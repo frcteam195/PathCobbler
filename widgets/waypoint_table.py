@@ -1,5 +1,4 @@
-import numbers
-from PySide6 import QtWidgets, QtCore
+from PySide6 import QtWidgets
 
 from widgets.waypoint import Waypoint
 from widgets.waypoint_table_body import WaypointTableBody
