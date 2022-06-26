@@ -12,6 +12,13 @@ class WaypointTableBody(QtWidgets.QWidget):
         self.grid_layout = QtWidgets.QGridLayout()
         self.grid_layout.setAlignment(QtCore.Qt.AlignTop)
 
+        # self.add_waypoint(Waypoint(0, 0, 0))
+        # self.add_waypoint(Waypoint(0, 0, 0))
+        # self.add_waypoint(Waypoint(0, 0, 0))
+        # self.add_waypoint(Waypoint(0, 0, 0))
+        # self.add_waypoint(Waypoint(0, 0, 0))
+        # self.add_waypoint(Waypoint(0, 0, 0))
+
         self.setLayout(self.grid_layout)
 
     def update(self):
