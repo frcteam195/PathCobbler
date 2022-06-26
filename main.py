@@ -12,8 +12,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.control = WaypointControl()
 
-        self.control.waypoint_table.add_waypoint(Waypoint(0, 0, 45))
-        self.control.waypoint_table.add_waypoint(Waypoint(20, 20, 65))
+        # self.control.waypoint_table.tableBody.add_waypoint(Waypoint(0, 0, 45))
+        # self.control.waypoint_table.add_waypoint(Waypoint(20, 20, 65))
 
         self.setCentralWidget(self.control)
 
