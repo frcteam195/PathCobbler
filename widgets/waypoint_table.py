@@ -10,30 +10,10 @@ class WaypointTable(QtWidgets.QWidget):
 
         self.waypoints = []
 
-        self.header_layout = QtWidgets.QHBoxLayout()
-        self.create_table_heading2()
-
         self.grid_layout = QtWidgets.QGridLayout()
+        self.create_table_heading()
 
-        self.main_layout = QtWidgets.QVBoxLayout()
-        self.main_layout.addLayout(self.header_layout)
-        self.main_layout.addLayout(self.grid_layout)
-
-        self.setLayout(self.main_layout)
-
-    def create_table_heading2(self):
-        print('creating heading')
-        x_label = QtWidgets.QLabel('X')
-        y_label = QtWidgets.QLabel('Y')
-        heading_label = QtWidgets.QLabel('Heading')
-        enabled_label = QtWidgets.QLabel('Enabled')
-        delete_label = QtWidgets.QLabel('Delete')
-
-        self.header_layout.addWidget(x_label)
-        self.header_layout.addWidget(y_label)
-        self.header_layout.addWidget(heading_label)
-        self.header_layout.addWidget(enabled_label)
-        self.header_layout.addWidget(delete_label)
+        self.setLayout(self.grid_layout)
 
     def create_table_heading(self):
         print('creating heading')
@@ -82,23 +62,18 @@ class WaypointTable(QtWidgets.QWidget):
         self.grid_layout.addWidget(delete_input, numRows, 4)
 
     def delete_row(self, rowNum):
-        # waypoints = self.get_waypoints()
-        # del waypoints[rowNum - 1]
+        waypoints = self.get_waypoints()
+        del waypoints[rowNum - 1]
 
-        # tempWidget = QtWidgets.QWidget()
-        # tempWidget.setLayout(self.grid_layout)
-        # tempWidget.deleteLater()
+        tempWidget = QtWidgets.QWidget()
+        tempWidget.setLayout(self.grid_layout)
+        tempWidget.deleteLater()
 
-        # self.grid_layout = QtWidgets.QGridLayout()
+        self.grid_layout = QtWidgets.QGridLayout()
+        self.create_table_heading()
 
-        # for wp in waypoints:
-        #     self.add_waypoint(wp)
+        for wp in waypoints:
+            self.add_waypoint(wp)
 
-        # print(self.main_layout.itemAt(1).layout().rowCount())
-
-        grid = self.main_layout.itemAt(0)
-        # self.main_layout.removeItem(grid)
-        grid.deleteLater()
-
-        # print(self.main_layout.itemAt(1))
+        self.setLayout(self.grid_layout)
         self.update()
