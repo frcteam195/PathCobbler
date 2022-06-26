@@ -4,3 +4,6 @@ class Waypoint:
         self.y = y
         self.heading = heading
         self.enabled = enabled
+
+    def __str__(self):
+        return f'X: {self.x}, Y: {self.y}, Theta: {self.heading}'
