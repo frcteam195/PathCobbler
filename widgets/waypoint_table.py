@@ -1,5 +1,5 @@
 import numbers
-from PySide6 import QtWidgets
+from PySide6 import QtWidgets, QtCore
 
 from widgets.waypoint import Waypoint
 
@@ -11,6 +11,7 @@ class WaypointTable(QtWidgets.QWidget):
         self.waypoints = []
 
         self.grid_layout = QtWidgets.QGridLayout()
+        self.grid_layout.setAlignment(QtCore.Qt.AlignTop)
         self.create_table_heading()
 
         self.setLayout(self.grid_layout)
@@ -70,6 +71,7 @@ class WaypointTable(QtWidgets.QWidget):
         tempWidget.deleteLater()
 
         self.grid_layout = QtWidgets.QGridLayout()
+        self.grid_layout.setAlignment(QtCore.Qt.AlignTop)
         self.create_table_heading()
 
         for wp in waypoints:
