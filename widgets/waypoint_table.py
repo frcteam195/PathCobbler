@@ -1,3 +1,4 @@
+import numbers
 from PySide6 import QtWidgets
 
 from widgets.waypoint import Waypoint
@@ -9,20 +10,44 @@ class WaypointTable(QtWidgets.QWidget):
 
         self.waypoints = []
 
+        self.header_layout = QtWidgets.QHBoxLayout()
+        self.create_table_heading2()
+
+        self.grid_layout = QtWidgets.QGridLayout()
+
+        self.main_layout = QtWidgets.QVBoxLayout()
+        self.main_layout.addLayout(self.header_layout)
+        self.main_layout.addLayout(self.grid_layout)
+
+        self.setLayout(self.main_layout)
+
+    def create_table_heading2(self):
+        print('creating heading')
         x_label = QtWidgets.QLabel('X')
         y_label = QtWidgets.QLabel('Y')
         heading_label = QtWidgets.QLabel('Heading')
         enabled_label = QtWidgets.QLabel('Enabled')
         delete_label = QtWidgets.QLabel('Delete')
 
-        self.grid_layout = QtWidgets.QGridLayout()
+        self.header_layout.addWidget(x_label)
+        self.header_layout.addWidget(y_label)
+        self.header_layout.addWidget(heading_label)
+        self.header_layout.addWidget(enabled_label)
+        self.header_layout.addWidget(delete_label)
+
+    def create_table_heading(self):
+        print('creating heading')
+        x_label = QtWidgets.QLabel('X')
+        y_label = QtWidgets.QLabel('Y')
+        heading_label = QtWidgets.QLabel('Heading')
+        enabled_label = QtWidgets.QLabel('Enabled')
+        delete_label = QtWidgets.QLabel('Delete')
+
         self.grid_layout.addWidget(x_label, 0, 0)
         self.grid_layout.addWidget(y_label, 0, 1)
         self.grid_layout.addWidget(heading_label, 0, 2)
         self.grid_layout.addWidget(enabled_label, 0, 3)
         self.grid_layout.addWidget(delete_label, 0, 4)
-
-        self.setLayout(self.grid_layout)
 
     def update(self):
         self.waypoints = []
@@ -57,5 +82,23 @@ class WaypointTable(QtWidgets.QWidget):
         self.grid_layout.addWidget(delete_input, numRows, 4)
 
     def delete_row(self, rowNum):
-        waypoints = self.get_waypoints()
-        self.grid_layout = QtWidgets.QGridLayout()
+        # waypoints = self.get_waypoints()
+        # del waypoints[rowNum - 1]
+
+        # tempWidget = QtWidgets.QWidget()
+        # tempWidget.setLayout(self.grid_layout)
+        # tempWidget.deleteLater()
+
+        # self.grid_layout = QtWidgets.QGridLayout()
+
+        # for wp in waypoints:
+        #     self.add_waypoint(wp)
+
+        # print(self.main_layout.itemAt(1).layout().rowCount())
+
+        grid = self.main_layout.itemAt(0)
+        # self.main_layout.removeItem(grid)
+        grid.deleteLater()
+
+        # print(self.main_layout.itemAt(1))
+        self.update()
