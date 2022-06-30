@@ -29,10 +29,15 @@ class WaypointTable(QWidget):
 
         self.heading_layout = QHBoxLayout()
         x_label = QLabel('X')
+        x_label.setAlignment(Qt.AlignCenter)
         y_label = QLabel('Y')
+        y_label.setAlignment(Qt.AlignCenter)
         heading_label = QLabel('Heading')
+        heading_label.setAlignment(Qt.AlignCenter)
         enabled_label = QLabel('Enabled')
+        enabled_label.setAlignment(Qt.AlignCenter)
         delete_label = QLabel('Delete')
+        delete_label.setAlignment(Qt.AlignCenter)
 
         self.heading_layout.addWidget(x_label)
         self.heading_layout.addWidget(y_label)
