@@ -17,12 +17,32 @@ class FieldView(QLabel):
     def __init__(self):
         super().__init__()
 
-        self.image = QPixmap('/Users/chris/git/ck/PathCobbler/resources/img/field.png').scaledToWidth(900)
-        # self.image = QPixmap(600, 600)
+        self.currentWaypoints = []
+        self.is_flipped = False
+
+        self.img_path = '/Users/chris/git/ck/PathCobbler/resources/img/field.png'
+        self.img_path_flipped = '/Users/chris/git/ck/PathCobbler/resources/img/fieldFlipped.png'
+        self.scaled_width = 1000
+
+        self.image = QPixmap((self.img_path)).scaledToWidth(self.scaled_width)
         self.setPixmap(self.image)
 
+    def flip_field(self):
+        self.is_flipped = not self.is_flipped
+
+        if self.is_flipped:
+            self.image = QPixmap(self.img_path_flipped).scaledToWidth(self.scaled_width)
+        else:
+            self.image = QPixmap(self.img_path).scaledToWidth(self.scaled_width)
+
+        self.setPixmap(self.image)
+
+        self.draw_waypoints(self.currentWaypoints)
+
     def mousePressEvent(self, ev: QMouseEvent) -> None:
-        # if ev.button() == Qt.LeftButton:
+        if ev.button() != Qt.LeftButton:
+            return
+
         canvas = self.pixmap()
         painter = QPainter(canvas)
         painter.setPen(Qt.NoPen)
@@ -39,6 +59,7 @@ class FieldView(QLabel):
         self.setPixmap(self.image)
 
     def draw_waypoints(self, wps: list[Waypoint]):
+        self.currentWaypoints = wps
         self.clear_canvas()
 
         canvas = self.pixmap()

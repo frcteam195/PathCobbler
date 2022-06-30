@@ -6,6 +6,8 @@ from widgets.waypoint_table_body import WaypointTableBody
 
 
 class WaypointTable(QWidget):
+    flipSignal = Signal()
+
     def __init__(self):
         super().__init__()
 
@@ -17,6 +19,7 @@ class WaypointTable(QWidget):
         self.updateButton.clicked.connect(self.update)
         self.animateButton = QPushButton('Animate')
         self.flipButton = QPushButton('Flip Field')
+        self.flipButton.clicked.connect(self.flipSignal.emit)
 
         self.buttonLayout = QHBoxLayout()
         self.buttonLayout.addWidget(self.addButton)
