@@ -1,4 +1,3 @@
-from email.mime import base
 import os
 
 from PySide6.QtWidgets import *
