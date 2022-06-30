@@ -8,8 +8,8 @@ class WaypointTable(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
 
-        # self.setMinimumSize(300, 500)
-        self.setMinimumWidth(500)
+        self.setMinimumSize(500, 300)
+        # self.setMinimumWidth(500)
         # self.setMinimumHeight(300)
 
         self.heading_layout = QtWidgets.QHBoxLayout()
