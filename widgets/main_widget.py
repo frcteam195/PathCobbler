@@ -18,6 +18,7 @@ class MainWidget(QWidget):
 
         self.table = WaypointTable()
         self.table.updateSignal.connect(self.update_field_waypoints)
+        self.table.flipSignal.connect(self.field.flip_field)
 
         self.mainLayout = QVBoxLayout()
         self.mainLayout.addWidget(self.field, alignment=Qt.AlignHCenter)
