@@ -1,4 +1,5 @@
 import os
+import math
 
 from PySide6.QtWidgets import *
 from PySide6.QtGui import *
@@ -26,6 +27,9 @@ class FieldView(QLabel):
         self.image = QPixmap((self.img_path)).scaledToWidth(self.scaled_width)
         self.setPixmap(self.image)
 
+        self.wp_size = 8
+        self.heading_length = 15
+
     def flip_field(self):
         self.is_flipped = not self.is_flipped
 
@@ -42,15 +46,14 @@ class FieldView(QLabel):
         if ev.button() != Qt.LeftButton:
             return
 
-        canvas = self.pixmap()
-        painter = QPainter(canvas)
-        painter.setPen(Qt.NoPen)
-        # painter.setBrush(QBrush(QColor(25, 255, 45), Qt.SolidPattern))
-        painter.setBrush(QBrush(Qt.green, Qt.SolidPattern))
-        size = 8
-        painter.drawEllipse(ev.position(), size, size)
-        painter.end()
-        self.setPixmap(canvas)
+        # canvas = self.pixmap()
+        # painter = QPainter(canvas)
+        # painter.setPen(Qt.NoPen)
+        # # painter.setBrush(QBrush(QColor(25, 255, 45), Qt.SolidPattern))
+        # painter.setBrush(QBrush(Qt.green, Qt.SolidPattern))
+        # painter.drawEllipse(ev.position(), self.wp_size, self.wp_size)
+        # painter.end()
+        # self.setPixmap(canvas)
 
         wp = Waypoint(ev.position().x(), ev.position().y(), 45)
         self.pointAdded.emit(wp)
@@ -66,11 +69,16 @@ class FieldView(QLabel):
         painter = QPainter(canvas)
         painter.setPen(Qt.NoPen)
         painter.setBrush(QBrush(QColor(25, 255, 45), Qt.SolidPattern))
-        size = 8
 
         for wp in wps:
             if wp.enabled:
-                painter.drawEllipse(QPointF(wp.x, wp.y), size, size)
+                painter.drawEllipse(QPointF(wp.x, wp.y), self.wp_size, self.wp_size)
+
+                x_diff = self.heading_length * math.cos(math.radians(wp.heading))
+                y_diff = self.heading_length * math.sin(math.radians(wp.heading))
+
+                painter.setPen(QPen(Qt.green, 3))
+                painter.drawLine(QPointF(wp.x, wp.y), QPointF(wp.x + x_diff, wp.y - y_diff))
 
         painter.end()
         self.setPixmap(canvas)
