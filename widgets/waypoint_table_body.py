@@ -67,7 +67,6 @@ class WaypointTableBody(QWidget):
 
         self.grid_layout = QGridLayout()
         self.grid_layout.setAlignment(Qt.AlignTop)
-        # self.create_table_heading()
 
         for wp in waypoints:
             self.add_waypoint(wp)
