@@ -1,6 +1,6 @@
 from PySide6 import QtWidgets
 
-from widgets.waypoint import Waypoint
+from utils.waypoint import Waypoint
 from widgets.waypoint_table import WaypointTable
 
 

@@ -4,7 +4,7 @@ from PySide6.QtWidgets import *
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 
-from widgets.waypoint import Waypoint
+from utils.waypoint import Waypoint
 
 
 base_dir = os.path.dirname(os.path.realpath(__file__))

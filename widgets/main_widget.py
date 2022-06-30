@@ -2,7 +2,7 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 
 from widgets.field_view import FieldView
-from widgets.waypoint import Waypoint
+from utils.waypoint import Waypoint
 from widgets.waypoint_table import WaypointTable
 
 
