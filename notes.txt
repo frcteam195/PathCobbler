@@ -1,0 +1,11 @@
+cp code has its own copies of trans2d, rotate2d, and pose2d
+- these are used to create real waypoints which are then
+  sent to the java as json
+- the json is parsed and the splines are calculated and returned as json
+
+TODO:
+the c wrapper should have a struct to define a simple waypoint
+- the real waypoints will be constructed in the c code
+- it will do the hard math then deconscruct the real waypoints
+  into simple waypoints for the python to display
+- simple waypoints need timestamp?
