@@ -34,3 +34,22 @@ class FieldView(QLabel):
 
         wp = Waypoint(ev.position().x(), ev.position().y(), 45)
         self.pointAdded.emit(wp)
+
+    def clear_canvas(self):
+        self.setPixmap(self.image)
+
+    def draw_waypoints(self, wps: list[Waypoint]):
+        self.clear_canvas()
+
+        canvas = self.pixmap()
+        painter = QPainter(canvas)
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(QBrush(QColor(25, 255, 45), Qt.SolidPattern))
+        size = 8
+
+        for wp in wps:
+            if wp.enabled:
+                painter.drawEllipse(QPointF(wp.x, wp.y), size, size)
+
+        painter.end()
+        self.setPixmap(canvas)
