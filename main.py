@@ -1,6 +1,9 @@
 import sys
 
 from PySide6 import QtWidgets
+from PySide6 import QtGui
+from widgets.field_view import FieldView
+from widgets.main_widget import MainWidget
 
 from widgets.waypoint import Waypoint
 from widgets.waypoint_control import WaypointControl
@@ -16,7 +19,11 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.control = WaypointControl()
+        self.setWindowTitle("PathCobbler 🥧")
+
+        # self.control = WaypointControl()
+        # self.control = FieldView()
+        self.control = MainWidget()
 
         self.setCentralWidget(self.control)
 

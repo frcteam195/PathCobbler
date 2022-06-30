@@ -9,6 +9,8 @@ class WaypointTableBody(QtWidgets.QWidget):
 
         self.waypoints = []
 
+        # self.setMinimumHeight(300)
+
         self.grid_layout = QtWidgets.QGridLayout()
         self.grid_layout.setAlignment(QtCore.Qt.AlignTop)
 
