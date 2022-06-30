@@ -6,4 +6,4 @@ class Waypoint:
         self.enabled = enabled
 
     def __str__(self):
-        return f'X: {self.x}, Y: {self.y}, Theta: {self.heading}'
+        return f'X: {self.x}, Y: {self.y}, Theta: {self.heading}, Enabled: {"Y" if self.enabled else "N"}'
