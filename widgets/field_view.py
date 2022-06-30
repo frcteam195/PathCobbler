@@ -22,7 +22,7 @@ class FieldView(QLabel):
 
         self.img_path = '/Users/chris/git/ck/PathCobbler/resources/img/field.png'
         self.img_path_flipped = '/Users/chris/git/ck/PathCobbler/resources/img/fieldFlipped.png'
-        self.scaled_width = 1000
+        self.scaled_width = 1200
 
         self.image = QPixmap((self.img_path)).scaledToWidth(self.scaled_width)
         self.setPixmap(self.image)
@@ -46,7 +46,8 @@ class FieldView(QLabel):
         canvas = self.pixmap()
         painter = QPainter(canvas)
         painter.setPen(Qt.NoPen)
-        painter.setBrush(QBrush(QColor(25, 255, 45), Qt.SolidPattern))
+        # painter.setBrush(QBrush(QColor(25, 255, 45), Qt.SolidPattern))
+        painter.setBrush(QBrush(Qt.green, Qt.SolidPattern))
         size = 8
         painter.drawEllipse(ev.position(), size, size)
         painter.end()
