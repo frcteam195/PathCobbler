@@ -1,25 +1,19 @@
-from PySide6 import QtWidgets, QtCore
+from PySide6.QtWidgets import *
+from PySide6.QtCore import *
 
 from widgets.waypoint import Waypoint
 
 
-class WaypointTableBody(QtWidgets.QWidget):
+class WaypointTableBody(QWidget):
+    updateSignal = Signal(list)
+
     def __init__(self):
         super().__init__()
 
         self.waypoints = []
 
-        # self.setMinimumHeight(300)
-
-        self.grid_layout = QtWidgets.QGridLayout()
-        self.grid_layout.setAlignment(QtCore.Qt.AlignTop)
-
-        # self.add_waypoint(Waypoint(0, 0, 0))
-        # self.add_waypoint(Waypoint(0, 0, 0))
-        # self.add_waypoint(Waypoint(0, 0, 0))
-        # self.add_waypoint(Waypoint(0, 0, 0))
-        # self.add_waypoint(Waypoint(0, 0, 0))
-        # self.add_waypoint(Waypoint(0, 0, 0))
+        self.grid_layout = QGridLayout()
+        self.grid_layout.setAlignment(Qt.AlignTop)
 
         self.setLayout(self.grid_layout)
 
@@ -27,12 +21,14 @@ class WaypointTableBody(QtWidgets.QWidget):
         self.waypoints = []
 
         for i in range(1, self.grid_layout.rowCount()):
-            x_val = self.grid_layout.itemAtPosition(i, 0).widget().text()
-            y_val = self.grid_layout.itemAtPosition(i, 1).widget().text()
-            heading_val = self.grid_layout.itemAtPosition(i, 2).widget().text()
+            x_val = float(self.grid_layout.itemAtPosition(i, 0).widget().text())
+            y_val = float(self.grid_layout.itemAtPosition(i, 1).widget().text())
+            heading_val = float(self.grid_layout.itemAtPosition(i, 2).widget().text())
             enabled_val = self.grid_layout.itemAtPosition(i, 3).widget().isChecked()
 
             self.waypoints.append(Waypoint(x_val, y_val, heading_val, enabled_val))
+
+        self.updateSignal.emit(self.waypoints)
 
     def get_waypoints(self) -> list[Waypoint]:
         self.update()
@@ -41,12 +37,16 @@ class WaypointTableBody(QtWidgets.QWidget):
     def add_waypoint(self, wp: Waypoint):
         numRows = self.grid_layout.rowCount()
 
-        x_input = QtWidgets.QLineEdit(str(wp.x))
-        y_input = QtWidgets.QLineEdit(str(wp.y))
-        heading_input = QtWidgets.QLineEdit(str(wp.heading))
-        enabled_input = QtWidgets.QCheckBox()
+        x_input = QLineEdit(str(wp.x))
+        x_input.textChanged.connect(self.update)
+        y_input = QLineEdit(str(wp.y))
+        y_input.textChanged.connect(self.update)
+        heading_input = QLineEdit(str(wp.heading))
+        heading_input.textChanged.connect(self.update)
+        enabled_input = QCheckBox()
         enabled_input.setChecked(wp.enabled)
-        delete_input = QtWidgets.QPushButton('X')
+        enabled_input.stateChanged.connect(self.update)
+        delete_input = QPushButton('X')
         delete_input.clicked.connect(lambda: self.delete_row(numRows))
 
         self.grid_layout.addWidget(x_input, numRows, 0)
@@ -55,16 +55,18 @@ class WaypointTableBody(QtWidgets.QWidget):
         self.grid_layout.addWidget(enabled_input, numRows, 3)
         self.grid_layout.addWidget(delete_input, numRows, 4)
 
+        self.update()
+
     def delete_row(self, rowNum):
         waypoints = self.get_waypoints()
         del waypoints[rowNum - 1]
 
-        tempWidget = QtWidgets.QWidget()
+        tempWidget = QWidget()
         tempWidget.setLayout(self.grid_layout)
         tempWidget.deleteLater()
 
-        self.grid_layout = QtWidgets.QGridLayout()
-        self.grid_layout.setAlignment(QtCore.Qt.AlignTop)
+        self.grid_layout = QGridLayout()
+        self.grid_layout.setAlignment(Qt.AlignTop)
         # self.create_table_heading()
 
         for wp in waypoints:
