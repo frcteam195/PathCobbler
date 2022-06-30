@@ -38,14 +38,21 @@ class WaypointTableBody(QWidget):
         numRows = self.grid_layout.rowCount()
 
         x_input = QLineEdit(str(wp.x))
+        x_input.setAlignment(Qt.AlignCenter)
         x_input.textChanged.connect(self.update)
+
         y_input = QLineEdit(str(wp.y))
+        y_input.setAlignment(Qt.AlignCenter)
         y_input.textChanged.connect(self.update)
+
         heading_input = QLineEdit(str(wp.heading))
+        heading_input.setAlignment(Qt.AlignCenter)
         heading_input.textChanged.connect(self.update)
+
         enabled_input = QCheckBox()
         enabled_input.setChecked(wp.enabled)
         enabled_input.stateChanged.connect(self.update)
+
         delete_input = QPushButton('X')
         delete_input.clicked.connect(lambda: self.delete_row(numRows))
 
