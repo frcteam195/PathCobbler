@@ -46,15 +46,6 @@ class FieldView(QLabel):
         if ev.button() != Qt.LeftButton:
             return
 
-        # canvas = self.pixmap()
-        # painter = QPainter(canvas)
-        # painter.setPen(Qt.NoPen)
-        # # painter.setBrush(QBrush(QColor(25, 255, 45), Qt.SolidPattern))
-        # painter.setBrush(QBrush(Qt.green, Qt.SolidPattern))
-        # painter.drawEllipse(ev.position(), self.wp_size, self.wp_size)
-        # painter.end()
-        # self.setPixmap(canvas)
-
         wp = Waypoint(ev.position().x(), ev.position().y(), 45)
         self.pointAdded.emit(wp)
 
