@@ -35,7 +35,8 @@ c_lib.waypoint_test(wp)
 
 print('\n\n')
 
-c_lib.make_waypoints.restype = c_void_p
+# c_lib.make_waypoints.restype = c_void_p
+c_lib.make_waypoints.restype = POINTER(C_Waypoint)
 wp = c_lib.make_waypoints(5)
 # print(wp.contents[0])
 
@@ -63,3 +64,21 @@ c_lib.mod_waypoints(wps_arr, len(wps))
 
 for wp in wps_arr:
     print(wp)
+
+
+print('\n\n')
+
+x = c_int(0)
+
+c_lib.sorcery.argtypes = [POINTER(c_int)]
+c_lib.sorcery.restype = POINTER(C_Waypoint)
+wp_ptr = c_lib.sorcery(pointer(x))
+
+print(x.value)
+
+wps = cast(wp_ptr, POINTER(C_Waypoint * x.value))
+
+for wp in wps.contents:
+    print(wp)
+
+c_lib.freeme(wp_ptr)
