@@ -1,5 +1,10 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 typedef struct
 {
     double x;
@@ -8,9 +13,9 @@ typedef struct
 } waypoint_t;
 
 void waypoint_test(waypoint_t wp);
+waypoint_t make_waypoint();
 void print_num(int x);
 
-// extern "C"
-// {
-//     void waypoint_test(way)
-// }
+#ifdef __cplusplus
+}
+#endif

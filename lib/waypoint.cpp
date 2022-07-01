@@ -1,4 +1,4 @@
-#include "waypoint.h"
+#include "waypoint.hpp"
 #include <iostream>
 
 void waypoint_test(waypoint_t wp)
@@ -7,6 +7,12 @@ void waypoint_test(waypoint_t wp)
               << ", Y: " << wp.y
               << ", Heading: " << wp.heading
               << std::endl;
+}
+
+waypoint_t make_waypoint()
+{
+    waypoint_t wp = {10, 20, 45};
+    return wp;
 }
 
 void print_num(int x)
