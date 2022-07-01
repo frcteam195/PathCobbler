@@ -58,15 +58,18 @@ class FieldView(QLabel):
 
         canvas = self.pixmap()
         painter = QPainter(canvas)
-        painter.setPen(Qt.NoPen)
+        painter.setRenderHint(QPainter.Antialiasing)
         painter.setBrush(QBrush(QColor(25, 255, 45), Qt.SolidPattern))
 
         for wp in wps:
             if wp.enabled:
+                painter.setPen(Qt.NoPen)
                 painter.drawEllipse(QPointF(wp.x, wp.y), self.wp_size, self.wp_size)
 
                 x_diff = self.heading_length * math.cos(math.radians(wp.heading))
                 y_diff = self.heading_length * math.sin(math.radians(wp.heading))
+
+                # painter.drawArc(wp.x, wp.y, 20, 0, 0, 1000)
 
                 painter.setPen(QPen(Qt.green, 3))
                 painter.drawLine(QPointF(wp.x, wp.y), QPointF(wp.x + x_diff, wp.y - y_diff))
