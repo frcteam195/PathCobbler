@@ -9,6 +9,9 @@ class C_Waypoint(Structure):
                 ('y', c_double),
                 ('heading', c_double)]
 
+    def __str__(self):
+        return f'{self.x} {self.y} {self.heading}'
+
 libname = pathlib.Path().absolute()
 c_lib = CDLL(libname / 'lib/build/libwaypoint_cpp.so')
 
@@ -24,3 +27,7 @@ wp.heading = 30
 
 c_lib.waypoint_test.argtypes = [C_Waypoint]
 c_lib.waypoint_test(wp)
+
+c_lib.make_waypoint.restype = C_Waypoint
+wp = c_lib.make_waypoint()
+print(wp)
