@@ -4,6 +4,11 @@ import pathlib
 from ctypes import *
 
 
+libname = pathlib.Path().absolute()
+c_lib = CDLL(libname / 'lib/build/libwaypoint_cpp.so')
+
+c_lib.freeme.argtypes = [c_void_p]
+
 class C_Waypoint(Structure):
     _fields_ = [('x', c_double),
                 ('y', c_double),
@@ -17,8 +22,17 @@ class C_Waypoint(Structure):
     def __str__(self):
         return f'{self.x} {self.y} {self.heading}'
 
-libname = pathlib.Path().absolute()
-c_lib = CDLL(libname / 'lib/build/libwaypoint_cpp.so')
+
+class C_WaypointArray(Structure):
+    _fields_ = [('size', c_uint32),
+                ('wp_ptr', POINTER(C_Waypoint))]
+
+    def create_waypoints(self):
+        self.waypoints = cast(self.wp_ptr, POINTER(C_Waypoint * self.size)).contents
+
+    def free(self):
+        c_lib.freeme(self.wp_ptr)
+
 
 x = 5
 
@@ -82,3 +96,17 @@ for wp in wps.contents:
     print(wp)
 
 c_lib.freeme(wp_ptr)
+
+print('\n\n')
+
+c_lib.get_waypoints.restype = C_WaypointArray
+wp_arr: C_WaypointArray = c_lib.get_waypoints()
+
+print(wp_arr.size)
+
+wp_arr.create_waypoints()
+
+for wp in wp_arr.waypoints:
+    print(wp)
+
+wp_arr.free()
