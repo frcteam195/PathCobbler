@@ -1,6 +1,9 @@
 #include "waypoint.hpp"
+#include "ck_utilities/geometry/Geometry.hpp"
 #include <iostream>
 #include <stdio.h>
+
+static ck::geometry::Pose2d pose_test();
 
 void waypoint_test(waypoint_t wp)
 {
