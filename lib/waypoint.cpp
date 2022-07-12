@@ -2,8 +2,6 @@
 #include <iostream>
 #include <stdio.h>
 
-#include "trajectory_generator_node/include/Constants.hpp"
-
 void waypoint_test(waypoint_t wp)
 {
     std::cout << K_DRIVE_WHEEL_DIAMETER_INCHES << std::endl;
