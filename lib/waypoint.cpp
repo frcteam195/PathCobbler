@@ -4,8 +4,6 @@
 
 void waypoint_test(waypoint_t wp)
 {
-    std::cout << K_DRIVE_WHEEL_DIAMETER_INCHES << std::endl;
-
     std::cout << "X: " << wp.x
               << ", Y: " << wp.y
               << ", Heading: " << wp.heading
