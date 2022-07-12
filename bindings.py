@@ -5,7 +5,7 @@ from ctypes import *
 
 
 libname = pathlib.Path().absolute()
-c_lib = CDLL(libname / 'lib/build/libwaypoint_cpp.so')
+c_lib = CDLL(libname / 'lib/build/libck_pathcobbler_bindings.so')
 
 c_lib.freeme.argtypes = [c_void_p]
 
