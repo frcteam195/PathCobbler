@@ -7,6 +7,8 @@ from PySide6.QtCore import *
 
 from utils.waypoint import Waypoint
 
+from bindings import calc_splines
+
 
 base_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -53,6 +55,8 @@ class FieldView(QLabel):
         self.setPixmap(self.image)
 
     def draw_waypoints(self, wps: list[Waypoint]):
+        wps = calc_splines(wps)
+
         self.currentWaypoints = wps
         self.clear_canvas()
 
