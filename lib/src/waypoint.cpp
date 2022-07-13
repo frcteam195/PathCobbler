@@ -90,6 +90,11 @@ waypoint_array_t calc_splines(waypoint_array_t waypoints)
         positions = SplineGenerator::parameterizeSplines(mSplines);
     }
 
+    for (auto spline : mQunticHermiteSplines)
+    {
+        delete spline;
+    }
+    mQunticHermiteSplines.clear();
 
     waypoint_array_t wp_arr;
     wp_arr.size = positions.size();
