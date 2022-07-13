@@ -46,7 +46,7 @@ c_lib.calc_splines.restype = C_WaypointArray
 
 def calc_splines(waypoints: list[Waypoint]):
     if len(waypoints) < 2:
-        return
+        return waypoints
 
     c_waypoints = []
     for wp in waypoints:
