@@ -43,6 +43,29 @@ c_lib.calc_splines.argtypes = [C_WaypointArray]
 c_lib.calc_splines.restype = C_WaypointArray
 
 
+def calc_splines(waypoints: list[Waypoint]):
+    if len(waypoints) < 2:
+        return
+
+    c_waypoints = []
+    for wp in waypoints:
+        c_waypoints.append(C_Waypoint(wp.x, wp.y, wp.heading))
+
+    c_wp_arr = C_WaypointArray(c_waypoints)
+
+    spline_points: C_WaypointArray = c_lib.calc_splines(c_wp_arr)
+    spline_points.create_waypoints()
+
+    ret_wps = []
+    for point in spline_points.waypoints:
+        ret_wps.append(Waypoint(point.x, point.y, point.heading))
+        print(point)
+
+    spline_points.free()
+
+    return ret_wps
+
+
 # c_lib.get_waypoints.restype = C_WaypointArray
 # wp_arr: C_WaypointArray = c_lib.get_waypoints()
 
@@ -75,26 +98,3 @@ c_lib.calc_splines.restype = C_WaypointArray
 
 # wp_arr.free()
 # wp_arr2.free()
-
-
-def calc_splines(waypoints: list[Waypoint]):
-    if len(waypoints) < 2:
-        return
-
-    c_waypoints = []
-    for wp in waypoints:
-        c_waypoints.append(C_Waypoint(wp.x, wp.y, wp.heading))
-
-    c_wp_arr = C_WaypointArray(c_waypoints)
-
-    spline_points: C_WaypointArray = c_lib.calc_splines(c_wp_arr)
-    spline_points.create_waypoints()
-
-    ret_wps = []
-    for point in spline_points.waypoints:
-        ret_wps.append(Waypoint(point.x, point.y, point.heading))
-        print(point)
-
-    spline_points.free()
-
-    return ret_wps
