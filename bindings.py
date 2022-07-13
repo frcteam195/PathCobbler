@@ -3,11 +3,8 @@ import pathlib
 
 from ctypes import *
 
+from utils.waypoint import Waypoint
 
-libname = pathlib.Path().absolute()
-c_lib = CDLL(libname / 'lib/build/libck_pathcobbler_bindings.dylib')
-
-c_lib.freeme.argtypes = [c_void_p]
 
 class C_Waypoint(Structure):
     _fields_ = [('x', c_double),
@@ -38,6 +35,14 @@ class C_WaypointArray(Structure):
         c_lib.freeme(self.wp_ptr)
 
 
+libname = pathlib.Path().absolute()
+c_lib = CDLL(libname / 'lib/build/libck_pathcobbler_bindings.dylib')
+
+c_lib.freeme.argtypes = [c_void_p]
+c_lib.calc_splines.argtypes = [C_WaypointArray]
+c_lib.calc_splines.restype = C_WaypointArray
+
+
 # c_lib.get_waypoints.restype = C_WaypointArray
 # wp_arr: C_WaypointArray = c_lib.get_waypoints()
 
@@ -51,19 +56,45 @@ class C_WaypointArray(Structure):
 # print('\n')
 
 
-py_points = [C_Waypoint(1, 2, 3), C_Waypoint(4, 5, 6)]
+# py_points = [C_Waypoint(1, 2, 3), C_Waypoint(4, 5, 6)]
 # py_arr = (C_Waypoint * len(py_points))(*py_points)
 
 # param = C_WaypointArray()
 # param.wp_ptr = py_arr
 # param.size = len(py_points)
 
-param = C_WaypointArray(py_points)
+# param = C_WaypointArray(py_points)
 
-c_lib.calc_splines.argtypes = [C_WaypointArray]
-c_lib.calc_splines.restype = C_WaypointArray
-wp_arr2: C_WaypointArray = c_lib.calc_splines(param)
-wp_arr2.create_waypoints()
+# wp_arr2: C_WaypointArray = c_lib.calc_splines(param)
+# wp_arr2.create_waypoints()
+
+# print('\n\n')
+# for wp in wp_arr2.waypoints:
+    # print(wp)
+# print('\n\n')
 
 # wp_arr.free()
-wp_arr2.free()
+# wp_arr2.free()
+
+
+def calc_splines(waypoints: list[Waypoint]):
+    if len(waypoints) < 2:
+        return
+
+    c_waypoints = []
+    for wp in waypoints:
+        c_waypoints.append(C_Waypoint(wp.x, wp.y, wp.heading))
+
+    c_wp_arr = C_WaypointArray(c_waypoints)
+
+    spline_points: C_WaypointArray = c_lib.calc_splines(c_wp_arr)
+    spline_points.create_waypoints()
+
+    ret_wps = []
+    for point in spline_points.waypoints:
+        ret_wps.append(Waypoint(point.x, point.y, point.heading))
+        print(point)
+
+    spline_points.free()
+
+    return ret_wps
