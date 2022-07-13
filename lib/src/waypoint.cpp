@@ -1,23 +1,17 @@
 #include "waypoint.hpp"
-#include "ck_utilities/geometry/Geometry.hpp"
+#include "ck_utilities/geometry/Pose2d.hpp"
+#include "ck_utilities/geometry/Pose2dWithCurvature.hpp"
+#include "ck_utilities/geometry/Rotation2d.hpp"
+#include "ck_utilities/geometry/Translation2d.hpp"
+#include "ck_utilities/spline/QuinticHermiteSpline.hpp"
+#include "ck_utilities/spline/Spline.hpp"
+#include "ck_utilities/spline/SplineGenerator.hpp"
+#include <vector>
 #include <iostream>
 #include <stdio.h>
 
-static ck::geometry::Pose2d pose_test();
-
-void waypoint_test(waypoint_t wp)
-{
-    std::cout << "X: " << wp.x
-              << ", Y: " << wp.y
-              << ", Heading: " << wp.heading
-              << std::endl;
-}
-
-waypoint_t make_waypoint()
-{
-    waypoint_t wp = {10, 20, 45};
-    return wp;
-}
+using namespace ck::geometry;
+using namespace ck::spline;
 
 waypoint_t *make_waypoints(int size)
 {
@@ -35,12 +29,6 @@ waypoint_t *make_waypoints(int size)
     return wps;
 }
 
-waypoint_t *sorcery(int *size)
-{
-    *size = 10;
-    return make_waypoints(*size);
-}
-
 waypoint_array_t get_waypoints()
 {
     waypoint_array_t wp_arr;
@@ -55,16 +43,31 @@ void freeme(void *ptr)
     free(ptr);
 }
 
-void mod_waypoints(waypoint_t *wps, int size)
+waypoint_array_t calc_splines(waypoint_array_t waypoints)
 {
-    for (int i = 0; i < size; i++)
-    {
-        wps[i].x = 100;
-        wps[i].heading = 2.0 * i;
-    }
-}
+    std::vector<Pose2d> points;
 
-void print_num(int x)
-{
-    std::cout << "CPP: " << x << std::endl;
+    for (int i = 0; i < waypoints.size; i++)
+    {
+        double x = waypoints.wp_ptr[i].x;
+        double y = waypoints.wp_ptr[i].y;
+        double heading = waypoints.wp_ptr[i].heading;
+
+        std::cout << "X: " << x
+                  << ", Y: " << y
+                  << ", Heading: " << heading
+                  << std::endl;
+
+        Translation2d t2d(x, y);
+        Pose2d p2d(t2d, Rotation2d::fromDegrees(heading));
+
+        points.push_back(p2d);
+    }
+
+    std::cout << "Num points: " << points.size() << std::endl;
+
+    waypoint_array_t wp_arr;
+    wp_arr.size = points.size();
+    wp_arr.wp_ptr = make_waypoints(wp_arr.size);
+    return wp_arr;
 }

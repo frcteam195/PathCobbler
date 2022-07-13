@@ -5,7 +5,7 @@ from ctypes import *
 
 
 libname = pathlib.Path().absolute()
-c_lib = CDLL(libname / 'lib/build/libck_pathcobbler_bindings.so')
+c_lib = CDLL(libname / 'lib/build/libck_pathcobbler_bindings.dylib')
 
 c_lib.freeme.argtypes = [c_void_p]
 
@@ -27,6 +27,10 @@ class C_WaypointArray(Structure):
     _fields_ = [('size', c_uint32),
                 ('wp_ptr', POINTER(C_Waypoint))]
 
+    def __init__(self, points: list[C_Waypoint]):
+        self.size = len(points)
+        self.wp_ptr = (C_Waypoint * self.size)(*points)
+
     def create_waypoints(self):
         self.waypoints = cast(self.wp_ptr, POINTER(C_Waypoint * self.size)).contents
 
@@ -34,79 +38,32 @@ class C_WaypointArray(Structure):
         c_lib.freeme(self.wp_ptr)
 
 
-x = 5
+# c_lib.get_waypoints.restype = C_WaypointArray
+# wp_arr: C_WaypointArray = c_lib.get_waypoints()
 
-c_lib.print_num.argtypes = [c_int]
-c_lib.print_num(x)
+# print(wp_arr.size)
 
-wp = C_Waypoint()
-wp.x = 1.123
-wp.y = 20
-wp.heading = 30
+# wp_arr.create_waypoints()
 
-c_lib.waypoint_test.argtypes = [C_Waypoint]
-c_lib.waypoint_test(wp)
+# for wp in wp_arr.waypoints:
+#     print(wp)
 
-print('\n\n')
-
-# c_lib.make_waypoints.restype = c_void_p
-c_lib.make_waypoints.restype = POINTER(C_Waypoint)
-wp = c_lib.make_waypoints(5)
-# print(wp.contents[0])
-
-wps = cast(wp, POINTER(C_Waypoint * 5))
-
-# print(wps.contents[0])
-for wp_a in wps.contents:
-    print(wp_a)
-
-# cast(wp, c_void_p)
-c_lib.freeme.argtypes = [c_void_p]
-c_lib.freeme(wp)
-
-print('\n\n')
-
-wps = []
-for i in range(10):
-    wps.append(C_Waypoint(0, i, 0))
-
-wp_arr_t = C_Waypoint * len(wps)
-wps_arr = wp_arr_t(*wps)
-
-c_lib.mod_waypoints.argtypes = [wp_arr_t, c_int]
-c_lib.mod_waypoints(wps_arr, len(wps))
-
-for wp in wps_arr:
-    print(wp)
+# print('\n')
 
 
-print('\n\n')
+py_points = [C_Waypoint(1, 2, 3), C_Waypoint(4, 5, 6)]
+# py_arr = (C_Waypoint * len(py_points))(*py_points)
 
-x = c_int(0)
+# param = C_WaypointArray()
+# param.wp_ptr = py_arr
+# param.size = len(py_points)
 
-c_lib.sorcery.argtypes = [POINTER(c_int)]
-c_lib.sorcery.restype = POINTER(C_Waypoint)
-wp_ptr = c_lib.sorcery(pointer(x))
+param = C_WaypointArray(py_points)
 
-print(x.value)
+c_lib.calc_splines.argtypes = [C_WaypointArray]
+c_lib.calc_splines.restype = C_WaypointArray
+wp_arr2: C_WaypointArray = c_lib.calc_splines(param)
+wp_arr2.create_waypoints()
 
-wps = cast(wp_ptr, POINTER(C_Waypoint * x.value))
-
-for wp in wps.contents:
-    print(wp)
-
-c_lib.freeme(wp_ptr)
-
-print('\n\n')
-
-c_lib.get_waypoints.restype = C_WaypointArray
-wp_arr: C_WaypointArray = c_lib.get_waypoints()
-
-print(wp_arr.size)
-
-wp_arr.create_waypoints()
-
-for wp in wp_arr.waypoints:
-    print(wp)
-
-wp_arr.free()
+# wp_arr.free()
+wp_arr2.free()
