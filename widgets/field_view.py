@@ -31,6 +31,7 @@ class FieldView(QLabel):
 
         self.wp_size = 8
         self.heading_length = 15
+        self.painter = QPainter()
 
     def flip_field(self):
         self.is_flipped = not self.is_flipped
@@ -61,22 +62,22 @@ class FieldView(QLabel):
         self.clear_canvas()
 
         canvas = self.pixmap()
-        painter = QPainter(canvas)
-        painter.setRenderHint(QPainter.Antialiasing)
-        painter.setBrush(QBrush(QColor(25, 255, 45), Qt.SolidPattern))
+        self.painter = QPainter(canvas)
+        self.painter.setRenderHint(QPainter.Antialiasing)
+        self.painter.setBrush(QBrush(QColor(25, 255, 45), Qt.SolidPattern))
 
         for wp in wps:
             if wp.enabled:
-                painter.setPen(Qt.NoPen)
-                painter.drawEllipse(QPointF(wp.x, wp.y), self.wp_size, self.wp_size)
+                self.painter.setPen(Qt.NoPen)
+                self.painter.drawEllipse(QPointF(wp.x, wp.y), self.wp_size, self.wp_size)
 
                 x_diff = self.heading_length * math.cos(math.radians(wp.heading))
                 y_diff = self.heading_length * math.sin(math.radians(wp.heading))
 
                 # painter.drawArc(wp.x, wp.y, 20, 0, 0, 1000)
 
-                painter.setPen(QPen(Qt.green, 3))
-                painter.drawLine(QPointF(wp.x, wp.y), QPointF(wp.x + x_diff, wp.y - y_diff))
+                self.painter.setPen(QPen(Qt.green, 3))
+                self.painter.drawLine(QPointF(wp.x, wp.y), QPointF(wp.x + x_diff, wp.y - y_diff))
 
-        painter.end()
+        self.painter.end()
         self.setPixmap(canvas)
