@@ -51,7 +51,7 @@ def calc_splines(waypoints: list[Waypoint]):
     c_waypoints = []
     for wp in waypoints:
         if wp.enabled:
-            c_waypoints.append(C_Waypoint(wp.x, wp.y, wp.heading))
+            c_waypoints.append(C_Waypoint(wp.x, wp.y, -wp.heading))
 
     c_wp_arr = C_WaypointArray(c_waypoints)
 
