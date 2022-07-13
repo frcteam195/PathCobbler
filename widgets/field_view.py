@@ -49,14 +49,16 @@ class FieldView(QLabel):
         if ev.button() != Qt.LeftButton:
             return
 
-        wp = Waypoint(ev.position().x(), ev.position().y(), 45)
+        # TODO: set heading to the angle that points from the last point to the new point
+        heading = self.currentWaypoints[-1].heading if len(self.currentWaypoints) > 0 else 0
+        wp = Waypoint(ev.position().x(), ev.position().y(), heading)
         self.pointAdded.emit(wp)
 
     def clear_canvas(self):
         self.setPixmap(self.image)
 
     def draw_waypoints(self, wps: list[Waypoint]):
-        wps = calc_splines(wps)
+        spline_wps = calc_splines(wps)
 
         self.currentWaypoints = wps
         self.clear_canvas()
@@ -64,6 +66,12 @@ class FieldView(QLabel):
         canvas = self.pixmap()
         self.painter = QPainter(canvas)
         self.painter.setRenderHint(QPainter.Antialiasing)
+
+        for wp in spline_wps:
+            self.painter.setPen(Qt.NoPen)
+            self.painter.setBrush(QBrush(QColor(0, 0, 255), Qt.SolidPattern))
+            self.painter.drawEllipse(QPointF(wp.x, wp.y), 4, 4)
+
         self.painter.setBrush(QBrush(QColor(25, 255, 45), Qt.SolidPattern))
 
         for wp in wps:
