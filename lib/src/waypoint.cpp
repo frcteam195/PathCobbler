@@ -58,16 +58,49 @@ waypoint_array_t calc_splines(waypoint_array_t waypoints)
                   << ", Heading: " << heading
                   << std::endl;
 
-        Translation2d t2d(x, y);
-        Pose2d p2d(t2d, Rotation2d::fromDegrees(heading));
+        // Translation2d t2d(x, y);
+        // Pose2d p2d(t2d, Rotation2d::fromDegrees(heading));
 
-        points.push_back(p2d);
+        points.push_back(Pose2d(Translation2d(x, y), Rotation2d::fromDegrees(heading)));
     }
-
     std::cout << "Num points: " << points.size() << std::endl;
 
+    std::vector<QuinticHermiteSpline *> mQunticHermiteSplines;
+    std::vector<Spline *> mSplines;
+    std::vector<Pose2dWithCurvature> positions;
+
+    if (points.size() < 2)
+    {
+        // return "no" ????
+    }
+    else
+    {
+        for (int i = 0; i < points.size() - 1; i++)
+        {
+            mQunticHermiteSplines.push_back(new QuinticHermiteSpline(points[i], points[i+1]));
+        }
+
+        QuinticHermiteSpline::optimizeSpline(mQunticHermiteSplines);
+
+        for (auto &mQunticHermiteSpline : mQunticHermiteSplines)
+        {
+            mSplines.push_back(mQunticHermiteSpline);
+        }
+
+        positions = SplineGenerator::parameterizeSplines(mSplines);
+    }
+
+
     waypoint_array_t wp_arr;
-    wp_arr.size = points.size();
-    wp_arr.wp_ptr = make_waypoints(wp_arr.size);
+    wp_arr.size = positions.size();
+    wp_arr.wp_ptr = new waypoint_t[wp_arr.size];
+
+    for (int i = 0; i < wp_arr.size; i++)
+    {
+        wp_arr.wp_ptr[i].x = positions[i].getTranslation().x();
+        wp_arr.wp_ptr[i].y = positions[i].getTranslation().y();
+        wp_arr.wp_ptr[i].heading = positions[i].getRotation().getDegrees();
+    }
+
     return wp_arr;
 }
