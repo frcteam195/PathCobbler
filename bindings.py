@@ -29,7 +29,8 @@ class C_WaypointArray(Structure):
         self.wp_ptr = (C_Waypoint * self.size)(*points)
 
     def create_waypoints(self):
-        self.waypoints = cast(self.wp_ptr, POINTER(C_Waypoint * self.size)).contents
+        if self.size > 0:
+            self.waypoints = cast(self.wp_ptr, POINTER(C_Waypoint * self.size)).contents
 
     def free(self):
         c_lib.freeme(self.wp_ptr)
@@ -49,12 +50,16 @@ def calc_splines(waypoints: list[Waypoint]):
 
     c_waypoints = []
     for wp in waypoints:
-        c_waypoints.append(C_Waypoint(wp.x, wp.y, wp.heading))
+        if wp.enabled:
+            c_waypoints.append(C_Waypoint(wp.x, wp.y, wp.heading))
 
     c_wp_arr = C_WaypointArray(c_waypoints)
 
     spline_points: C_WaypointArray = c_lib.calc_splines(c_wp_arr)
     spline_points.create_waypoints()
+
+    if spline_points.size == 0:
+        return waypoints
 
     ret_wps = []
     for point in spline_points.waypoints:
