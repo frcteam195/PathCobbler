@@ -71,7 +71,10 @@ waypoint_array_t calc_splines(waypoint_array_t waypoints)
 
     if (points.size() < 2)
     {
-        // return "no" ????
+        waypoint_array_t wp_arr;
+        wp_arr.size = 0;
+        wp_arr.wp_ptr = nullptr;
+        return wp_arr;
     }
     else
     {
