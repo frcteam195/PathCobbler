@@ -1,5 +1,6 @@
 import sys
 import pathlib
+import time
 
 from ctypes import *
 
@@ -55,8 +56,12 @@ def calc_splines(waypoints: list[Waypoint]):
 
     c_wp_arr = C_WaypointArray(c_waypoints)
 
+    start = time.time()
     spline_points: C_WaypointArray = c_lib.calc_splines(c_wp_arr)
+    end = time.time()
     spline_points.create_waypoints()
+
+    print(f'Time to calc splines: {end - start} seconds')
 
     if spline_points.size == 0:
         return waypoints
@@ -64,7 +69,7 @@ def calc_splines(waypoints: list[Waypoint]):
     ret_wps = []
     for point in spline_points.waypoints:
         ret_wps.append(Waypoint(point.x, point.y, point.heading))
-        print(point)
+        # print(point)
 
     spline_points.free()
 
