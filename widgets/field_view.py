@@ -46,6 +46,13 @@ class FieldView(QLabel):
         self.draw_waypoints(self.currentWaypoints)
 
     def mousePressEvent(self, ev: QMouseEvent) -> None:
+        # for wp in self.currentWaypoints:
+        #     dist = math.hypot(wp.x - ev.position().x(), wp.y - ev.position().y())
+
+        #     if dist < self.wp_size:
+        #         wp.set_clicked(True)
+        #         return
+
         if ev.button() != Qt.LeftButton:
             return
 
