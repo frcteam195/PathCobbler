@@ -49,8 +49,15 @@ class FieldView(QLabel):
         if ev.button() != Qt.LeftButton:
             return
 
-        # TODO: set heading to the angle that points from the last point to the new point
-        heading = self.currentWaypoints[-1].heading if len(self.currentWaypoints) > 0 else 0
+        heading = 0
+
+        if len(self.currentWaypoints) > 0:
+            last_wp = self.currentWaypoints[-1]
+            x_diff = ev.position().x() - last_wp.x
+            y_diff = ev.position().y() - last_wp.y
+
+            heading = -int(math.degrees(math.atan2(y_diff, x_diff)))
+
         wp = Waypoint(ev.position().x(), ev.position().y(), heading)
         self.pointAdded.emit(wp)
 
