@@ -63,9 +63,10 @@ class Translation2d:
         return self.inverse().translateBy(other).norm()
 
     def draw(self, painter: QPainter, color: QColor, radius):
-        painter.setPen(Qt.NoPen)
         painter.setBrush(QBrush(color, Qt.SolidPattern))
-        painter.drawArc(self.drawX(), self.drawY(), radius, radius, 0, 360 * 16)
+        # painter.setPen(QPen(color, 4))
+        painter.setPen(Qt.NoPen)
+        painter.drawEllipse(QPointF(self.x, self.y), radius, radius)
 
     def drawX(self):
         return (self.x + constants.xOffset) * (constants.width / constants.fieldWidth)
