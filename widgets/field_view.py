@@ -25,7 +25,7 @@ class FieldView(QLabel):
 
         self.img_path = '/Users/chris/git/ck/PathCobbler/resources/img/field.png'
         self.img_path_flipped = '/Users/chris/git/ck/PathCobbler/resources/img/fieldFlipped.png'
-        self.scaled_width = 600
+        self.scaled_width = 1200
 
         self.image = QPixmap((self.img_path)).scaledToWidth(self.scaled_width)
         self.setPixmap(self.image)
@@ -87,20 +87,18 @@ class FieldView(QLabel):
             self.painter.setBrush(QBrush(QColor(0, 0, 255), Qt.SolidPattern))
             self.painter.drawEllipse(QPointF(wp.x, wp.y), 4, 4)
 
-        self.painter.setBrush(QBrush(QColor(25, 255, 45), Qt.SolidPattern))
 
         for wp in wps:
             if wp.enabled:
                 self.painter.setPen(Qt.NoPen)
+                self.painter.setBrush(QBrush(QColor(25, 255, 45), Qt.SolidPattern))
                 self.painter.drawEllipse(QPointF(wp.x, wp.y), self.wp_size, self.wp_size)
 
                 x_diff = self.heading_length * math.cos(math.radians(wp.heading))
                 y_diff = self.heading_length * math.sin(math.radians(wp.heading))
 
-                # painter.drawArc(wp.x, wp.y, 20, 0, 0, 1000)
-
                 self.painter.setPen(QPen(Qt.green, 3))
-                self.painter.drawLine(QPointF(wp.x, wp.y), QPointF(wp.x + x_diff, wp.y - y_diff))
+                # self.painter.drawLine(QPointF(wp.x, wp.y), QPointF(wp.x + x_diff, wp.y - y_diff))
 
                 self.drawRobot(self.painter, wp)
 
@@ -108,7 +106,7 @@ class FieldView(QLabel):
         self.setPixmap(canvas)
 
     def drawRobot(self, painter: QPainter, wp: Waypoint):
-        h = math.radians(wp.heading)
+        h = -math.radians(wp.heading)
         angles = [h + (math.pi / 2) + C_T,
                   h - (math.pi / 2) + C_T,
                   h + (math.pi / 2) - C_T,
@@ -118,4 +116,4 @@ class FieldView(QLabel):
             point = Translation2d(wp.x + (C_R * math.cos(angle)),
                                   wp.y + (C_R * math.sin(angle)))
 
-            point.draw(painter, QColor(255, 0, 0), 2)
+            point.draw(painter, QColor(255, 0, 0), 5)
