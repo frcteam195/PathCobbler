@@ -84,8 +84,10 @@ class FieldView(QLabel):
 
         for wp in spline_wps:
             self.painter.setPen(Qt.NoPen)
-            self.painter.setBrush(QBrush(QColor(0, 0, 255), Qt.SolidPattern))
-            self.painter.drawEllipse(QPointF(wp.x, wp.y), 4, 4)
+            self.painter.setBrush(QBrush(QColor(0, 255, 0), Qt.SolidPattern))
+            self.painter.drawEllipse(QPointF(wp.x, wp.y), 3, 3)
+
+            self.drawRobot(self.painter, wp)
 
 
         for wp in wps:
@@ -98,15 +100,15 @@ class FieldView(QLabel):
                 y_diff = self.heading_length * math.sin(math.radians(wp.heading))
 
                 self.painter.setPen(QPen(Qt.green, 3))
-                # self.painter.drawLine(QPointF(wp.x, wp.y), QPointF(wp.x + x_diff, wp.y - y_diff))
+                self.painter.drawLine(QPointF(wp.x, wp.y), QPointF(wp.x + x_diff, wp.y - y_diff))
 
-                self.drawRobot(self.painter, wp)
+                # self.drawRobot(self.painter, wp)
 
         self.painter.end()
         self.setPixmap(canvas)
 
     def drawRobot(self, painter: QPainter, wp: Waypoint):
-        h = -math.radians(wp.heading)
+        h = math.radians(wp.heading)
         angles = [h + (math.pi / 2) + C_T,
                   h - (math.pi / 2) + C_T,
                   h + (math.pi / 2) - C_T,
@@ -116,4 +118,6 @@ class FieldView(QLabel):
             point = Translation2d(wp.x + (C_R * math.cos(angle)),
                                   wp.y + (C_R * math.sin(angle)))
 
-            point.draw(painter, QColor(255, 0, 0), 5)
+            color = QColor(0, 170, 255) if abs(angle - h) < math.pi / 2 else QColor(0, 102, 255)
+
+            point.draw(painter, color, 2)
