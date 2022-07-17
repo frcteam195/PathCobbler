@@ -6,8 +6,9 @@ from PySide6.QtGui import *
 from PySide6.QtCore import *
 
 from utils.waypoint import Waypoint
-
+from utils.translation2d import Translation2d
 from bindings import calc_splines
+from utils.constants import *
 
 
 base_dir = os.path.dirname(os.path.realpath(__file__))
@@ -24,7 +25,7 @@ class FieldView(QLabel):
 
         self.img_path = '/Users/chris/git/ck/PathCobbler/resources/img/field.png'
         self.img_path_flipped = '/Users/chris/git/ck/PathCobbler/resources/img/fieldFlipped.png'
-        self.scaled_width = 1200
+        self.scaled_width = 600
 
         self.image = QPixmap((self.img_path)).scaledToWidth(self.scaled_width)
         self.setPixmap(self.image)
@@ -101,5 +102,20 @@ class FieldView(QLabel):
                 self.painter.setPen(QPen(Qt.green, 3))
                 self.painter.drawLine(QPointF(wp.x, wp.y), QPointF(wp.x + x_diff, wp.y - y_diff))
 
+                self.drawRobot(self.painter, wp)
+
         self.painter.end()
         self.setPixmap(canvas)
+
+    def drawRobot(self, painter: QPainter, wp: Waypoint):
+        h = math.radians(wp.heading)
+        angles = [h + (math.pi / 2) + C_T,
+                  h - (math.pi / 2) + C_T,
+                  h + (math.pi / 2) - C_T,
+                  h - (math.pi / 2) - C_T]
+
+        for angle in angles:
+            point = Translation2d(wp.x + (C_R * math.cos(angle)),
+                                  wp.y + (C_R * math.sin(angle)))
+
+            point.draw(painter, QColor(255, 0, 0), 2)

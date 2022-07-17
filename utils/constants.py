@@ -15,6 +15,9 @@ bumberWidth = 3.5 * 2.0 # inches
 robotWidth = 28 + bumberWidth # inches
 robotHeight = 31.75 + bumberWidth # inches
 
+C_R = math.sqrt(math.pow(robotWidth, 2) + math.pow(robotHeight, 2)) / 2
+C_T = math.atan2(robotHeight, robotWidth)
+
 waypointRadius = 7
 splineWidth = 2
 

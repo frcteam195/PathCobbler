@@ -10,7 +10,8 @@ from utils.waypoint import Waypoint
 class C_Waypoint(Structure):
     _fields_ = [('x', c_double),
                 ('y', c_double),
-                ('heading', c_double)]
+                ('heading', c_double),
+                ('curvature', c_double)]
 
     def __init__(self, x=0.0, y=0.0, heading=0.0):
         self.x = x
