@@ -83,7 +83,7 @@ waypoint_array_t calc_splines(waypoint_array_t waypoints)
             mQunticHermiteSplines.push_back(new QuinticHermiteSpline(points[i], points[i+1]));
         }
 
-        QuinticHermiteSpline::optimizeSpline(mQunticHermiteSplines);
+        // QuinticHermiteSpline::optimizeSpline(mQunticHermiteSplines);
 
         for (auto &mQunticHermiteSpline : mQunticHermiteSplines)
         {
