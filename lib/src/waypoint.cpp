@@ -108,6 +108,7 @@ waypoint_array_t calc_splines(waypoint_array_t waypoints)
         wp_arr.wp_ptr[i].x = positions[i].getTranslation().x();
         wp_arr.wp_ptr[i].y = positions[i].getTranslation().y();
         wp_arr.wp_ptr[i].heading = positions[i].getRotation().getDegrees();
+        wp_arr.wp_ptr[i].curvature = positions[i].getCurvature();
     }
 
     return wp_arr;

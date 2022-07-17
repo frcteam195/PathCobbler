@@ -12,6 +12,7 @@ typedef struct
     double x;
     double y;
     double heading;
+    double curvature;
 } waypoint_t;
 
 typedef struct

@@ -1,8 +1,9 @@
 class Waypoint:
-    def __init__(self, x, y, heading, enabled=True):
+    def __init__(self, x, y, heading, curvature=0, enabled=True):
         self.x = float(x)
         self.y = float(y)
         self.heading = float(heading)
+        self.curvature = float(curvature)
         self.enabled = enabled
         self.clicked = False
 

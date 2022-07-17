@@ -1,7 +1,10 @@
 import math
-import constants
+import utils.constants as constants
 
-from rotation2d import Rotation2d
+from utils.rotation2d import Rotation2d
+
+from PySide6.QtCore import *
+from PySide6.QtGui import *
 
 class Translation2d:
     def __init__(self, x, y):
@@ -58,6 +61,11 @@ class Translation2d:
 
     def distance(self, other):
         return self.inverse().translateBy(other).norm()
+
+    def draw(self, painter: QPainter, color: QColor, radius):
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(QBrush(color, Qt.SolidPattern))
+        painter.drawArc(self.drawX(), self.drawY(), radius, radius, 0, 360 * 16)
 
     def drawX(self):
         return (self.x + constants.xOffset) * (constants.width / constants.fieldWidth)
