@@ -26,7 +26,7 @@ class WaypointTableBody(QWidget):
             heading_val = float(self.grid_layout.itemAtPosition(i, 2).widget().text())
             enabled_val = self.grid_layout.itemAtPosition(i, 3).widget().isChecked()
 
-            self.waypoints.append(Waypoint(x_val, y_val, heading_val, enabled_val))
+            self.waypoints.append(Waypoint(x_val, y_val, heading_val, enabled=enabled_val))
 
         self.updateSignal.emit(self.waypoints)
 
