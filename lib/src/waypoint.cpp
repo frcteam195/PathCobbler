@@ -58,14 +58,11 @@ waypoint_array_t calc_splines(waypoint_array_t waypoints)
                   << ", Heading: " << heading
                   << std::endl;
 
-        // Translation2d t2d(x, y);
-        // Pose2d p2d(t2d, Rotation2d::fromDegrees(heading));
-
         points.push_back(Pose2d(Translation2d(x, y), Rotation2d::fromDegrees(heading)));
     }
     std::cout << "Num points: " << points.size() << std::endl;
 
-    std::vector<QuinticHermiteSpline *> mQunticHermiteSplines;
+    std::vector<QuinticHermiteSpline> mQunticHermiteSplines;
     std::vector<Spline *> mSplines;
     std::vector<Pose2dWithCurvature> positions;
 
@@ -80,24 +77,18 @@ waypoint_array_t calc_splines(waypoint_array_t waypoints)
     {
         for (int i = 0; i < points.size() - 1; i++)
         {
-            mQunticHermiteSplines.push_back(new QuinticHermiteSpline(points[i], points[i+1]));
+            mQunticHermiteSplines.push_back(QuinticHermiteSpline(points[i], points[i+1]));
         }
 
-        // QuinticHermiteSpline::optimizeSpline(mQunticHermiteSplines);
+        QuinticHermiteSpline::optimizeSpline(mQunticHermiteSplines);
 
         for (auto &mQunticHermiteSpline : mQunticHermiteSplines)
         {
-            mSplines.push_back(mQunticHermiteSpline);
+            mSplines.push_back(&mQunticHermiteSpline);
         }
 
         positions = SplineGenerator::parameterizeSplines(mSplines);
     }
-
-    for (auto spline : mQunticHermiteSplines)
-    {
-        delete spline;
-    }
-    mQunticHermiteSplines.clear();
 
     waypoint_array_t wp_arr;
     wp_arr.size = positions.size();
