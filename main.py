@@ -16,6 +16,7 @@ class MainWindow(QMainWindow):
         self.control = MainWidget()
         self.setCentralWidget(self.control)
 
+
 if __name__ == '__main__':
     app = QApplication()
     mw = MainWindow()
