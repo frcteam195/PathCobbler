@@ -3,15 +3,13 @@
 #include "ck_utilities/geometry/Pose2dWithCurvature.hpp"
 #include "ck_utilities/geometry/Rotation2d.hpp"
 #include "ck_utilities/geometry/Translation2d.hpp"
-#include "ck_utilities/spline/QuinticHermiteSpline.hpp"
-#include "ck_utilities/spline/Spline.hpp"
-#include "ck_utilities/spline/SplineGenerator.hpp"
+#include "ck_utilities/geometry/QuinticHermiteSpline.hpp"
+#include "ck_utilities/geometry/SplineGenerator.hpp"
 #include <vector>
 #include <iostream>
 #include <stdio.h>
 
 using namespace ck::geometry;
-using namespace ck::spline;
 
 waypoint_t *make_waypoints(int size)
 {
@@ -63,7 +61,6 @@ waypoint_array_t calc_splines(waypoint_array_t waypoints)
     std::cout << "Num points: " << points.size() << std::endl;
 
     std::vector<QuinticHermiteSpline> mQunticHermiteSplines;
-    std::vector<Spline *> mSplines;
     std::vector<Pose2dWithCurvature> positions;
 
     if (points.size() < 2)
@@ -82,12 +79,7 @@ waypoint_array_t calc_splines(waypoint_array_t waypoints)
 
         QuinticHermiteSpline::optimizeSpline(mQunticHermiteSplines);
 
-        for (auto &mQunticHermiteSpline : mQunticHermiteSplines)
-        {
-            mSplines.push_back(&mQunticHermiteSpline);
-        }
-
-        positions = SplineGenerator::parameterizeSplines(mSplines);
+        positions = SplineGenerator::parameterizeSplines(mQunticHermiteSplines);
     }
 
     waypoint_array_t wp_arr;
