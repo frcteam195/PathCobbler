@@ -1,5 +1,5 @@
 import math
-import utils.constants
+import utils.constants as constants
 
 
 class Rotation2d:
