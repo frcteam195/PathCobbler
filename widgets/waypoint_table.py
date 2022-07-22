@@ -6,6 +6,8 @@ from PySide6.QtCore import *
 from utils.waypoint import Waypoint
 from widgets.waypoint_table_body import WaypointTableBody
 
+from utils.file_utils import *
+
 
 class WaypointTable(QWidget):
     flipSignal = Signal()
@@ -24,6 +26,8 @@ class WaypointTable(QWidget):
         self.flipButton.clicked.connect(self.flipSignal.emit)
         self.loadButton = QPushButton('Load Path')
         self.loadButton.clicked.connect(self.load_path)
+        self.saveButton = QPushButton('Save Path')
+        self.saveButton.clicked.connect(self.save_path)
 
         self.buttonLayout = QHBoxLayout()
         self.buttonLayout.addWidget(self.addButton)
@@ -31,6 +35,7 @@ class WaypointTable(QWidget):
         self.buttonLayout.addWidget(self.animateButton)
         self.buttonLayout.addWidget(self.flipButton)
         self.buttonLayout.addWidget(self.loadButton)
+        self.buttonLayout.addWidget(self.saveButton)
 
         self.heading_layout = QHBoxLayout()
         x_label = QLabel('X')
@@ -76,18 +81,22 @@ class WaypointTable(QWidget):
         self.tableBody.delete_row(rowNum)
 
     def load_path(self):
-        filename, _ = QFileDialog.getOpenFileName(parent=self, caption='Select Path to Load', dir='.', filter='JSON File (*.json)')
+        filename, _ = QFileDialog.getOpenFileName(self, 'Select Path to Load', '.', 'JSON File (*.json)')
 
-        if filename is None:
+        path_json = open_json_file(filename)
+
+        if path_json is None:
             return
-
-        path_json = None
-
-        with open(filename, 'r') as f:
-            path_json = json.loads(f.read())
 
         self.tableBody.clear()
 
         for wp_json in path_json['waypoints']:
             print(wp_json)
             self.tableBody.add_waypoint(Waypoint(wp_json['x'], -wp_json['y'], wp_json['theta']))
+
+    def save_path(self):
+        print('Save the path!!')
+
+        path_json = json.dumps(self.tableBody.waypoints, indent=4)
+
+        QFileDialog.saveFileContent(bytes(path_json))
