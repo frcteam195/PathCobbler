@@ -80,3 +80,14 @@ class WaypointTableBody(QWidget):
 
         self.setLayout(self.grid_layout)
         self.update()
+
+    def clear(self):
+        tempWidget = QWidget()
+        tempWidget.setLayout(self.grid_layout)
+        tempWidget.deleteLater()
+
+        self.grid_layout = QGridLayout()
+        self.grid_layout.setAlignment(Qt.AlignTop)
+
+        self.setLayout(self.grid_layout)
+        self.update()

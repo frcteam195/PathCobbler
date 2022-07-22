@@ -1,3 +1,5 @@
+import json
+
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 
@@ -20,12 +22,15 @@ class WaypointTable(QWidget):
         self.animateButton = QPushButton('Animate')
         self.flipButton = QPushButton('Flip Field')
         self.flipButton.clicked.connect(self.flipSignal.emit)
+        self.loadButton = QPushButton('Load Path')
+        self.loadButton.clicked.connect(self.load_path)
 
         self.buttonLayout = QHBoxLayout()
         self.buttonLayout.addWidget(self.addButton)
         self.buttonLayout.addWidget(self.updateButton)
         self.buttonLayout.addWidget(self.animateButton)
         self.buttonLayout.addWidget(self.flipButton)
+        self.buttonLayout.addWidget(self.loadButton)
 
         self.heading_layout = QHBoxLayout()
         x_label = QLabel('X')
@@ -69,3 +74,20 @@ class WaypointTable(QWidget):
 
     def delete_row(self, rowNum):
         self.tableBody.delete_row(rowNum)
+
+    def load_path(self):
+        filename, _ = QFileDialog.getOpenFileName(parent=self, caption='Select Path to Load', dir='.', filter='JSON File (*.json)')
+
+        if filename is None:
+            return
+
+        path_json = None
+
+        with open(filename, 'r') as f:
+            path_json = json.loads(f.read())
+
+        self.tableBody.clear()
+
+        for wp_json in path_json['waypoints']:
+            print(wp_json)
+            self.tableBody.add_waypoint(Waypoint(wp_json['x'], -wp_json['y'], wp_json['theta']))
