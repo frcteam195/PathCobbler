@@ -30,6 +30,14 @@ class WaypointTableBody(QWidget):
 
         self.updateSignal.emit(self.waypoints)
 
+    def updateRow(self, wp: Waypoint, index):
+        self.waypoints[index] = wp
+
+        self.grid_layout.itemAtPosition(index, 0).widget().setText(wp.x)
+        self.grid_layout.itemAtPosition(index, 1).widget().setText(wp.y)
+        self.grid_layout.itemAtPosition(index, 2).widget().setText(wp.heading)
+        self.grid_layout.itemAtPosition(index, 3).widget().setChecked(wp.enabled)
+
     def get_waypoints(self) -> list[Waypoint]:
         self.update()
         return self.waypoints
