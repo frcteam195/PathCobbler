@@ -5,7 +5,7 @@ from utils.waypoint import Waypoint
 
 
 class WaypointTableBody(QWidget):
-    updateSignal = Signal(list)
+    updateSignal = Signal(list, name='updateSignal')
 
     def __init__(self):
         super().__init__()

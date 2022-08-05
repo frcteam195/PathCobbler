@@ -15,7 +15,7 @@ base_dir = os.path.dirname(os.path.realpath(__file__))
 
 
 class FieldView(QLabel):
-    pointAdded = Signal(Waypoint)
+    pointAdded = Signal(Waypoint, name='pointAdded')
 
     def __init__(self):
         super().__init__()
@@ -23,11 +23,13 @@ class FieldView(QLabel):
         self.currentWaypoints = []
         self.is_flipped = False
 
-        self.img_path = '/Users/chris/git/ck/PathCobbler/resources/img/field.png'
-        self.img_path_flipped = '/Users/chris/git/ck/PathCobbler/resources/img/fieldFlipped.png'
+        file_path = os.path.dirname(__file__)
+
+        self.img_path = f'{file_path}/../resources/img/field.png'
+        self.img_path_flipped = f'{file_path}/../resources/img/fieldFlipped.png'
         self.scaled_width = 1200
 
-        self.image = QPixmap((self.img_path)).scaledToWidth(self.scaled_width)
+        self.image = QPixmap(self.img_path).scaledToWidth(self.scaled_width)
         self.setPixmap(self.image)
 
         self.wp_size = 8
