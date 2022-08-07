@@ -1,4 +1,3 @@
-from pkgutil import walk_packages
 from utils.waypoint import Waypoint
 
 from PySide6.QtCore import *
