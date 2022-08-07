@@ -61,7 +61,7 @@ def calc_splines(waypoints: list[Waypoint]):
     end = time.time()
     spline_points.create_waypoints()
 
-    print(f'Time to calc splines: {end - start} seconds')
+    # print(f'Time to calc splines: {end - start} seconds')
 
     if spline_points.size == 0:
         return waypoints

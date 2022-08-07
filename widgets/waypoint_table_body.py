@@ -37,7 +37,6 @@ class WaypointTableBody(QWidget):
 
     def createTable(self):
         for wp in self.model:
-            print('test')
             self.add_waypoint(wp)
 
     def draw_table(self):

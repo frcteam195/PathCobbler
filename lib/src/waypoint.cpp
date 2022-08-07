@@ -15,7 +15,7 @@ waypoint_t *make_waypoints(int size)
 {
     waypoint_t *wps = new waypoint_t[size];
 
-    printf("Allocating address: %p\n", wps);
+    // printf("Allocating address: %p\n", wps);
 
     for (int i = 0; i < size; i++)
     {
@@ -37,7 +37,7 @@ waypoint_array_t get_waypoints()
 
 void freeme(void *ptr)
 {
-    printf("Freeing address: %p\n", ptr);
+    // printf("Freeing address: %p\n", ptr);
     free(ptr);
 }
 
@@ -51,14 +51,13 @@ waypoint_array_t calc_splines(waypoint_array_t waypoints)
         double y = waypoints.wp_ptr[i].y;
         double heading = waypoints.wp_ptr[i].heading;
 
-        std::cout << "X: " << x
-                  << ", Y: " << y
-                  << ", Heading: " << heading
-                  << std::endl;
+        // std::cout << "X: " << x
+        //           << ", Y: " << y
+        //           << ", Heading: " << heading
+        //           << std::endl;
 
         points.push_back(Pose2d(Translation2d(x, y), Rotation2d::fromDegrees(heading)));
     }
-    std::cout << "Num points: " << points.size() << std::endl;
 
     std::vector<QuinticHermiteSpline> mQunticHermiteSplines;
     std::vector<Pose2dWithCurvature> positions;
