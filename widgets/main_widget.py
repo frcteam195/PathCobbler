@@ -1,8 +1,10 @@
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
+from PySide6.QtGui import *
 
 from widgets.field_view import FieldView
 from utils.waypoint import Waypoint
+from widgets.waypoint_model import WaypointModel
 from widgets.waypoint_table import WaypointTable
 
 
@@ -10,12 +12,14 @@ class MainWidget(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.field = FieldView()
+        self.model = WaypointModel()
+
+        self.field = FieldView(self.model)
         self.field.pointAdded.connect(self.add_click_wp_to_table)
         button = QPushButton('Push me')
         button.clicked.connect(lambda: self.field.clear_canvas())
 
-        self.table = WaypointTable()
+        self.table = WaypointTable(self.model)
         self.table.updateSignal.connect(self.update_field_waypoints)
         self.table.flipSignal.connect(self.field.flip_field)
 
@@ -31,3 +35,15 @@ class MainWidget(QWidget):
 
     def update_field_waypoints(self, wps: list[Waypoint]):
         self.field.draw_waypoints(wps)
+
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        if event.key() == Qt.Key_Shift:
+            self.field.rotate = True
+
+        return super().keyPressEvent(event)
+
+    def keyReleaseEvent(self, event: QKeyEvent) -> None:
+        if event.key() == Qt.Key_Shift:
+            self.field.rotate = False
+
+        return super().keyReleaseEvent(event)

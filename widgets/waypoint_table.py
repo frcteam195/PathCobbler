@@ -4,6 +4,7 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 
 from utils.waypoint import Waypoint
+from widgets.waypoint_model import WaypointModel
 from widgets.waypoint_table_body import WaypointTableBody
 
 from utils.file_utils import *
@@ -12,8 +13,10 @@ from utils.file_utils import *
 class WaypointTable(QWidget):
     flipSignal = Signal()
 
-    def __init__(self):
+    def __init__(self, model: WaypointModel):
         super().__init__()
+
+        self.model = model
 
         self.setMinimumSize(500, 300)
 
@@ -57,7 +60,7 @@ class WaypointTable(QWidget):
 
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
-        self.tableBody = WaypointTableBody()
+        self.tableBody = WaypointTableBody(self.model)
         self.scroll_area.setWidget(self.tableBody)
         self.updateSignal = self.tableBody.updateSignal
 
