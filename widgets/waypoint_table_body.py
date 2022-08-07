@@ -18,8 +18,6 @@ class WaypointTableBody(QWidget):
         self.grid_layout = QGridLayout()
         self.grid_layout.setAlignment(Qt.AlignTop)
 
-        self.createTable()
-
         self.setLayout(self.grid_layout)
 
     def update(self):
@@ -35,12 +33,9 @@ class WaypointTableBody(QWidget):
 
         self.model.update(waypoints)
 
-    def createTable(self):
-        for wp in self.model:
-            self.add_waypoint(wp)
-
     def draw_table(self):
         self.clear()
+        # self.create_heading()
 
         for wp in self.model:
             self.add_waypoint(wp)
@@ -49,6 +44,28 @@ class WaypointTableBody(QWidget):
         self.update()
         return self.waypoints
 
+    def create_heading(self):
+        x_label = QLabel('X')
+        x_label.setAlignment(Qt.AlignCenter)
+
+        y_label = QLabel('Y')
+        y_label.setAlignment(Qt.AlignCenter)
+
+        heading_label = QLabel('Heading')
+        heading_label.setAlignment(Qt.AlignCenter)
+
+        enabled_label = QLabel('Enabled')
+        enabled_label.setAlignment(Qt.AlignCenter)
+
+        delete_label = QLabel('Delete')
+        delete_label.setAlignment(Qt.AlignCenter)
+
+        self.grid_layout.addWidget(x_label, 0, 0)
+        self.grid_layout.addWidget(y_label, 0, 1)
+        self.grid_layout.addWidget(heading_label, 0, 2)
+        self.grid_layout.addWidget(enabled_label, 0, 3)
+        self.grid_layout.addWidget(delete_label, 0, 4)
+
     def add_waypoint(self, wp: Waypoint):
         numRows = self.grid_layout.rowCount()
 
@@ -56,22 +73,27 @@ class WaypointTableBody(QWidget):
         # textChanged signal can be used instead of
         # editing finished.
 
+        x_label = QLabel('X:')
         x_input = QLineEdit(str(wp.x))
         x_input.setAlignment(Qt.AlignCenter)
         x_input.editingFinished.connect(self.update)
 
+        y_label = QLabel('Y:')
         y_input = QLineEdit(str(wp.y))
         y_input.setAlignment(Qt.AlignCenter)
         y_input.editingFinished.connect(self.update)
 
+        heading_label = QLabel('Heading:')
         heading_input = QLineEdit(str(wp.heading))
         heading_input.setAlignment(Qt.AlignCenter)
         heading_input.editingFinished.connect(self.update)
 
+        enabled_label = QLabel('Enabled?:')
         enabled_input = QCheckBox()
         enabled_input.setChecked(wp.enabled)
         enabled_input.stateChanged.connect(self.update)
 
+        delete_label = QLabel('Delete')
         delete_input = QPushButton('X')
         delete_input.clicked.connect(lambda: self.delete_row(numRows))
 
@@ -80,6 +102,17 @@ class WaypointTableBody(QWidget):
         self.grid_layout.addWidget(heading_input, numRows, 2)
         self.grid_layout.addWidget(enabled_input, numRows, 3)
         self.grid_layout.addWidget(delete_input, numRows, 4)
+
+        # self.grid_layout.addWidget(x_label, numRows, 0)
+        # self.grid_layout.addWidget(x_input, numRows, 1)
+        # self.grid_layout.addWidget(y_label, numRows, 2)
+        # self.grid_layout.addWidget(y_input, numRows, 3)
+        # self.grid_layout.addWidget(heading_label, numRows, 4)
+        # self.grid_layout.addWidget(heading_input, numRows, 5)
+        # # self.grid_layout.addWidget(enabled_label, numRows, 6)
+        # self.grid_layout.addWidget(enabled_input, numRows, 7)
+        # # self.grid_layout.addWidget(delete_label, numRows, 8)
+        # self.grid_layout.addWidget(delete_input, numRows, 9)
 
     def delete_row(self, rowNum):
         # waypoints = self.get_waypoints()
