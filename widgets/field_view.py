@@ -59,6 +59,9 @@ class FieldView(QLabel):
             return
 
         for wp in self.model:
+            if not wp.enabled:
+                continue
+
             dist = math.hypot(wp.x - ev.position().x(), wp.y - ev.position().y())
 
             if dist < self.wp_size:
@@ -124,20 +127,24 @@ class FieldView(QLabel):
 
         for wp in wps:
             if wp.enabled:
-                color = QColor(25, 255, 45)
+                pointColor = QColor(25, 255, 45)
+                lineColor = pointColor
 
                 if wp.clicked:
-                    color = QColor(255, 0, 0)
+                    pointColor = QColor(255, 0, 0)
 
-                self.painter.setPen(Qt.NoPen)
-                self.painter.setBrush(QBrush(color, Qt.SolidPattern))
-                self.painter.drawEllipse(QPointF(wp.x, wp.y), self.wp_size, self.wp_size)
+                    if self.rotate:
+                        lineColor = pointColor
 
                 x_diff = self.heading_length * math.cos(math.radians(wp.heading))
                 y_diff = self.heading_length * math.sin(math.radians(wp.heading))
 
-                self.painter.setPen(QPen(color, 3))
+                self.painter.setPen(QPen(lineColor, 3))
                 self.painter.drawLine(QPointF(wp.x, wp.y), QPointF(wp.x + x_diff, wp.y - y_diff))
+
+                self.painter.setPen(Qt.NoPen)
+                self.painter.setBrush(QBrush(pointColor, Qt.SolidPattern))
+                self.painter.drawEllipse(QPointF(wp.x, wp.y), self.wp_size, self.wp_size)
 
         self.painter.end()
         self.setPixmap(canvas)
