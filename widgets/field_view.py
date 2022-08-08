@@ -122,7 +122,7 @@ class FieldView(QLabel):
                     x_diff = inchesX - wp.x
                     y_diff = inchesY - wp.y
 
-                    wp.heading = -int(math.degrees(math.atan2(y_diff, x_diff)))
+                    wp.heading = -float(math.floor(math.degrees(math.atan2(y_diff, x_diff))))
                 else:
                     wp.x = inchesX
                     wp.y = inchesY
