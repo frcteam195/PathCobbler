@@ -5,10 +5,10 @@ from PySide6.QtWidgets import *
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 
+import utils.constants as constants
 from utils.waypoint import Waypoint
 from utils.translation2d import Translation2d
 from bindings import calc_splines
-from utils.constants import *
 from widgets.waypoint_model import WaypointModel
 
 
@@ -36,11 +36,26 @@ class FieldView(QLabel):
         self.image = QPixmap(self.img_path).scaledToWidth(self.scaled_width)
         self.setPixmap(self.image)
 
+        self.fieldWidth = self.image.width()
+        self.fieldHeight = self.image.height()
+
         self.wp_size = 8
         self.heading_length = 15
         self.painter = QPainter()
 
         self.rotate = False
+
+    def pixels_to_inches(self, pixelsX, pixelsY):
+        inchesX = (pixelsX / self.fieldWidth) * constants.fieldWidth - constants.xOffset
+        inchesY = (pixelsY / self.fieldHeight) * constants.fieldHeight - constants.yOffset
+
+        return (inchesX, inchesY)
+
+    def inches_to_pixels(self, inchesX, inchesY):
+        pixelsX = (inchesX + constants.xOffset) / constants.fieldWidth * self.fieldWidth
+        pixelsY = (inchesY + constants.yOffset) / constants.fieldHeight * self.fieldHeight
+
+        return (pixelsX, pixelsY)
 
     def flip_field(self):
         self.is_flipped = not self.is_flipped
@@ -62,7 +77,9 @@ class FieldView(QLabel):
             if not wp.enabled:
                 continue
 
-            dist = math.hypot(wp.x - ev.position().x(), wp.y - ev.position().y())
+            pixelsX, pixelsY = self.inches_to_pixels(wp.x, wp.y)
+
+            dist = math.hypot(pixelsX - ev.position().x(), pixelsY - ev.position().y())
 
             if dist < self.wp_size:
                 wp.set_clicked(True)
@@ -71,14 +88,19 @@ class FieldView(QLabel):
 
         heading = 0
 
+        inchesX, inchesY = self.pixels_to_inches(ev.position().x(), ev.position().y())
+        inchesX = int(inchesX)
+        inchesY = int(inchesY)
+
         if len(self.currentWaypoints) > 0:
             last_wp = self.currentWaypoints[-1]
-            x_diff = ev.position().x() - last_wp.x
-            y_diff = ev.position().y() - last_wp.y
+            x_diff = inchesX - last_wp.x
+            y_diff = inchesY - last_wp.y
 
             heading = -int(math.degrees(math.atan2(y_diff, x_diff)))
 
-        wp = Waypoint(ev.position().x(), ev.position().y(), heading)
+        wp = Waypoint(inchesX, inchesY, heading)
+
         self.model.append(wp)
 
     def mouseReleaseEvent(self, ev: QMouseEvent) -> None:
@@ -92,14 +114,18 @@ class FieldView(QLabel):
     def mouseMoveEvent(self, ev: QMouseEvent) -> None:
         for wp in self.model:
             if wp.clicked:
+                inchesX, inchesY = self.pixels_to_inches(ev.position().x(), ev.position().y())
+                inchesX = float(math.floor(inchesX))
+                inchesY = float(math.floor(inchesY))
+
                 if self.rotate:
-                    x_diff = ev.position().x() - wp.x
-                    y_diff = ev.position().y() - wp.y
+                    x_diff = inchesX - wp.x
+                    y_diff = inchesY - wp.y
 
                     wp.heading = -int(math.degrees(math.atan2(y_diff, x_diff)))
                 else:
-                    wp.x = ev.position().x()
-                    wp.y = ev.position().y()
+                    wp.x = inchesX
+                    wp.y = inchesY
 
         self.model.update()
 
@@ -121,7 +147,10 @@ class FieldView(QLabel):
         for wp in spline_wps:
             self.painter.setPen(Qt.NoPen)
             self.painter.setBrush(QBrush(QColor(0, 255, 0), Qt.SolidPattern))
-            self.painter.drawEllipse(QPointF(wp.x, wp.y), 3, 3)
+
+            pixelsX, pixelsY = self.inches_to_pixels(wp.x, wp.y)
+
+            self.painter.drawEllipse(QPointF(pixelsX, pixelsY), 3, 3)
 
             self.drawRobot(self.painter, wp)
 
@@ -136,30 +165,38 @@ class FieldView(QLabel):
                     if self.rotate:
                         lineColor = pointColor
 
+                pixelsX, pixelsY = self.inches_to_pixels(wp.x, wp.y)
+
                 x_diff = self.heading_length * math.cos(math.radians(wp.heading))
                 y_diff = self.heading_length * math.sin(math.radians(wp.heading))
 
                 self.painter.setPen(QPen(lineColor, 3))
-                self.painter.drawLine(QPointF(wp.x, wp.y), QPointF(wp.x + x_diff, wp.y - y_diff))
+                self.painter.drawLine(QPointF(pixelsX, pixelsY), QPointF(pixelsX + x_diff, pixelsY - y_diff))
 
                 self.painter.setPen(Qt.NoPen)
                 self.painter.setBrush(QBrush(pointColor, Qt.SolidPattern))
-                self.painter.drawEllipse(QPointF(wp.x, wp.y), self.wp_size, self.wp_size)
+                self.painter.drawEllipse(QPointF(pixelsX, pixelsY), self.wp_size, self.wp_size)
 
         self.painter.end()
         self.setPixmap(canvas)
 
     def drawRobot(self, painter: QPainter, wp: Waypoint):
         h = math.radians(wp.heading)
-        angles = [h + (math.pi / 2) + C_T,
-                  h - (math.pi / 2) + C_T,
-                  h + (math.pi / 2) - C_T,
-                  h - (math.pi / 2) - C_T]
+        angles = [h + (math.pi / 2) + constants.C_T,
+                  h - (math.pi / 2) + constants.C_T,
+                  h + (math.pi / 2) - constants.C_T,
+                  h - (math.pi / 2) - constants.C_T]
 
+        # TODO: Try to only use 1 translation2d instance to do this
+        # need to convert C_R to pixels somehow?
         for angle in angles:
-            point = Translation2d(wp.x + (C_R * math.cos(angle)),
-                                  wp.y + (C_R * math.sin(angle)))
+            point = Translation2d(wp.x + (constants.C_R * math.cos(angle)),
+                                  wp.y + (constants.C_R * math.sin(angle)))
 
             color = QColor(0, 170, 255) if abs(angle - h) < math.pi / 2 else QColor(0, 102, 255)
 
-            point.draw(painter, color, 2)
+            pixelsX, pixelsY = self.inches_to_pixels(point.x, point.y)
+
+            pixelPoint = Translation2d(pixelsX, pixelsY)
+
+            pixelPoint.draw(painter, color, 2)
