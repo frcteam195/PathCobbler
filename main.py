@@ -26,7 +26,7 @@ class MainWindow(QMainWindow):
 
         splashScreen = QSplashScreen(QPixmap(logoPath))
         splashScreen.show()
-        time.sleep(0.2)
+        time.sleep(0.4)
 
 
 if __name__ == '__main__':
