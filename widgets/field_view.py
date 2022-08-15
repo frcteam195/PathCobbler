@@ -47,13 +47,13 @@ class FieldView(QLabel):
 
     def pixels_to_inches(self, pixelsX, pixelsY):
         inchesX = (pixelsX / self.fieldWidth) * constants.fieldWidth - constants.xOffset
-        inchesY = (pixelsY / self.fieldHeight) * constants.fieldHeight - constants.yOffset
+        inchesY = constants.fieldHeight - (pixelsY / self.fieldHeight) * constants.fieldHeight - constants.yOffset
 
         return (inchesX, inchesY)
 
     def inches_to_pixels(self, inchesX, inchesY):
         pixelsX = (inchesX + constants.xOffset) / constants.fieldWidth * self.fieldWidth
-        pixelsY = (inchesY + constants.yOffset) / constants.fieldHeight * self.fieldHeight
+        pixelsY = self.fieldHeight - (inchesY + constants.yOffset) / constants.fieldHeight * self.fieldHeight
 
         return (pixelsX, pixelsY)
 
@@ -171,7 +171,7 @@ class FieldView(QLabel):
                 y_diff = self.heading_length * math.sin(math.radians(wp.heading))
 
                 self.painter.setPen(QPen(lineColor, 3))
-                self.painter.drawLine(QPointF(pixelsX, pixelsY), QPointF(pixelsX + x_diff, pixelsY - y_diff))
+                self.painter.drawLine(QPointF(pixelsX, pixelsY), QPointF(pixelsX + x_diff, pixelsY + y_diff))
 
                 self.painter.setPen(Qt.NoPen)
                 self.painter.setBrush(QBrush(pointColor, Qt.SolidPattern))
