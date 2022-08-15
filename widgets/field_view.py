@@ -8,11 +8,11 @@ from PySide6.QtCore import *
 import utils.constants as constants
 from utils.waypoint import Waypoint
 from utils.translation2d import Translation2d
-from bindings import calc_splines
+from utils.bindings import calc_splines
 from widgets.waypoint_model import WaypointModel
 
 
-base_dir = os.path.dirname(os.path.realpath(__file__))
+base_dir = os.path.dirname(os.path.dirname(__file__))
 
 
 class FieldView(QLabel):
@@ -27,10 +27,8 @@ class FieldView(QLabel):
         self.currentWaypoints = []
         self.is_flipped = False
 
-        file_path = os.path.dirname(__file__)
-
-        self.img_path = f'{file_path}/../resources/images/field.png'
-        self.img_path_flipped = f'{file_path}/../resources/images/fieldFlipped.png'
+        self.img_path = f'{base_dir}/resources/images/field.png'
+        self.img_path_flipped = f'{base_dir}/resources/images/fieldFlipped.png'
         self.scaled_width = 1200
 
         self.image = QPixmap(self.img_path).scaledToWidth(self.scaled_width)

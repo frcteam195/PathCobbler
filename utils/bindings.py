@@ -1,3 +1,4 @@
+import os
 import pathlib
 import time
 
@@ -37,8 +38,12 @@ class C_WaypointArray(Structure):
         c_lib.freeme(self.wp_ptr)
 
 
-libname = pathlib.Path().absolute()
-c_lib = CDLL(libname / 'lib/build/libck_pathcobbler_bindings.dylib')
+# libname = pathlib.Path().absolute()
+# c_lib = CDLL(libname / 'lib/build/libck_pathcobbler_bindings.dylib')
+basedir = os.path.dirname(os.path.dirname(__file__))
+libpath = os.path.join(basedir, 'lib/build/libck_pathcobbler_bindings.dylib')
+c_lib = CDLL(libpath)
+
 
 c_lib.freeme.argtypes = [c_void_p]
 c_lib.calc_splines.argtypes = [C_WaypointArray]
