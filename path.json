@@ -1,0 +1,25 @@
+{
+    "id": 1,
+    "name": "NewPath",
+    "reversed": false,
+    "waypoints": [
+        {
+            "x": 87.0,
+            "y": -203.0,
+            "theta": 0.0,
+            "comment": ""
+        },
+        {
+            "x": 194.0,
+            "y": -255.0,
+            "theta": 25.0,
+            "comment": ""
+        },
+        {
+            "x": 444.0,
+            "y": -142.0,
+            "theta": -24.0,
+            "comment": ""
+        }
+    ]
+}
