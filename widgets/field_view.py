@@ -29,8 +29,8 @@ class FieldView(QLabel):
 
         file_path = os.path.dirname(__file__)
 
-        self.img_path = f'{file_path}/../resources/img/field.png'
-        self.img_path_flipped = f'{file_path}/../resources/img/fieldFlipped.png'
+        self.img_path = f'{file_path}/../resources/images/field.png'
+        self.img_path_flipped = f'{file_path}/../resources/images/fieldFlipped.png'
         self.scaled_width = 1200
 
         self.image = QPixmap(self.img_path).scaledToWidth(self.scaled_width)

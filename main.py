@@ -20,7 +20,7 @@ class MainWindow(QMainWindow):
         self.control = MainWidget()
         self.setCentralWidget(self.control)
 
-        logoPath = os.path.join(os.path.dirname(__file__), 'resources/img/logo.png')
+        logoPath = os.path.join(os.path.dirname(__file__), 'resources/images/logo.png')
 
         self.setWindowIcon(QPixmap(logoPath))
 
