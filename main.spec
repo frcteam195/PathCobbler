@@ -54,6 +54,6 @@ coll = COLLECT(
 app = BUNDLE(
     coll,
     name='PathCobbler.app',
-    icon='resources/images/logo.png',
+    icon='resources/images/Icon.icns',
     bundle_identifier=None,
 )
