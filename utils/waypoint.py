@@ -12,3 +12,13 @@ class Waypoint:
 
     def __str__(self):
         return f'X: {self.x}, Y: {self.y}, Theta: {self.heading}, Enabled: {"Y" if self.enabled else "N"}'
+
+    def toJson(self):
+        json_obj = dict()
+
+        json_obj['x'] = self.x
+        json_obj['y'] = self.y
+        json_obj['theta'] = self.heading
+        json_obj['comment'] = ''
+
+        return json_obj

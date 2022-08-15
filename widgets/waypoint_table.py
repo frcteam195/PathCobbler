@@ -1,3 +1,4 @@
+import os
 import json
 
 from PySide6.QtWidgets import *
@@ -84,22 +85,38 @@ class WaypointTable(QWidget):
         self.tableBody.delete_row(rowNum)
 
     def load_path(self):
-        filename, _ = QFileDialog.getOpenFileName(self, 'Select Path to Load', '.', 'JSON File (*.json)')
+        filename, _ = QFileDialog.getOpenFileName(self, 'Select File to Load', '.', 'JSON File (*.json)')
 
         path_json = open_json_file(filename)
 
         if path_json is None:
             return
 
-        self.tableBody.clear()
+        # self.tableBody.clear()
+        self.model.waypoints = []
 
         for wp_json in path_json['waypoints']:
-            print(wp_json)
-            self.tableBody.add_waypoint(Waypoint(wp_json['x'], -wp_json['y'], wp_json['theta']))
+            self.model.append(Waypoint(wp_json['x'], wp_json['y'], wp_json['theta']))
 
     def save_path(self):
-        print('Save the path!!')
+        default_name = 'path.json'
+        filename, _ = QFileDialog.getSaveFileName(self, 'Select File to Save', f'./{default_name}', 'JSON File (*.json)')
 
-        path_json = json.dumps(self.tableBody.waypoints, indent=4)
+        if filename is None:
+            return
 
-        QFileDialog.saveFileContent(bytes(path_json))
+        json_obj = dict()
+
+        json_obj['id'] = 1
+        json_obj['name'] = os.path.splitext(os.path.basename(filename))[0]
+        json_obj['reversed'] = False
+
+        json_obj['waypoints'] = []
+
+        for wp in self.model:
+            json_obj['waypoints'].append(wp.toJson())
+
+        path_json = json.dumps(json_obj, indent=4)
+
+        with open(filename, 'w') as f:
+            f.write(path_json)
