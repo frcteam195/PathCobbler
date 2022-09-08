@@ -1,3 +1,5 @@
+from typing import List
+
 from utils.waypoint import Waypoint
 
 from PySide6.QtCore import *
@@ -6,11 +8,11 @@ from PySide6.QtCore import *
 class WaypointModel(QObject):
     updated = Signal()
 
-    def __init__(self, wapyoints: list[Waypoint]=None):
+    def __init__(self, wapyoints: List[Waypoint]=None):
         super().__init__()
-        self.waypoints: list[Waypoint] = wapyoints or []
+        self.waypoints: List[Waypoint] = wapyoints or []
 
-    def update(self, waypoints: list[Waypoint]=None):
+    def update(self, waypoints: List[Waypoint]=None):
         if waypoints is not None:
             self.waypoints = waypoints
 

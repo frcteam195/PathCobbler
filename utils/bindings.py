@@ -3,6 +3,7 @@ import pathlib
 import time
 
 from ctypes import *
+from typing import List
 
 from utils.waypoint import Waypoint
 
@@ -26,7 +27,7 @@ class C_WaypointArray(Structure):
     _fields_ = [('size', c_uint32),
                 ('wp_ptr', POINTER(C_Waypoint))]
 
-    def __init__(self, points: list[C_Waypoint]):
+    def __init__(self, points: List[C_Waypoint]):
         self.size = len(points)
         self.wp_ptr = (C_Waypoint * self.size)(*points)
 
@@ -50,7 +51,7 @@ c_lib.calc_splines.argtypes = [C_WaypointArray]
 c_lib.calc_splines.restype = C_WaypointArray
 
 
-def calc_splines(waypoints: list[Waypoint]):
+def calc_splines(waypoints: List[Waypoint]):
     if len(waypoints) < 2:
         return waypoints
 

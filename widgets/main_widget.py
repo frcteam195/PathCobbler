@@ -1,3 +1,5 @@
+from typing import List
+
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
@@ -33,7 +35,7 @@ class MainWidget(QWidget):
     def add_click_wp_to_table(self, wp: Waypoint):
         self.table.add_waypoint(wp)
 
-    def update_field_waypoints(self, wps: list[Waypoint]):
+    def update_field_waypoints(self, wps: List[Waypoint]):
         self.field.draw_waypoints(wps)
 
     def keyPressEvent(self, event: QKeyEvent) -> None:

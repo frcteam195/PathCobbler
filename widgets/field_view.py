@@ -1,6 +1,8 @@
 import os
 import math
 
+from typing import List
+
 from PySide6.QtWidgets import *
 from PySide6.QtGui import *
 from PySide6.QtCore import *
@@ -132,7 +134,7 @@ class FieldView(QLabel):
     def clear_canvas(self):
         self.setPixmap(self.image)
 
-    def draw_waypoints(self, wps: list[Waypoint]):
+    def draw_waypoints(self, wps: List[Waypoint]):
         spline_wps = calc_splines(wps)
 
         self.currentWaypoints = wps
