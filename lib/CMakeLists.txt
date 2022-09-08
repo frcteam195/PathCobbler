@@ -3,6 +3,8 @@ set(PROJECT_NAME "ck_pathcobbler_bindings")
 set(CMAKE_CXX_STANDARD 17)
 project(${PROJECT_NAME})
 
+set(CMAKE_SHARED_LIBRARY_SUFFIX .so)
+
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
