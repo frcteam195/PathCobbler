@@ -76,10 +76,10 @@ class WaypointTable(QWidget):
         self.tableBody.update()
 
     def get_waypoints(self) -> list[Waypoint]:
-        return self.tableBody.get_waypoints()
+        return self.model.waypoints
 
     def add_waypoint(self, wp: Waypoint=Waypoint(0, 0, 0)):
-        self.tableBody.add_waypoint(wp)
+        self.model.append(wp)
 
     def delete_row(self, rowNum):
         self.tableBody.delete_row(rowNum)
