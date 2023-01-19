@@ -42,7 +42,7 @@ class C_WaypointArray(Structure):
 # libname = pathlib.Path().absolute()
 # c_lib = CDLL(libname / 'lib/build/libck_pathcobbler_bindings.dylib')
 basedir = os.path.dirname(os.path.dirname(__file__))
-libpath = os.path.join(basedir, 'lib/build/libck_pathcobbler_bindings.dylib')
+libpath = os.path.join(basedir, 'lib/build/libck_pathcobbler_bindings.so')
 c_lib = CDLL(libpath)
 
 
@@ -58,7 +58,7 @@ def calc_splines(waypoints: List[Waypoint]):
     c_waypoints = []
     for wp in waypoints:
         if wp.enabled:
-            c_waypoints.append(C_Waypoint(wp.x, wp.y, -wp.heading))
+            c_waypoints.append(C_Waypoint(wp.x, wp.y, wp.heading))
 
     c_wp_arr = C_WaypointArray(c_waypoints)
 
