@@ -1,4 +1,5 @@
 import os
+import sys
 import math
 
 from typing import List
@@ -70,38 +71,49 @@ class FieldView(QLabel):
         self.draw_waypoints(self.currentWaypoints)
 
     def mousePressEvent(self, ev: QMouseEvent) -> None:
-        if ev.button() != Qt.LeftButton:
-            return
+        if ev.button() == Qt.LeftButton:
+            for wp in self.model:
+                if not wp.enabled:
+                    continue
 
-        for wp in self.model:
-            if not wp.enabled:
-                continue
+                pixelsX, pixelsY = self.inches_to_pixels(wp.x, wp.y)
 
-            pixelsX, pixelsY = self.inches_to_pixels(wp.x, wp.y)
+                dist = math.hypot(pixelsX - ev.position().x(), pixelsY - ev.position().y())
 
-            dist = math.hypot(pixelsX - ev.position().x(), pixelsY - ev.position().y())
+                if dist < self.wp_size:
+                    wp.set_clicked(True)
+                    self.model.update()
+                    return
 
-            if dist < self.wp_size:
-                wp.set_clicked(True)
-                self.model.update()
-                return
+            heading = 0
 
-        heading = 0
+            inchesX, inchesY = self.pixels_to_inches(ev.position().x(), ev.position().y())
+            inchesX = int(inchesX)
+            inchesY = int(inchesY)
 
-        inchesX, inchesY = self.pixels_to_inches(ev.position().x(), ev.position().y())
-        inchesX = int(inchesX)
-        inchesY = int(inchesY)
+            if len(self.currentWaypoints) > 0:
+                last_wp = self.currentWaypoints[-1]
+                x_diff = inchesX - last_wp.x
+                y_diff = inchesY - last_wp.y
 
-        if len(self.currentWaypoints) > 0:
-            last_wp = self.currentWaypoints[-1]
-            x_diff = inchesX - last_wp.x
-            y_diff = inchesY - last_wp.y
+                heading = int(math.degrees(math.atan2(y_diff, x_diff)))
 
-            heading = -int(math.degrees(math.atan2(y_diff, x_diff)))
+            wp = Waypoint(inchesX, inchesY, heading)
 
-        wp = Waypoint(inchesX, inchesY, heading)
+            self.model.append(wp)
+        elif ev.button() == Qt.RightButton:
+            spline_wps = calc_splines(self.model.waypoints)
 
-        self.model.append(wp)
+            for wp in spline_wps:
+                pixelsX, pixelsY = self.inches_to_pixels(wp.x, wp.y)
+
+                dist = math.hypot(pixelsX - ev.position().x(), pixelsY - ev.position().y())
+
+                if dist < 30:
+                    print('found')
+
+
+
 
     def mouseReleaseEvent(self, ev: QMouseEvent) -> None:
         for wp in self.model:
@@ -122,7 +134,7 @@ class FieldView(QLabel):
                     x_diff = inchesX - wp.x
                     y_diff = inchesY - wp.y
 
-                    wp.heading = -float(math.floor(math.degrees(math.atan2(y_diff, x_diff))))
+                    wp.heading = float(math.floor(math.degrees(math.atan2(y_diff, x_diff))))
                 else:
                     wp.x = inchesX
                     wp.y = inchesY
@@ -171,7 +183,7 @@ class FieldView(QLabel):
                 y_diff = self.heading_length * math.sin(math.radians(wp.heading))
 
                 self.painter.setPen(QPen(lineColor, 3))
-                self.painter.drawLine(QPointF(pixelsX, pixelsY), QPointF(pixelsX + x_diff, pixelsY + y_diff))
+                self.painter.drawLine(QPointF(pixelsX, pixelsY), QPointF(pixelsX + x_diff, pixelsY - y_diff))
 
                 self.painter.setPen(Qt.NoPen)
                 self.painter.setBrush(QBrush(pointColor, Qt.SolidPattern))
