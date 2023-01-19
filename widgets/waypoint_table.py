@@ -5,6 +5,7 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 
 from utils.waypoint import Waypoint
+from widgets.path_list import PathList
 from widgets.waypoint_model import WaypointModel
 from widgets.waypoint_table_body import WaypointTableBody
 
@@ -65,10 +66,22 @@ class WaypointTable(QWidget):
         self.scroll_area.setWidget(self.tableBody)
         self.updateSignal = self.tableBody.updateSignal
 
+
+        self.test_layout = QHBoxLayout()
+        self.path_list = PathList()
+
+
+        self.wp_table_layout = QVBoxLayout()
+        self.wp_table_layout.addLayout(self.heading_layout)
+        self.wp_table_layout.addWidget(self.scroll_area)
+
+        self.test_layout.addWidget(self.path_list)
+        self.test_layout.addLayout(self.wp_table_layout)
+
         self.main_layout = QVBoxLayout()
         self.main_layout.addLayout(self.buttonLayout)
-        self.main_layout.addLayout(self.heading_layout)
-        self.main_layout.addWidget(self.scroll_area)
+        # self.main_layout.addLayout(self.heading_layout)
+        self.main_layout.addLayout(self.test_layout)
 
         self.setLayout(self.main_layout)
 

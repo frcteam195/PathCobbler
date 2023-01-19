@@ -2,18 +2,19 @@ from typing import List
 
 from utils.waypoint import Waypoint
 
-from PySide6.QtCore import *
+from PySide6.QtCore import QObject, Signal
 
 
 class WaypointModel(QObject):
     updated = Signal()
 
-    def __init__(self, wapyoints: List[Waypoint]=None):
+    def __init__(self, wapyoints: List[Waypoint]=[]):
         super().__init__()
-        self.waypoints: List[Waypoint] = wapyoints or []
+        self.waypoints: List[Waypoint] = wapyoints
 
-    def update(self, waypoints: List[Waypoint]=None):
-        if waypoints is not None:
+    def update(self, waypoints: List[Waypoint]=[]):
+        # if waypoints is not None:
+        if len(waypoints) > 0:
             self.waypoints = waypoints
 
         self.updated.emit()
