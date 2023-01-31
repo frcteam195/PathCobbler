@@ -47,7 +47,7 @@ sudo apt install -y \
 ```bash
 sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt update
-sudo apt install python3.9-dev python3.9-venv
+sudo apt install python3.10-dev python3.10-venv
 ```
 
 3. Download and unzip Qt source code
@@ -78,7 +78,7 @@ sudo cmake --install .
 7. Setup a `venv` for doing the PySide build and install. Make sure to use the Python version installed in step 2.
 ```bash
 cd ~
-python3.9 -m venv pyside-venv
+python3 -m venv pyside-venv
 source pyside-venv/bin/activate
 python -m pip install --upgrade pip setuptools wheel
 ```
@@ -94,7 +94,16 @@ cd pyside-setup
 git checkout 6.4
 ```
 
-10. Build PySide
+10. Update Requirements
+```bash
+In requirements.txt, change the line:
+pyinstaller==3.6
+
+To:
+pyinstaller
+```
+
+11.   Build PySide
 ```bash
 python -m pip install -r requirements.txt
 python setup.py build \
@@ -104,13 +113,7 @@ python setup.py build \
   --standalone 
 ```
 
-11. (Optional) Build the wheels and place in `pyside-setup/dist_new/`
-```bash
-ln -s build/pyside-venv/ build/pyside-venva
-python create_wheels.py
-```
-
-12. (Optional) Install PySide to the current venv
+12.   (Optional) Install PySide to the current venv
 ```bash
 python setup.py install \
   --qtpaths=/usr/local/Qt-6.4.0/bin/qtpaths \
