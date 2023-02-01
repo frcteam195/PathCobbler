@@ -3,11 +3,13 @@ import json
 
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
+from PySide6.QtGui import *
 
 from utils.waypoint import Waypoint
 from widgets.path_list import PathList
 from widgets.waypoint_model import WaypointModel
 from widgets.waypoint_table_body import WaypointTableBody
+from widgets.field_view import FieldView
 
 from utils.file_utils import *
 
@@ -15,10 +17,11 @@ from utils.file_utils import *
 class WaypointTable(QWidget):
     flipSignal = Signal()
 
-    def __init__(self, model: WaypointModel):
+    def __init__(self, model: WaypointModel, field: FieldView):
         super().__init__()
 
         self.model = model
+        self.field = field
 
         self.setMinimumSize(500, 300)
 
@@ -133,3 +136,10 @@ class WaypointTable(QWidget):
 
         with open(filename, 'w') as f:
             f.write(path_json)
+
+        self.screenshot(filename.replace(".json", ".png"))
+
+    def screenshot(self, filename):
+        screenshot_area = QRect(self.field.x(), self.field.y(), self.field.width(), self.field.height())
+        screenshot = self.window().grab(screenshot_area)
+        screenshot.save(filename)

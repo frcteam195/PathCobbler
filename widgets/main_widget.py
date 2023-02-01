@@ -21,7 +21,7 @@ class MainWidget(QWidget):
         button = QPushButton('Push me')
         button.clicked.connect(lambda: self.field.clear_canvas())
 
-        self.table = WaypointTable(self.model)
+        self.table = WaypointTable(self.model, self.field)
         self.table.updateSignal.connect(self.update_field_waypoints)
         self.table.flipSignal.connect(self.field.flip_field)
 
