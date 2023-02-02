@@ -13,6 +13,9 @@ class WaypointTableBody(QWidget):
 
         self.waypoints = []
         self.model = model
+
+        self.num_waypoints = 0
+
         self.model.updated.connect(self.draw_table)
 
         self.grid_layout = QGridLayout()
@@ -21,6 +24,7 @@ class WaypointTableBody(QWidget):
         self.setLayout(self.grid_layout)
 
     def update(self):
+
         waypoints = []
 
         for i in range(1, self.grid_layout.rowCount()):
@@ -34,8 +38,10 @@ class WaypointTableBody(QWidget):
         self.model.update(waypoints)
 
     def draw_table(self):
+        if self.num_waypoints == len(self.model):
+            return
         self.clear()
-        # self.create_heading()
+
 
         for wp in self.model:
             self.add_waypoint(wp)
@@ -72,21 +78,21 @@ class WaypointTableBody(QWidget):
         # TODO: Fix model implementation so the
         # textChanged signal can be used instead of
         # editing finished.
-
+        self.num_waypoints += 1
         x_label = QLabel('X:')
         x_input = QLineEdit(str(wp.x))
         x_input.setAlignment(Qt.AlignCenter)
-        x_input.editingFinished.connect(self.update)
+        x_input.textChanged.connect(self.update)
 
         y_label = QLabel('Y:')
         y_input = QLineEdit(str(wp.y))
         y_input.setAlignment(Qt.AlignCenter)
-        y_input.editingFinished.connect(self.update)
+        y_input.textChanged.connect(self.update)
 
         heading_label = QLabel('Heading:')
         heading_input = QLineEdit(str(wp.heading))
         heading_input.setAlignment(Qt.AlignCenter)
-        heading_input.editingFinished.connect(self.update)
+        heading_input.textChanged.connect(self.update)
 
         enabled_label = QLabel('Enabled?:')
         enabled_input = QCheckBox()
@@ -118,8 +124,11 @@ class WaypointTableBody(QWidget):
         # waypoints = self.get_waypoints()
         # del waypoints[rowNum - 1]
         del self.model[rowNum - 1]
-
+        
+        self.num_waypoints -= 1
+        
         self.draw_table()
+
 
         # tempWidget = QWidget()
         # tempWidget.setLayout(self.grid_layout)
@@ -135,6 +144,8 @@ class WaypointTableBody(QWidget):
         # self.update()
 
     def clear(self):
+        self.num_waypoints = 0
+
         tempWidget = QWidget()
         tempWidget.setLayout(self.grid_layout)
         tempWidget.deleteLater()
