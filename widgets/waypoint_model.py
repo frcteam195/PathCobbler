@@ -3,12 +3,7 @@ from typing import List
 
 from utils.waypoint import Waypoint
 
-from threading import Lock
-
-
-from PySide6.QtCore import QObject, Signal, QMutex
-
-import traceback
+from PySide6.QtCore import QObject, Signal
 
 class WaypointModel(QObject):
     updated = Signal()
@@ -17,20 +12,18 @@ class WaypointModel(QObject):
        
         super().__init__()
         self.waypoints: List[Waypoint] = wapyoints
-        self.mutex = QMutex()
 
     def update(self, waypoints: List[Waypoint]=[]):
         if len(waypoints) > 0:
             self.waypoints = waypoints
-        traceback.print_stack()
-        self.mutex.lock()
         self.updated.emit()
-        self.mutex.unlock()
+
                  
 
     def append(self, wp: Waypoint):
-        self.waypoints.append(wp)
-        self.update()
+        wps = self.waypoints+[wp]
+        
+        self.update(wps)
 
     def __len__(self):
         return len(self.waypoints)
