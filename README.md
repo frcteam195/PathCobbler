@@ -18,7 +18,7 @@ echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
 eval "$(/opt/homebrew/bin/brew shellenv)"
 ```
 
-Now that brew is isntalled and set up, close the terminal and reopen it so that your new PATH variable will take effect.
+Now that brew is installed and set up, close the terminal and reopen it so that your new PATH variable will take effect.
 ```
 cd PathCobbler
 brew install python
