@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.9)
 set(PROJECT_NAME "ck_pathcobbler_bindings")
 project(${PROJECT_NAME})
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 if (MINGW32)
 	set(CMAKE_SYSTEM_NAME Windows)
 	set(CMAKE_C_COMPILER x86_64-w64-mingw32-gcc-posix)
