@@ -40,7 +40,7 @@ class WaypointTableBody(QWidget):
         for wp in self.model:
             self.add_waypoint(wp)
 
-    def get_waypoints(self) -> list[Waypoint]:
+    def get_waypoints(self):
         self.update()
         return self.waypoints
 
