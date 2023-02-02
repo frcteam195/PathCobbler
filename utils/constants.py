@@ -1,14 +1,14 @@
 import math
 
 
-fieldWidth = 864  # inches
+fieldWidth = 888  # inches
 fieldHeight = 360  # inches
 
-xOffset = 108
-yOffset = fieldHeight - 17.75
+xOffset = 118.20125000
+yOffset = fieldHeight - 21.90125000
 
-width = 1858  # pixels
-height = 773  # pixels
+width = 2704  # pixels
+height = 1096  # pixels
 
 bumperWidth = 3.5 * 2.0  # inches
 
