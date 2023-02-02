@@ -6,6 +6,9 @@ fi
 mkdir -p lib/build
 cd lib/build
 
+# cmake -DMINGW32=1 ..
+# find /usr | grep dll$ | grep -v win32 | grep -v 686
+
 if [ ! -f "Makefile" ]; then
     cmake ..
 fi
