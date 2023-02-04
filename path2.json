@@ -1,0 +1,25 @@
+{
+    "id": 1,
+    "name": "Path2",
+    "reversed": false,
+    "waypoints": [
+        {
+            "x": 87.0,
+            "y": -123.0,
+            "theta": 0.0,
+            "comment": ""
+        },
+        {
+            "x": 194.0,
+            "y": -46.0,
+            "theta": 25.0,
+            "comment": ""
+        },
+        {
+            "x": 444.0,
+            "y": -28.0,
+            "theta": -24.0,
+            "comment": ""
+        }
+    ]
+}

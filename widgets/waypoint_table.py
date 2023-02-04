@@ -10,6 +10,7 @@ from widgets.path_list import PathList
 from widgets.waypoint_model import WaypointModel
 from widgets.waypoint_table_body import WaypointTableBody
 from widgets.field_view import FieldView
+from widgets.cordwainer import Cordwainer
 
 from utils.file_utils import *
 
@@ -36,7 +37,7 @@ class WaypointTable(QWidget):
         self.loadButton.clicked.connect(self.load_path)
         self.saveButton = QPushButton('Save Path')
         self.saveButton.clicked.connect(self.save_path)
-
+       
         self.buttonLayout = QHBoxLayout()
         self.buttonLayout.addWidget(self.addButton)
         self.buttonLayout.addWidget(self.updateButton)
@@ -69,9 +70,8 @@ class WaypointTable(QWidget):
         self.scroll_area.setWidget(self.tableBody)
         self.updateSignal = self.tableBody.updateSignal
 
-
         self.test_layout = QHBoxLayout()
-        self.path_list = PathList()
+        self.path_list = Cordwainer(model)
 
 
         self.wp_table_layout = QVBoxLayout()
@@ -102,17 +102,7 @@ class WaypointTable(QWidget):
 
     def load_path(self):
         filename, _ = QFileDialog.getOpenFileName(self, 'Select File to Load', '.', 'JSON File (*.json)')
-
-        path_json = open_json_file(filename)
-
-        if path_json is None:
-            return
-
-        # self.tableBody.clear()
-        self.model.waypoints = []
-
-        for wp_json in path_json['waypoints']:
-            self.model.append(Waypoint(wp_json['x'], wp_json['y'], wp_json['theta']))
+        self.model.update(load_path(filename))
 
     def save_path(self):
         default_name = 'path.json'
