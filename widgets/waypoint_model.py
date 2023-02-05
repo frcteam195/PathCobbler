@@ -8,16 +8,19 @@ from PySide6.QtCore import QObject, Signal
 class WaypointModel(QObject):
     updated = Signal()
 
-    def __init__(self, wapyoints: List[Waypoint]=[]):
+    def __init__(self, waypoints: List[Waypoint]=[]):
        
         super().__init__()
-        self.waypoints: List[Waypoint] = wapyoints
+        self.waypoints: List[Waypoint] = waypoints
 
     def update(self, waypoints: List[Waypoint]=[]):
         if len(waypoints) > 0:
             self.waypoints = waypoints
         self.updated.emit()
 
+    def clear_model(self):
+        self.waypoints.clear()
+        self.updated.emit()
                  
 
     def append(self, wp: Waypoint):
