@@ -11,6 +11,7 @@ from widgets.waypoint_model import WaypointModel
 from widgets.waypoint_table_body import WaypointTableBody
 from widgets.field_view import FieldView
 from widgets.cordwainer import Cordwainer
+from utils.auto import Auto
 
 from utils.file_utils import *
 
@@ -102,7 +103,13 @@ class WaypointTable(QWidget):
 
     def load_path(self):
         filename, _ = QFileDialog.getOpenFileName(self, 'Select File to Load', '.', 'JSON File (*.json)')
-        self.model.update(load_path(filename))
+        waypoints = []
+        for path in load_auto(filename):
+            self.path_list.list.addItem(path.name)
+            for wp in path.waypoints:
+                waypoints.append(wp)
+        self.model.update(waypoints)
+        
 
     def save_path(self):
         default_name = 'path.json'
@@ -123,12 +130,12 @@ class WaypointTable(QWidget):
         
 
         for i, path in enumerate(paths):
-            json_obj['paths'].append([])
+            json_obj['paths'].append({})
+            json_obj["paths"][i]["name"] = path.name
+            json_obj["paths"][i]["waypoints"] = []
             for wp in path.waypoints:
-                json_obj["paths"][i].append(wp.toJson())
-
+                json_obj["paths"][i]["waypoints"].append(wp.toJson()) 
                 
-            
 
         path_json = json.dumps(json_obj, indent=4)
 

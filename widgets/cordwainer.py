@@ -9,18 +9,9 @@ from PySide6.QtWidgets import *
 
 from utils.file_utils import *
 from widgets.waypoint_model import *
+from utils.auto import Auto
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
-
-
-class Auto(QListWidgetItem):
-    def __init__(self, name, waypoints):
-        super().__init__(name)
-        self.name = name
-        self.waypoints = waypoints
-
-
-
 class ShoeButtons(QWidget):
     def __init__(self):
         super().__init__()
@@ -78,7 +69,14 @@ class ShoeList(QListWidget):
 
     def selection_changed(self):
         item = self.currentItem()
-        self.model.update(item.waypoints)
+        print(item)
+        self.model.update(item)
+    
+    def add_paths(self, names, wps):
+        self.names = names
+        self.wps = wps
+        
+
 
 class Cordwainer(QWidget):
     def __init__(self, model: WaypointModel):
