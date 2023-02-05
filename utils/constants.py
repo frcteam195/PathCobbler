@@ -12,8 +12,8 @@ height = 1096  # pixels
 
 bumperWidth = 3.5 * 2.0  # inches
 
-robotWidth = 28 + bumperWidth  # inches
-robotHeight = 31.75 + bumperWidth  # inches
+robotWidth = 24 + bumperWidth  # inches
+robotHeight = 24 + bumperWidth  # inches
 
 C_R = math.sqrt(math.pow(robotWidth, 2) + math.pow(robotHeight, 2)) / 2
 C_T = math.atan2(robotHeight, robotWidth)
