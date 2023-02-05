@@ -34,10 +34,10 @@ class WaypointTable(QWidget):
         self.animateButton = QPushButton('Animate')
         self.flipButton = QPushButton('Flip Field')
         self.flipButton.clicked.connect(self.flipSignal.emit)
-        self.loadButton = QPushButton('Load Path')
+        self.loadButton = QPushButton('Load Auto')
         self.loadButton.clicked.connect(self.load_path)
-        self.saveButton = QPushButton('Save Path')
-        self.saveButton.clicked.connect(self.save_path)
+        self.saveButton = QPushButton('Save Auto')
+        self.saveButton.clicked.connect(self.save_auto)
        
         self.buttonLayout = QHBoxLayout()
         self.buttonLayout.addWidget(self.addButton)
@@ -104,45 +104,56 @@ class WaypointTable(QWidget):
     def load_path(self):
         filename, _ = QFileDialog.getOpenFileName(self, 'Select File to Load', '.', 'JSON File (*.json)')
         waypoints = []
-        for path in load_auto(filename):
-            self.path_list.list.addItem(path.name)
-            for wp in path.waypoints:
-                waypoints.append(wp)
+        auto = load_auto(filename)
+        if auto is not None:
+            for path in auto:
+                self.path_list.list.addItem(path)
+                for wp in path.waypoints:
+                    waypoints.append(wp)
         self.model.update(waypoints)
         
 
-    def save_path(self):
-        default_name = 'path.json'
-        filename, _ = QFileDialog.getSaveFileName(self, 'Select File to Save', f'./{default_name}', 'JSON File (*.json)')
 
-        if filename is None:
-            return
+    def save_auto(self):
+        if self.path_list.list.count() > 0:
+            default_name = 'auto.json'
+            filename, _ = QFileDialog.getSaveFileName(self, 'Select File to Save', f'./{default_name}', 'JSON File (*.json)')
 
-        json_obj = dict()
+            if filename is None:
+                return
 
-        paths = self.path_list.get_paths()
-        #json_obj['id'] = 1
-        json_obj['name'] = os.path.splitext(os.path.basename(filename))[0]
-        json_obj['path_count'] = len(paths)
-        #json_obj['reversed'] = False
+            json_obj = dict()
 
-        json_obj['paths'] = []
-        
+            paths = self.path_list.get_paths()
+            #json_obj['id'] = 1
+            json_obj['name'] = os.path.splitext(os.path.basename(filename))[0]
+            json_obj['path_count'] = len(paths)
+            #json_obj['reversed'] = False
 
-        for i, path in enumerate(paths):
-            json_obj['paths'].append({})
-            json_obj["paths"][i]["name"] = path.name
-            json_obj["paths"][i]["waypoints"] = []
-            for wp in path.waypoints:
-                json_obj["paths"][i]["waypoints"].append(wp.toJson()) 
-                
+            json_obj['paths'] = []
+            
 
-        path_json = json.dumps(json_obj, indent=4)
+            for i, path in enumerate(paths):
+                json_obj['paths'].append({})
+                json_obj["paths"][i]["name"] = path.name
+                json_obj["paths"][i]["waypoints"] = []
+                for wp in path.waypoints:
+                    json_obj["paths"][i]["waypoints"].append(wp.toJson()) 
+                    
 
-        with open(filename, 'w') as f:
-            f.write(path_json)
+            path_json = json.dumps(json_obj, indent=4)
 
-        self.screenshot(filename.replace(".json", ".png"))
+            with open(filename, 'w') as f:
+                f.write(path_json)
+
+            self.screenshot(filename.replace(".json", ".png"))
+        else:
+            msg = QMessageBox()
+            msg.setWindowTitle("WARNING")
+            msg.setText("You must have at least one path in an auto!")
+            msg.setIcon(QMessageBox.Warning)
+            msg.setGeometry(100, 200, 100, 100)
+            msg.exec()
 
     def screenshot(self, filename):
         screenshot_area = QRect(self.field.x(), self.field.y(), self.field.width(), self.field.height())

@@ -41,11 +41,21 @@ def load_auto(filename):
         return
 
     paths = []
-    for path in path_json['paths']:
-        waypoints = []
-        for wp in path['waypoints']:
-            waypoints.append(Waypoint(wp['x'], wp['y'], wp['theta']))
+    if 'paths' in path_json:
+        for path in path_json['paths']:
+            waypoints = []
+            for wp in path['waypoints']:
+                waypoints.append(Waypoint(wp['x'], wp['y'], wp['theta']))
 
-        paths.append(Auto(path['name'], waypoints))
-    return paths
+            paths.append(Auto(path['name'], waypoints))
+        return paths
+    else:
+        msg = QMessageBox()
+        msg.setWindowTitle("WARNING")
+        msg.setText("You need to upload a valid auto!")
+        msg.setIcon(QMessageBox.Warning)
+        msg.setGeometry(100, 200, 100, 100)
+        msg.exec()
+        return None
+
 
