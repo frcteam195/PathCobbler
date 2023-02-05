@@ -113,14 +113,22 @@ class WaypointTable(QWidget):
 
         json_obj = dict()
 
-        json_obj['id'] = 1
+        paths = self.path_list.get_paths()
+        #json_obj['id'] = 1
         json_obj['name'] = os.path.splitext(os.path.basename(filename))[0]
-        json_obj['reversed'] = False
+        json_obj['path_count'] = len(paths)
+        #json_obj['reversed'] = False
 
-        json_obj['waypoints'] = []
+        json_obj['paths'] = []
+        
 
-        for wp in self.model:
-            json_obj['waypoints'].append(wp.toJson())
+        for i, path in enumerate(paths):
+            json_obj['paths'].append([])
+            for wp in path.waypoints:
+                json_obj["paths"][i].append(wp.toJson())
+
+                
+            
 
         path_json = json.dumps(json_obj, indent=4)
 

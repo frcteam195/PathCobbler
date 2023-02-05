@@ -51,7 +51,13 @@ class ShoeList(QListWidget):
         #layout.addWidget(self)
 
         self.currentItemChanged.connect(self.selection_changed)
-    
+
+    def get_items(self):
+        paths = []
+        for path in range(self.count()):
+            paths.append(self.item(path))
+        return paths
+
     def remove_item(self):
         items = self.currentRow()
         self.takeItem(items)      
@@ -92,3 +98,6 @@ class Cordwainer(QWidget):
 
         self.buttons.remove_button.clicked.connect(self.list.remove_item)
         self.buttons.add_button.clicked.connect(self.list.add_item)
+    
+    def get_paths(self):
+        return self.list.get_items()
