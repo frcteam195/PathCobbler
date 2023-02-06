@@ -39,7 +39,14 @@ class WaypointTableBody(QWidget):
 
     def draw_table(self):
         if self.num_waypoints == len(self.model):
+            # for i in range(1, self.grid_layout.rowCount()):
+            #     self.grid_layout.itemAtPosition(i, 0).widget().setText(self.model[i-1].x)
+            #     self.grid_layout.itemAtPosition(i, 1).widget().setText(self.model[i-1].y)
+            #     self.grid_layout.itemAtPosition(i, 2).widget().setText(self.model[i-1].heading)
+            #     self.grid_layout.itemAtPosition(i, 3).widget().setChecked(self.model[i-1].enabled)
+            
             return
+
         self.clear()
 
 

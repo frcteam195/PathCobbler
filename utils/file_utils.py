@@ -28,11 +28,18 @@ def load_path(filename):
 
     # self.tableBody.clear()
     waypoints = []
-
-    for wp_json in path_json['waypoints']:
-        waypoints.append(Waypoint(wp_json['x'], wp_json['y'], wp_json['theta']))
-
-    return waypoints
+    if 'waypoints' in path_json:
+        for wp_json in path_json['waypoints']:
+            waypoints.append(Waypoint(wp_json['x'], wp_json['y'], wp_json['theta']))
+        return waypoints
+    else:
+        msg = QMessageBox()
+        msg.setWindowTitle("WARNING")
+        msg.setText("You need a valid path!")
+        msg.setIcon(QMessageBox.Warning)
+        msg.setGeometry(100, 200, 100, 100)
+        msg.exec()
+        return None
 
 def load_auto(filename):
     path_json = open_json_file(filename)
