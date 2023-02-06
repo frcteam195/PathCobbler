@@ -10,6 +10,7 @@ from PySide6.QtWidgets import *
 from utils.file_utils import *
 from widgets.waypoint_model import *
 from utils.auto import Auto
+# from widgets.waypoint_table import *
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 class ShoeButtons(QWidget):
@@ -33,7 +34,6 @@ class ShoeList(QListWidget):
     def __init__(self, model: WaypointModel):
         super().__init__()
         self.model = model
-
         self.setDragDropMode(QAbstractItemView.DragDrop)
 
         self.setDefaultDropAction(Qt.DropAction.MoveAction)        
@@ -64,19 +64,27 @@ class ShoeList(QListWidget):
         self.dialog = QFileDialog()
         self.fileName, _ = self.dialog.getOpenFileName(self, 'Open file', 
         '.',"Json files (*.json)")
-        
-        new_item = Auto(os.path.splitext(os.path.basename(self.fileName))[0], load_path(self.fileName))
+        if load_path is not None:
+            new_item = Auto(os.path.splitext(os.path.basename(self.fileName))[0], load_path(self.fileName))
+            self.model.update(new_item.waypoints)
+            self
 
-        self.model.update(new_item.waypoints)
+            self.addItem(new_item)
 
-        self.addItem(new_item)
-
-        self.setCurrentItem(new_item)
+            self.setCurrentItem(new_item)
+        else:
+            msg = QMessageBox()
+            msg.setWindowTitle("WARNING")
+            msg.setText("You need to upload a valid path!")
+            msg.setIcon(QMessageBox.Warning)
+            msg.setGeometry(100, 200, 100, 100)
+            msg.exec()
 
     def selection_changed(self):
         item = self.currentItem()
         if item is not None:
             self.model.update(item.waypoints)
+            print(item.waypoints)
         else:
             self.model.clear_model()
     
