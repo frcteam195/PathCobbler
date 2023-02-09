@@ -8,12 +8,170 @@ from PySide6.QtGui import *
 from utils.waypoint import Waypoint
 from widgets.path_list import PathList
 from widgets.waypoint_model import WaypointModel
-from widgets.waypoint_table_body import WaypointTableBody
 from widgets.field_view import FieldView
 from widgets.cordwainer import Cordwainer
 from utils.auto import Auto
 
 from utils.file_utils import *
+
+from PySide6.QtWidgets import *
+from PySide6.QtCore import *
+
+from utils.waypoint import Waypoint
+from widgets.waypoint_model import WaypointModel
+
+
+class WaypointTableBody(QTableWidget):
+    updateSignal = Signal(list, name='updateSignal')
+
+    def __init__(self, model: WaypointModel):
+        super().__init__()
+
+        self.waypoints = [] 
+        self.model = model
+        self.table = QTableView()
+        self.num_waypoints = 0
+        self.setMinimumSize(500, 100)
+
+        self.model.updated.connect(self.draw_table)
+        self.setColumnCount(5)
+        self.setHorizontalHeaderLabels(["X", "Y", "Header", "Enabled", "Delete"])
+
+        self.header = self.table.horizontalHeader()
+        self.header.setDefaultAlignment(Qt.AlignHCenter)
+        self.header.setMinimumSize(500, 100)
+
+    def update(self):
+
+        waypoints = []
+
+        for i in range(1, self.rowCount()):
+            x_val = float(self.item(i, 0))
+            y_val = float(self.item(i, 1))
+            heading_val = float(self.item(i, 1))
+            enabled_val = float(self.item(i, 1))
+
+            waypoints.append(Waypoint(x_val, y_val, heading_val, enabled=enabled_val))
+
+        self.model.update(waypoints)
+
+    def draw_table(self):
+        if self.num_waypoints == len(self.model):
+            # for i in range(1, self.rowCount()):
+            #     self.itemAtPosition(i, 0).widget().setText(self.model[i-1].x)
+            #     self.itemAtPosition(i, 1).widget().setText(self.model[i-1].y)
+            #     self.itemAtPosition(i, 2).widget().setText(self.model[i-1].heading)
+            #     self.itemAtPosition(i, 3).widget().setChecked(self.model[i-1].enabled)
+            
+            return
+
+        self.clear()
+
+
+        for wp in self.model:
+            self.add_waypoint(wp)
+
+    def get_waypoints(self):
+        self.update()
+        return self.waypoints
+
+   
+
+    def add_waypoint(self, wp: Waypoint):
+        num_rows = self.rowCount()
+        
+
+        # TODO: Fix model implementation so the
+        # textChanged signal can be used instead of
+        # editing finished.
+        # self.num_waypoints += 1
+        # x_label = QLabel('X:')
+        # x_input = QLineEdit(str(wp.x))
+        # x_input.setAlignment(Qt.AlignCenter)
+        # x_input.textChanged.connect(self.update)
+
+        # x_item = QTableWidgetItem(x_input)
+
+
+        # y_label = QLabel('Y:')
+        # y_input = QLineEdit(str(wp.y))
+        # y_input.setAlignment(Qt.AlignCenter)
+        # y_input.textChanged.connect(self.update)
+
+        # heading_label = QLabel('Heading:')
+        # heading_input = QLineEdit(str(wp.heading))
+        # heading_input.setAlignment(Qt.AlignCenter)
+        # heading_input.textChanged.connect(self.update)
+
+        # enabled_label = QLabel('Enabled?:')
+        # enabled_input = QCheckBox()
+        # enabled_input.setChecked(wp.enabled)
+        # enabled_input.stateChanged.connect(self.update)
+
+        # delete_label = QLabel('Delete')
+        # delete_input = QPushButton('X')
+        # delete_input.clicked.connect(lambda: self.delete_row(numRows))
+        self.insertRow(num_rows)
+        self.checkboxItem = QTableWidgetItem()
+        self.checkboxItem.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
+        self.checkboxItem.setCheckState(Qt.Checked)
+        self.delete_button = QPushButton("X")
+        self.setItem(num_rows, 0, QTableWidgetItem(str(wp.x)))
+        self.setItem(num_rows, 1, QTableWidgetItem(str(wp.y)))
+        self.setItem(num_rows, 2, QTableWidgetItem(str(wp.heading)))
+        self.setItem(num_rows, 3, self.checkboxItem)
+        self.setCellWidget(num_rows, 4, self.delete_button)
+        # self.setItem(num_rows, 0, item)
+
+        # self.setItem(numRows, 2, item2)
+        # self.setItem(numRows, 3, item3)
+        # self.setItem(numRows, 4, item4)
+
+        # self.addWidget(x_label, numRows, 0)
+        # self.addWidget(x_input, numRows, 1)
+        # self.addWidget(y_label, numRows, 2)
+        # self.addWidget(y_input, numRows, 3)
+        # self.addWidget(heading_label, numRows, 4)
+        # self.addWidget(heading_input, numRows, 5)
+        # # self.addWidget(enabled_label, numRows, 6)
+        # self.addWidget(enabled_input, numRows, 7)
+        # # self.addWidget(delete_label, numRows, 8)
+        # self.addWidget(delete_input, numRows, 9)
+
+    def delete_row(self, rowNum):
+        # waypoints = self.get_waypoints()
+        # del waypoints[rowNum - 1]
+        del self.model[rowNum - 1]
+        
+        self.num_waypoints -= 1
+        
+        self.draw_table()
+
+
+        # tempWidget = QWidget()
+        # tempWidget.setLayout(self)
+        # tempWidget.deleteLater()
+
+        # self = QGridLayout()
+        # self.setAlignment(Qt.AlignTop)
+
+        # for wp in waypoints:
+        #     self.add_waypoint(wp)
+
+        # self.setLayout(self)
+        # self.update()
+
+    def clear(self):
+        self.num_waypoints = 0
+
+        tempWidget = QWidget()
+       # tempWidget.setLayout(self)
+        tempWidget.deleteLater()
+
+        self = QGridLayout()
+        self.setAlignment(Qt.AlignTop)
+
+        #self.setLayout(self)
 
 
 class WaypointTable(QWidget):
@@ -47,23 +205,7 @@ class WaypointTable(QWidget):
         self.buttonLayout.addWidget(self.loadButton)
         self.buttonLayout.addWidget(self.saveButton)
 
-        self.heading_layout = QHBoxLayout()
-        x_label = QLabel('X')
-        x_label.setAlignment(Qt.AlignCenter)
-        y_label = QLabel('Y')
-        y_label.setAlignment(Qt.AlignCenter)
-        heading_label = QLabel('Heading')
-        heading_label.setAlignment(Qt.AlignCenter)
-        enabled_label = QLabel('Enabled')
-        enabled_label.setAlignment(Qt.AlignCenter)
-        delete_label = QLabel('Delete')
-        delete_label.setAlignment(Qt.AlignCenter)
-
-        self.heading_layout.addWidget(x_label)
-        self.heading_layout.addWidget(y_label)
-        self.heading_layout.addWidget(heading_label)
-        self.heading_layout.addWidget(enabled_label)
-        self.heading_layout.addWidget(delete_label)
+       
 
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
@@ -73,10 +215,12 @@ class WaypointTable(QWidget):
 
         self.test_layout = QHBoxLayout()
         self.path_list = Cordwainer(model)
-
+        self.table = QTableWidget()
 
         self.wp_table_layout = QVBoxLayout()
-        self.wp_table_layout.addLayout(self.heading_layout)
+
+        self.scroll_area.setWidget(self.tableBody)
+    
         self.wp_table_layout.addWidget(self.scroll_area)
 
         self.test_layout.addWidget(self.path_list)
@@ -84,7 +228,7 @@ class WaypointTable(QWidget):
 
         self.main_layout = QVBoxLayout()
         self.main_layout.addLayout(self.buttonLayout)
-        # self.main_layout.addLayout(self.heading_layout)
+
         self.main_layout.addLayout(self.test_layout)
 
         self.setLayout(self.main_layout)
