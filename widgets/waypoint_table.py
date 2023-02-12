@@ -48,8 +48,7 @@ class WaypointTableBody(QTableWidget):
             x_val = float(self.item(i, 0).text())
             y_val = float(self.item(i, 1).text())
             heading_val = float(self.item(i, 2).text())
-            print(checked_item)
-            enabled_val = checked_item
+            enabled_val = self.item(i, 3).getCheckedState() == Qt.Checked
 
 
             self.model[i] = Waypoint(x_val, y_val, heading_val, enabled = enabled_val)
@@ -86,10 +85,10 @@ class WaypointTableBody(QTableWidget):
         y_val = float(self.item(row, 1).text())
         heading_val = float(self.item(row, 2).text())
         enabled_val = self.item(row, 3).checkState() == Qt.CheckState.Checked
-        print(enabled_val, type(enabled_val))
 
         self.model[row] = Waypoint(x_val, y_val, heading_val, enabled = enabled_val)
-      
+        print(x_val, y_val, heading_val, enabled_val)
+
     def add_waypoint(self, wp: Waypoint):
         # TODO: Fix model implementation so the
         # textChanged signal can be used instead of
@@ -106,18 +105,10 @@ class WaypointTableBody(QTableWidget):
         self.delete_button = QPushButton("X")
         self.delete_button.clicked.connect(lambda: self.delete_row(num_rows ))
 
-        x_input = QTableWidgetItem(str(wp.x))
-
-        y_input = QTableWidgetItem(str(wp.y))
-
-        heading_input = QTableWidgetItem(str(wp.heading))
-
-
-
-        self.setItem(num_rows, 0, x_input)
+        self.setItem(num_rows, 0, QTableWidgetItem(str(wp.x)))
         self.setItem(num_rows, 1, QTableWidgetItem(str(wp.y)))
         self.setItem(num_rows, 2, QTableWidgetItem(str(wp.heading)))
-        self.setCellWidget(num_rows, 3, self.checkboxItem)
+        self.setItem(num_rows, 3, self.checkboxItem)
 
         self.setCellWidget(num_rows, 4, self.delete_button)
 
