@@ -40,19 +40,31 @@ class WaypointTableBody(QTableWidget):
 
         self.itemChanged.connect(self.item_changed)
 
-    def update(self):
+    def update(self, checked_item):
 
         waypoints = []
+        for i in range(0, self.rowCount()):
 
-        for i in range(1, self.rowCount()):
-            x_val = float(self.item(i, 0))
-            y_val = float(self.item(i, 1))
-            heading_val = float(self.item(i, 1))
-            enabled_val = float(self.item(i, 1))
+            x_val = float(self.item(i, 0).text())
+            y_val = float(self.item(i, 1).text())
+            heading_val = float(self.item(i, 2).text())
+            print(checked_item)
+            enabled_val = checked_item
 
-            waypoints.append(Waypoint(x_val, y_val, heading_val, enabled=enabled_val))
 
-        self.model.update(waypoints)
+            self.model[i] = Waypoint(x_val, y_val, heading_val, enabled = enabled_val)
+       
+        # for i in range(0, self.rowCount()):
+        #     print("hello")
+        #     x_val = float(self.item(i, 0).text())
+        #     y_val = float(self.item(i, 1).text())
+        #     heading_val = float(self.item(i, 2).text())
+        #     enabled_val = self.item(i, 3)
+        #     print("heading: ", heading_val)
+        #     print("enabled: ", enabled_val)
+        #     waypoints.append(Waypoint(x_val, y_val, heading_val, enabled=enabled_val))
+
+        # self.model.update(waypoints)
 
     def draw_table(self):
         
@@ -74,9 +86,9 @@ class WaypointTableBody(QTableWidget):
         y_val = float(self.item(row, 1).text())
         heading_val = float(self.item(row, 2).text())
         enabled_val = self.item(row, 3).checkState() == Qt.CheckState.Checked
+        print(enabled_val, type(enabled_val))
 
         self.model[row] = Waypoint(x_val, y_val, heading_val, enabled = enabled_val)
-        print(x_val, y_val, heading_val, enabled_val)
       
     def add_waypoint(self, wp: Waypoint):
         # TODO: Fix model implementation so the
@@ -88,9 +100,10 @@ class WaypointTableBody(QTableWidget):
 
         self.insertRow(num_rows)
         
-        self.checkboxItem = QTableWidgetItem()
-        self.checkboxItem.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
+        self.checkboxItem = QCheckBox()
         self.checkboxItem.setCheckState(Qt.Checked)
+        print("Item is : ", self.checkboxItem)
+        self.checkboxItem.toggled.connect(lambda checked_item=self.checkboxItem: self.update(checked_item))
         self.delete_button = QPushButton("X")
         self.delete_button.clicked.connect(lambda: self.delete_row(num_rows ))
 
@@ -101,10 +114,11 @@ class WaypointTableBody(QTableWidget):
         heading_input = QTableWidgetItem(str(wp.heading))
 
 
+
         self.setItem(num_rows, 0, x_input)
         self.setItem(num_rows, 1, QTableWidgetItem(str(wp.y)))
         self.setItem(num_rows, 2, QTableWidgetItem(str(wp.heading)))
-        self.setItem(num_rows, 3, self.checkboxItem)
+        self.setCellWidget(num_rows, 3, self.checkboxItem)
 
         self.setCellWidget(num_rows, 4, self.delete_button)
 
@@ -112,7 +126,6 @@ class WaypointTableBody(QTableWidget):
 
     def delete_row(self, rowNum):
 
-        print(rowNum)
 
         del self.model[rowNum]
         
@@ -161,7 +174,9 @@ class WaypointTable(QWidget):
         self.loadButton.clicked.connect(self.load_path)
         self.saveButton = QPushButton('Save Auto')
         self.saveButton.clicked.connect(self.save_auto)
-       
+        self.howToUseButton = QPushButton('?')
+        self.howToUseButton.clicked.connect(self.program_explanation)
+        self.howToUseButton.setMaximumSize(32, 32)
         self.buttonLayout = QHBoxLayout()
         self.buttonLayout.addWidget(self.addButton)
         self.buttonLayout.addWidget(self.updateButton)
@@ -169,9 +184,9 @@ class WaypointTable(QWidget):
         self.buttonLayout.addWidget(self.flipButton)
         self.buttonLayout.addWidget(self.loadButton)
         self.buttonLayout.addWidget(self.saveButton)
+        self.buttonLayout.addWidget(self.howToUseButton)
 
-       
-
+        # setting radius and border
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
         self.tableBody = WaypointTableBody(self.model)
@@ -263,6 +278,15 @@ class WaypointTable(QWidget):
             msg.setIcon(QMessageBox.Warning)
             msg.setGeometry(100, 200, 100, 100)
             msg.exec()
+
+    def program_explanation(self):
+        msg = QMessageBox()
+        msg.setWindowTitle("hello")
+        msg.setText("This application is used to create autos for the robot. It creates 'paths' which the robot follows. These paths make up the auto that the robot follows. This program can be used to make both paths and autos. Plot points on the field or in the table, save the path, and then add those saved paths to the 'Cordwainer'(the auto maker). Once that is completed, the paths can be edited and then the paths are exported into a new auto. This auto can then be put into the robot code to be run during the Autonomous period")
+        msg.setIcon(QMessageBox.Information)
+        msg.setGeometry(500, 500, 500, 500)
+        msg.exec()
+        
 
     def screenshot(self, filename):
         screenshot_area = QRect(self.field.x(), self.field.y(), self.field.width(), self.field.height())
