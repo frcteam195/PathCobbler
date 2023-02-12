@@ -167,14 +167,14 @@ class FieldView(QLabel):
         self.painter.setRenderHint(QPainter.Antialiasing)
 
         for wp in spline_wps:
-            self.painter.setPen(Qt.NoPen)
-            self.painter.setBrush(QBrush(QColor(0, 255, 0), Qt.SolidPattern))
+            if wp.enabled:
+                self.painter.setPen(Qt.NoPen)
+                self.painter.setBrush(QBrush(QColor(0, 255, 0), Qt.SolidPattern))
 
-            pixelsX, pixelsY = self.inches_to_pixels(wp.x, wp.y)
+                pixelsX, pixelsY = self.inches_to_pixels(wp.x, wp.y)
 
-            self.painter.drawEllipse(QPointF(pixelsX, pixelsY), 3, 3)
-
-            self.drawRobot(self.painter, wp)
+                self.painter.drawEllipse(QPointF(pixelsX, pixelsY), 3, 3)
+                self.drawRobot(self.painter, wp)
 
         for wp in wps:
             if wp.enabled:
@@ -210,16 +210,17 @@ class FieldView(QLabel):
 
     def drawRobot(self, painter: QPainter, wp: Waypoint):
         h = math.radians(wp.heading)
+
         angles = [h + (math.pi / 2) + constants.C_T,
-                  h - (math.pi / 2) + constants.C_T,
-                  h + (math.pi / 2) - constants.C_T,
-                  h - (math.pi / 2) - constants.C_T]
+                h - (math.pi / 2) + constants.C_T,
+                h + (math.pi / 2) - constants.C_T,
+                h - (math.pi / 2) - constants.C_T]
 
         # TODO: Try to only use 1 translation2d instance to do this
         # need to convert C_R to pixels somehow?
         for angle in angles:
             point = Translation2d(wp.x + (constants.C_R * math.cos(angle)),
-                                  wp.y + (constants.C_R * math.sin(angle)))
+                                wp.y + (constants.C_R * math.sin(angle)))
 
             color = QColor(0, 170, 255) if abs(angle - h) < math.pi / 2 else QColor(0, 102, 255)
 
