@@ -27,7 +27,7 @@ class WaypointTableBody(QTableWidget):
     def __init__(self, model: WaypointModel):
         super().__init__()
 
-        self.waypoints = [] 
+        self.waypoints = []
         self.model = model
         self.num_waypoints = 0
         # self.resize(500, 100)
@@ -67,7 +67,7 @@ class WaypointTableBody(QTableWidget):
         # self.model.update(waypoints)
 
     def draw_table(self):
-        
+
 
         self.clear()
 
@@ -99,16 +99,15 @@ class WaypointTableBody(QTableWidget):
         num_rows = self.rowCount()
 
         self.insertRow(num_rows)
-        
-        self.checkboxItem = QCheckBox()
-        self.checkboxItem.setCheckState(Qt.Checked)
-        print("Item is : ", self.checkboxItem)
-        self.checkboxItem.toggled.connect(lambda checked_item=self.checkboxItem: self.update(checked_item))
+
+        self.checkboxItem = QTableWidgetItem()
+        self.checkboxItem.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
+        self.checkboxItem.setCheckState(Qt.Checked if wp.enabled else Qt.Unchecked)
         self.delete_button = QPushButton("X")
         self.delete_button.clicked.connect(lambda: self.delete_row(num_rows ))
 
         x_input = QTableWidgetItem(str(wp.x))
-        
+
         y_input = QTableWidgetItem(str(wp.y))
 
         heading_input = QTableWidgetItem(str(wp.heading))
@@ -128,7 +127,7 @@ class WaypointTableBody(QTableWidget):
 
 
         del self.model[rowNum]
-        
+
         self.num_waypoints -= 1
 
         # tempWidget = QWidget()
@@ -200,7 +199,7 @@ class WaypointTable(QWidget):
         self.wp_table_layout = QVBoxLayout()
 
         self.scroll_area.setWidget(self.tableBody)
-    
+
         self.wp_table_layout.addWidget(self.scroll_area)
 
         self.test_layout.addWidget(self.path_list)
@@ -235,7 +234,7 @@ class WaypointTable(QWidget):
                 for wp in path.waypoints:
                     waypoints.append(wp)
         self.model.update(waypoints)
-        
+
 
 
     def save_auto(self):
@@ -255,15 +254,15 @@ class WaypointTable(QWidget):
             #json_obj['reversed'] = False
 
             json_obj['paths'] = []
-            
+
 
             for i, path in enumerate(paths):
                 json_obj['paths'].append({})
                 json_obj["paths"][i]["name"] = path.name
                 json_obj["paths"][i]["waypoints"] = []
                 for wp in path.waypoints:
-                    json_obj["paths"][i]["waypoints"].append(wp.toJson()) 
-                    
+                    json_obj["paths"][i]["waypoints"].append(wp.toJson())
+
 
             path_json = json.dumps(json_obj, indent=4)
 
