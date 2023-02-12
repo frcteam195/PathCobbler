@@ -41,10 +41,11 @@ class FieldView(QLabel):
         self.fieldHeight = self.image.height()
 
         self.wp_size = 8
-        self.heading_length = 15
+        self.track_length = 15
         self.painter = QPainter()
 
-        self.rotate = False
+        self.rotate_heading = False
+        self.rotate_track = False
 
     def pixels_to_inches(self, pixelsX, pixelsY):
         inchesX = (pixelsX / self.fieldWidth) * constants.fieldWidth - constants.xOffset
@@ -85,6 +86,7 @@ class FieldView(QLabel):
                     self.model.update()
                     return
 
+            track = 0
             heading = 0
 
             inchesX, inchesY = self.pixels_to_inches(ev.position().x(), ev.position().y())
@@ -96,9 +98,11 @@ class FieldView(QLabel):
                 x_diff = inchesX - last_wp.x
                 y_diff = inchesY - last_wp.y
 
-                heading = int(math.degrees(math.atan2(y_diff, x_diff)))
+                track = int(math.degrees(math.atan2(y_diff, x_diff)))
+                
+                heading = track
 
-            wp = Waypoint(inchesX, inchesY, heading)
+            wp = Waypoint(inchesX, inchesY, track, heading)
 
             self.model.append(wp)
         elif ev.button() == Qt.RightButton:
@@ -130,15 +134,21 @@ class FieldView(QLabel):
                 inchesX = float(math.floor(inchesX))
                 inchesY = float(math.floor(inchesY))
 
-                if self.rotate:
+                if self.rotate_track:
+                    x_diff = inchesX - wp.x
+                    y_diff = inchesY - wp.y
+
+                    wp.track = float(math.floor(math.degrees(math.atan2(y_diff, x_diff))))
+                    
+                elif self.rotate_heading:
                     x_diff = inchesX - wp.x
                     y_diff = inchesY - wp.y
 
                     wp.heading = float(math.floor(math.degrees(math.atan2(y_diff, x_diff))))
+                           
                 else:
                     wp.x = inchesX
-                    wp.y = inchesY
-
+                    wp.y = inchesY   
         self.model.update()
 
         return super().mouseMoveEvent(ev)
@@ -170,21 +180,27 @@ class FieldView(QLabel):
             if wp.enabled:
                 pointColor = QColor(25, 255, 45)
                 lineColor = pointColor
+                headingColor = QColor(250, 17, 242)
 
                 if wp.clicked:
                     pointColor = QColor(255, 0, 0)
 
-                    if self.rotate:
+                    if self.rotate_heading:
                         lineColor = pointColor
+                    if self.rotate_track:
+                        headingColor = QColor(255, 172, 28)
 
                 pixelsX, pixelsY = self.inches_to_pixels(wp.x, wp.y)
 
-                x_diff = self.heading_length * math.cos(math.radians(wp.heading))
-                y_diff = self.heading_length * math.sin(math.radians(wp.heading))
+                x_diff = self.track_length * math.cos(math.radians(wp.heading))
+                y_diff = self.track_length * math.sin(math.radians(wp.heading))
+                track_x_d = self.track_length * math.cos(math.radians(wp.track))
+                track_y_d = self.track_length * math.sin(math.radians(wp.track))
 
                 self.painter.setPen(QPen(lineColor, 3))
                 self.painter.drawLine(QPointF(pixelsX, pixelsY), QPointF(pixelsX + x_diff, pixelsY - y_diff))
-
+                self.painter.setPen(QPen(headingColor, 3))
+                self.painter.drawLine(QPointF(pixelsX, pixelsY), QPointF(pixelsX + track_x_d , pixelsY - track_y_d))
                 self.painter.setPen(Qt.NoPen)
                 self.painter.setBrush(QBrush(pointColor, Qt.SolidPattern))
                 self.painter.drawEllipse(QPointF(pixelsX, pixelsY), self.wp_size, self.wp_size)
