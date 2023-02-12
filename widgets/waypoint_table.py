@@ -35,8 +35,8 @@ class WaypointTableBody(QTableWidget):
 
 
         self.model.updated.connect(self.draw_table)
-        self.setColumnCount(5)
-        self.setHorizontalHeaderLabels(["X", "Y", "Header", "Enabled", "Delete"])
+        self.setColumnCount(6)
+        self.setHorizontalHeaderLabels(["X", "Y", "Track", "Heading",  "Enabled", "Delete"])
 
         self.itemChanged.connect(self.item_changed)
 
@@ -47,21 +47,22 @@ class WaypointTableBody(QTableWidget):
 
             x_val = float(self.item(i, 0).text())
             y_val = float(self.item(i, 1).text())
-            heading_val = float(self.item(i, 2).text())
-            enabled_val = self.item(i, 3).getCheckedState() == Qt.Checked
+            heading_val = float(self.item(i, 3).text())
+            track_val = float(self.item(i, 2).text())
+            enabled_val = self.item(i, 4).getCheckedState() == Qt.Checked
 
 
-            self.model[i] = Waypoint(x_val, y_val, heading_val, enabled = enabled_val)
+            self.model[i] = Waypoint(x_val, y_val, track_val, heading_val, enabled = enabled_val)
        
         # for i in range(0, self.rowCount()):
         #     print("hello")
         #     x_val = float(self.item(i, 0).text())
         #     y_val = float(self.item(i, 1).text())
-        #     heading_val = float(self.item(i, 2).text())
+        #     track_val = float(self.item(i, 2).text())
         #     enabled_val = self.item(i, 3)
-        #     print("heading: ", heading_val)
+        #     print("track: ", track_val)
         #     print("enabled: ", enabled_val)
-        #     waypoints.append(Waypoint(x_val, y_val, heading_val, enabled=enabled_val))
+        #     waypoints.append(Waypoint(x_val, y_val, track_val, enabled=enabled_val))
 
         # self.model.update(waypoints)
 
@@ -83,11 +84,11 @@ class WaypointTableBody(QTableWidget):
         row = item.row()
         x_val = float(self.item(row, 0).text())
         y_val = float(self.item(row, 1).text())
-        heading_val = float(self.item(row, 2).text())
-        enabled_val = self.item(row, 3).checkState() == Qt.CheckState.Checked
+        track_val = float(self.item(row, 2).text())
+        heading_val = float(self.item(row, 3).text())
+        enabled_val = self.item(row, 4).checkState() == Qt.CheckState.Checked
 
-        self.model[row] = Waypoint(x_val, y_val, heading_val, enabled = enabled_val)
-        print(x_val, y_val, heading_val, enabled_val)
+        self.model[row] = Waypoint(x_val, y_val, track_val, heading_val, enabled = enabled_val)
 
     def add_waypoint(self, wp: Waypoint):
         # TODO: Fix model implementation so the
@@ -107,10 +108,11 @@ class WaypointTableBody(QTableWidget):
 
         self.setItem(num_rows, 0, QTableWidgetItem(str(wp.x)))
         self.setItem(num_rows, 1, QTableWidgetItem(str(wp.y)))
-        self.setItem(num_rows, 2, QTableWidgetItem(str(wp.heading)))
-        self.setItem(num_rows, 3, self.checkboxItem)
+        self.setItem(num_rows, 2, QTableWidgetItem(str(wp.track)))
+        self.setItem(num_rows, 3, QTableWidgetItem(str(wp.heading)))
+        self.setItem(num_rows, 4, self.checkboxItem)
 
-        self.setCellWidget(num_rows, 4, self.delete_button)
+        self.setCellWidget(num_rows, 5, self.delete_button)
 
         self.blockSignals(False)
 
@@ -209,7 +211,7 @@ class WaypointTable(QWidget):
     def get_waypoints(self):
         return self.model.waypoints
 
-    def add_waypoint(self, wp: Waypoint=Waypoint(0, 0, 0)):
+    def add_waypoint(self, wp: Waypoint=Waypoint(0, 0, 0, 0)):
         self.model.append(wp)
         pass
     def delete_row(self, rowNum):

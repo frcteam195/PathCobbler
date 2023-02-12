@@ -40,12 +40,14 @@ class MainWidget(QWidget):
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if event.key() == Qt.Key_Shift:
-            self.field.rotate = True
-
+            self.field.rotate_track = True
+        if event.key() == Qt.Key_Control:
+            self.field.rotate_heading = True
         return super().keyPressEvent(event)
 
     def keyReleaseEvent(self, event: QKeyEvent) -> None:
         if event.key() == Qt.Key_Shift:
-            self.field.rotate = False
-
+            self.field.rotate_track = False
+        if event.key() == Qt.Key_Control:
+            self.field.rotate_heading = False
         return super().keyReleaseEvent(event)
