@@ -1,24 +1,41 @@
 {
     "id": 1,
-    "name": "Path2",
+    "name": "path2",
     "reversed": false,
     "waypoints": [
         {
-            "x": 87.0,
-            "y": -123.0,
-            "theta": 0.0,
+            "x": 328.0,
+            "y": -191.0,
+            "theta": -49.0,
+            "heading": 0.0,
             "comment": ""
         },
         {
-            "x": 194.0,
-            "y": -46.0,
-            "theta": 25.0,
+            "x": 376.0,
+            "y": -157.0,
+            "theta": 158.0,
+            "heading": -27.0,
             "comment": ""
         },
         {
-            "x": 444.0,
-            "y": -28.0,
-            "theta": -24.0,
+            "x": 342.0,
+            "y": -29.0,
+            "theta": 180.0,
+            "heading": 147.0,
+            "comment": ""
+        },
+        {
+            "x": 221.0,
+            "y": -109.0,
+            "theta": -172.0,
+            "heading": -175.0,
+            "comment": ""
+        },
+        {
+            "x": 215.0,
+            "y": -204.0,
+            "theta": 66.0,
+            "heading": 10.0,
             "comment": ""
         }
     ]

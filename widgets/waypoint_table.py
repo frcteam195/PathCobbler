@@ -226,7 +226,7 @@ class WaypointTable(QWidget):
                 self.path_list.list.addItem(path)
                 for wp in path.waypoints:
                     waypoints.append(wp)
-        self.model.update(waypoints)
+            self.model.update(waypoints)
 
 
 
