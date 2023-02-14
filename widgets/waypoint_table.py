@@ -153,7 +153,7 @@ class WaypointTable(QWidget):
         self.model = model
         self.field = field
 
-        self.setMinimumSize(920, 300)
+        self.setMinimumSize(1010, 300)
 
         self.addButton = QPushButton('Add Point')
         self.addButton.clicked.connect(lambda: self.add_waypoint())
@@ -163,7 +163,7 @@ class WaypointTable(QWidget):
         self.flipButton = QPushButton('Flip Field')
         self.flipButton.clicked.connect(self.flipSignal.emit)
         self.loadButton = QPushButton('Load Auto')
-        self.loadButton.clicked.connect(self.load_path)
+        self.loadButton.clicked.connect(self.load_auto_wp_table)
         self.saveButton = QPushButton('Save Auto')
         self.saveButton.clicked.connect(self.save_auto)
         self.howToUseButton = QPushButton('?')
@@ -217,7 +217,7 @@ class WaypointTable(QWidget):
     def delete_row(self, rowNum):
         self.tableBody.delete_row(rowNum)
 
-    def load_path(self):
+    def load_auto_wp_table(self):
         filename, _ = QFileDialog.getOpenFileName(self, 'Select File to Load', '.', 'JSON File (*.json)')
         waypoints = []
         auto = load_auto(filename)
@@ -261,7 +261,6 @@ class WaypointTable(QWidget):
 
             with open(filename, 'w') as f:
                 f.write(path_json)
-
             self.screenshot(filename.replace(".json", ".png"))
         else:
             msg = QMessageBox()
@@ -281,6 +280,14 @@ class WaypointTable(QWidget):
         
 
     def screenshot(self, filename):
+        auto = load_auto(filename.replace(".png", ".json"))
+        waypoints = []
+        if auto is not None:
+            for path in auto:
+                self.path_list.list.addItem(path)
+                for wp in path.waypoints:
+                    waypoints.append(wp)
+            self.model.update(waypoints)
         screenshot_area = QRect(self.field.x(), self.field.y(), self.field.width(), self.field.height())
         screenshot = self.window().grab(screenshot_area)
         screenshot.save(filename)
