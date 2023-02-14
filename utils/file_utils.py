@@ -24,7 +24,7 @@ def load_path(filename):
     path_json = open_json_file(filename)
 
     if path_json is None:
-        return
+        return None
 
     # self.tableBody.clear()
     waypoints = []
