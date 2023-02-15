@@ -14,9 +14,10 @@ class WaypointModel(QObject):
         self.waypoints: List[Waypoint] = waypoints
 
     def update(self, waypoints: List[Waypoint]=[]):
-        if len(waypoints) > 0:
-            self.waypoints = waypoints
-        self.updated.emit()
+        if waypoints is not None:
+            if len(waypoints) > 0:
+                self.waypoints = waypoints
+            self.updated.emit()
 
     def clear_model(self):
         self.waypoints.clear()

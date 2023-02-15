@@ -296,8 +296,18 @@ class WaypointTable(QWidget):
     def show_auto(self):
         waypoints = []
         auto = self.path_list.get_paths()
+        last_item = None
         if auto is not None:
             for path in auto:
+                if last_item != path.waypoints[0].x and last_item is not None:
+                    print(1)
+                    msg = QMessageBox()
+                    msg.setWindowTitle("Error!")
+                    msg.setIcon(QMessageBox.Warning)
+                    msg.setGeometry(500, 500, 500, 500)
+                    msg.setText("One of your paths doesn't end with the same point that begins the subsequent path")
+                    msg.exec()
+                last_item = path.waypoints[len(path.waypoints) - 1].x
                 self.path_list.list.addItem(path)
                 for wp in path.waypoints:
                     waypoints.append(wp)
