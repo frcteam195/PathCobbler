@@ -166,6 +166,8 @@ class WaypointTable(QWidget):
         self.loadButton.clicked.connect(self.load_auto_wp_table)
         self.saveButton = QPushButton('Save Auto')
         self.saveButton.clicked.connect(self.save_auto)
+        self.showButton = QPushButton('Show Auto')
+        self.showButton.clicked.connect(self.show_auto)
         self.howToUseButton = QPushButton('?')
         self.howToUseButton.clicked.connect(self.program_explanation)
         self.howToUseButton.setMaximumSize(32, 32)
@@ -176,6 +178,7 @@ class WaypointTable(QWidget):
         self.buttonLayout.addWidget(self.flipButton)
         self.buttonLayout.addWidget(self.loadButton)
         self.buttonLayout.addWidget(self.saveButton)
+        self.buttonLayout.addWidget(self.showButton)
         self.buttonLayout.addWidget(self.howToUseButton)
 
         # setting radius and border
@@ -227,8 +230,6 @@ class WaypointTable(QWidget):
                 for wp in path.waypoints:
                     waypoints.append(wp)
             self.model.update(waypoints)
-
-
 
     def save_auto(self):
         if self.path_list.list.count() > 0:
@@ -291,3 +292,13 @@ class WaypointTable(QWidget):
         screenshot_area = QRect(self.field.x(), self.field.y(), self.field.width(), self.field.height())
         screenshot = self.window().grab(screenshot_area)
         screenshot.save(filename)
+    
+    def show_auto(self):
+        waypoints = []
+        auto = self.path_list.get_paths()
+        if auto is not None:
+            for path in auto:
+                self.path_list.list.addItem(path)
+                for wp in path.waypoints:
+                    waypoints.append(wp)
+            self.model.update(waypoints)
