@@ -5,6 +5,9 @@ from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 
+import imageio as io
+import pygifsicle as optimize
+
 from utils.waypoint import Waypoint
 from widgets.path_list import PathList
 from widgets.waypoint_model import WaypointModel
@@ -262,7 +265,7 @@ class WaypointTable(QWidget):
 
             with open(filename, 'w') as f:
                 f.write(path_json)
-            self.screenshot(filename.replace(".json", ".png"))
+            self.screenshot(filename)
         else:
             msg = QMessageBox()
             msg.setWindowTitle("WARNING")
@@ -281,18 +284,23 @@ class WaypointTable(QWidget):
         
 
     def screenshot(self, filename):
-        auto = load_auto(filename.replace(".png", ".json"))
-        waypoints = []
-        if auto is not None:
-            for path in auto:
-                self.path_list.list.addItem(path)
-                for wp in path.waypoints:
-                    waypoints.append(wp)
+        # auto = load_auto(filename.replace(".png", ".json"))
+        for file in os.scandir('./resources/animation_in'):
+            os.remove(file.path)
+        # for wp in path.waypoints:
+        #         waypoints.append(wp)
+
+        for path in self.path_list.get_paths():
+            waypoints = path.waypoints
+
             self.model.update(waypoints)
-        screenshot_area = QRect(self.field.x(), self.field.y(), self.field.width(), self.field.height())
-        screenshot = self.window().grab(screenshot_area)
-        screenshot.save(filename)
-    
+
+            screenshot_area = QRect(self.field.x(), self.field.y(), self.field.width(), self.field.height())
+            screenshot = self.window().grab(screenshot_area)
+
+            screenshot.save(f"./resources/animation_in/auto_animation_{path.name}.png")
+        self.make_gif(filename.replace(".json", ""))
+        
     def show_auto(self):
         waypoints = []
         auto = self.path_list.get_paths()
@@ -300,7 +308,6 @@ class WaypointTable(QWidget):
         if auto is not None:
             for path in auto:
                 if last_item != path.waypoints[0].x and last_item is not None:
-                    print(1)
                     msg = QMessageBox()
                     msg.setWindowTitle("Error!")
                     msg.setIcon(QMessageBox.Warning)
@@ -312,3 +319,15 @@ class WaypointTable(QWidget):
                 for wp in path.waypoints:
                     waypoints.append(wp)
             self.model.update(waypoints)
+
+    def make_gif(self, file_name):
+        images = []
+        
+        for filename in sorted(os.listdir('./resources/animation_in')):
+            print(filename)
+            if filename.startswith("auto_animation_") and filename.endswith(".png"):
+                images.append(io.imread(os.path.join("./resources/animation_in",  f"{filename}")))
+        io.mimsave(f'{file_name}.gif', images, fps=1)
+        # optimize(file_name)
+
+
