@@ -1,0 +1,72 @@
+{
+    "name": "auto2",
+    "path_count": 2,
+    "paths": [
+        {
+            "name": "path",
+            "waypoints": [
+                {
+                    "x": 297.0,
+                    "y": -101.0,
+                    "theta": 0.0,
+                    "heading": 0.0,
+                    "comment": ""
+                },
+                {
+                    "x": 296.0,
+                    "y": -154.0,
+                    "theta": 40.0,
+                    "heading": 40.0,
+                    "comment": ""
+                },
+                {
+                    "x": 313.0,
+                    "y": -19.0,
+                    "theta": 163.0,
+                    "heading": 163.0,
+                    "comment": ""
+                }
+            ]
+        },
+        {
+            "name": "path2",
+            "waypoints": [
+                {
+                    "x": 329.0,
+                    "y": -255.0,
+                    "theta": -49.0,
+                    "heading": 0.0,
+                    "comment": ""
+                },
+                {
+                    "x": 534.0,
+                    "y": -185.0,
+                    "theta": 158.0,
+                    "heading": -27.0,
+                    "comment": ""
+                },
+                {
+                    "x": 493.0,
+                    "y": -35.0,
+                    "theta": 180.0,
+                    "heading": 147.0,
+                    "comment": ""
+                },
+                {
+                    "x": 147.0,
+                    "y": -44.0,
+                    "theta": -172.0,
+                    "heading": -175.0,
+                    "comment": ""
+                },
+                {
+                    "x": 63.0,
+                    "y": -168.0,
+                    "theta": 66.0,
+                    "heading": 10.0,
+                    "comment": ""
+                }
+            ]
+        }
+    ]
+}

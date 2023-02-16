@@ -67,7 +67,6 @@ class ShoeList(QListWidget):
         if load_path is not None:
             new_item = Auto(os.path.splitext(os.path.basename(self.fileName))[0], load_path(self.fileName))
             self.model.update(new_item.waypoints)
-            self
 
             self.addItem(new_item)
 
@@ -84,7 +83,6 @@ class ShoeList(QListWidget):
         item = self.currentItem()
         if item is not None:
             self.model.update(item.waypoints)
-            print(item.waypoints)
         else:
             self.model.clear_model()
     
