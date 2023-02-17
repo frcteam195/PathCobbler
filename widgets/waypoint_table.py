@@ -169,8 +169,8 @@ class WaypointTable(QWidget):
         self.loadButton.clicked.connect(self.load_auto_wp_table)
         self.saveButton = QPushButton('Save Auto')
         self.saveButton.clicked.connect(self.save_auto)
-        self.showButton = QPushButton('Show Auto')
-        self.showButton.clicked.connect(self.show_auto)
+        # self.showButton = QPushButton('Show Auto')
+        # self.showButton.clicked.connect(self.show_auto)
         self.howToUseButton = QPushButton('?')
         self.howToUseButton.clicked.connect(self.program_explanation)
         self.howToUseButton.setMaximumSize(32, 32)
@@ -181,7 +181,7 @@ class WaypointTable(QWidget):
         self.buttonLayout.addWidget(self.flipButton)
         self.buttonLayout.addWidget(self.loadButton)
         self.buttonLayout.addWidget(self.saveButton)
-        self.buttonLayout.addWidget(self.showButton)
+        # self.buttonLayout.addWidget(self.showButton)
         self.buttonLayout.addWidget(self.howToUseButton)
 
         # setting radius and border
@@ -227,12 +227,25 @@ class WaypointTable(QWidget):
         filename, _ = QFileDialog.getOpenFileName(self, 'Select File to Load', '.', 'JSON File (*.json)')
         waypoints = []
         auto = load_auto(filename)
+        last_x = None
+        last_y = None
+        last_track = None
         if auto is not None:
             for path in auto:
+                if last_x is not None and last_x != path.waypoints[0].x and last_y != path.waypoints[0].y and last_track != path.waypoints[0].track:
+                    msg = QMessageBox()
+                    msg.setWindowTitle("Error!")
+                    msg.setIcon(QMessageBox.Warning)
+                    msg.setGeometry(500, 500, 500, 500)
+                    msg.setText("One of your paths doesn't end with the same point that begins the subsequent path")
+                    msg.exec()
                 self.path_list.list.addItem(path)
                 for wp in path.waypoints:
                     waypoints.append(wp)
-            self.model.update(waypoints)
+                last_x = path.waypoints[len(path.waypoints) - 1].x
+                last_y = path.waypoints[len(path.waypoints) - 1].y
+                last_track = path.waypoints[len(path.waypoints) - 1].track
+                self.model.update(waypoints)
 
     def save_auto(self):
         if self.path_list.list.count() > 0:
@@ -291,8 +304,22 @@ class WaypointTable(QWidget):
         #         waypoints.append(wp)
 
         increment = 0
+        last_x = None
+        last_y = None
+        last_track = None
 
         for path in self.path_list.get_paths():
+            if last_x is not None and last_x != path.waypoints[0].x and last_y != path.waypoints[0].y and last_track != path.waypoints[0].track:
+                msg = QMessageBox()
+                msg.setWindowTitle("Error!")
+                msg.setIcon(QMessageBox.Warning)
+                msg.setGeometry(500, 500, 500, 500)
+                msg.setText("One of your paths doesn't end with the same point that begins the subsequent path")
+                msg.exec()
+            last_x = path.waypoints[len(path.waypoints) - 1].x
+            last_y = path.waypoints[len(path.waypoints) - 1].y
+            last_track = path.waypoints[len(path.waypoints) - 1].track
+
             increment += 1
 
             waypoints = path.waypoints
@@ -313,24 +340,24 @@ class WaypointTable(QWidget):
            
         self.make_gif(filename.replace(".json", ""))
         
-    def show_auto(self):
-        waypoints = []
-        auto = self.path_list.get_paths()
-        last_item = None
-        if auto is not None:
-            for path in auto:
-                if last_item is not None and last_item != path.waypoints[0].x  :
-                    msg = QMessageBox()
-                    msg.setWindowTitle("Error!")
-                    msg.setIcon(QMessageBox.Warning)
-                    msg.setGeometry(500, 500, 500, 500)
-                    msg.setText("One of your paths doesn't end with the same point that begins the subsequent path")
-                    msg.exec()
-                last_item = path.waypoints[len(path.waypoints) - 1].x
-                self.path_list.list.addItem(path)
-                for wp in path.waypoints:
-                    waypoints.append(wp)
-            self.model.update(waypoints)
+    # def show_auto(self):
+    #     waypoints = []
+    #     auto = self.path_list.get_paths()
+    #     last_item = None
+    #     if auto is not None:
+    #         for path in auto:
+    #             if last_item is not None and last_item != path.waypoints[0].x  :
+    #                 msg = QMessageBox()
+    #                 msg.setWindowTitle("Error!")
+    #                 msg.setIcon(QMessageBox.Warning)
+    #                 msg.setGeometry(500, 500, 500, 500)
+    #                 msg.setText("One of your paths doesn't end with the same point that begins the subsequent path")
+    #                 msg.exec()
+    #             last_item = path.waypoints[len(path.waypoints) - 1].x
+    #             self.path_list.list.addItem(path)
+    #             for wp in path.waypoints:
+    #                 waypoints.append(wp)
+    #         self.model.update(waypoints)
 
     def make_gif(self, file_name):
         images = []
