@@ -6,7 +6,7 @@ from PySide6.QtCore import *
 from PySide6.QtGui import *
 
 import imageio as io
-import pygifsicle as optimize
+from PIL import Image, ImageFont, ImageDraw 
 
 from utils.waypoint import Waypoint
 from widgets.path_list import PathList
@@ -290,7 +290,11 @@ class WaypointTable(QWidget):
         # for wp in path.waypoints:
         #         waypoints.append(wp)
 
+        increment = 0
+
         for path in self.path_list.get_paths():
+            increment += 1
+
             waypoints = path.waypoints
 
             self.model.update(waypoints)
@@ -299,6 +303,14 @@ class WaypointTable(QWidget):
             screenshot = self.window().grab(screenshot_area)
 
             screenshot.save(f"./resources/animation_in/auto_animation_{path.name}.png")
+
+            test = Image.open(f"./resources/animation_in/auto_animation_{path.name}.png")
+            image = ImageDraw.Draw(test)
+
+            image.text((15, test.size[1] - 175), str(increment), (237, 230, 211), font = ImageFont.truetype("Arial Unicode.ttf", 150))
+
+            test.save(f"./resources/animation_in/auto_animation_{path.name}.png")
+           
         self.make_gif(filename.replace(".json", ""))
         
     def show_auto(self):
@@ -307,7 +319,7 @@ class WaypointTable(QWidget):
         last_item = None
         if auto is not None:
             for path in auto:
-                if last_item != path.waypoints[0].x and last_item is not None:
+                if last_item is not None and last_item != path.waypoints[0].x  :
                     msg = QMessageBox()
                     msg.setWindowTitle("Error!")
                     msg.setIcon(QMessageBox.Warning)
