@@ -219,7 +219,7 @@ class FieldView(QLabel):
         self.setPixmap(canvas)
 
     def drawRobot(self, painter: QPainter, wp: Waypoint):
-        h = math.radians(wp.track)
+        h = math.radians(wp.heading)
 
         angles = [h + (math.pi / 2) + constants.C_T,
                 h - (math.pi / 2) + constants.C_T,
