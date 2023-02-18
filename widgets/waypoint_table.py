@@ -345,7 +345,7 @@ class WaypointTable(QWidget):
             for pt in tiny_points:
                 #Ignore this
                 skip += 1
-                if skip == 5:
+                if skip == 15:
 
                     skip = 0
                     
@@ -396,7 +396,7 @@ class WaypointTable(QWidget):
         print()
         for filename in files:
             images.append(filename)
-        iio.mimsave(f'{file_name}.gif', images, fps=10)
+        iio.mimsave(f'{file_name}.gif', images, fps=15)
         # optimize(file_name)
 
 
