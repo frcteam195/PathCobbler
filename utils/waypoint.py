@@ -12,14 +12,14 @@ class Waypoint:
         self.clicked = clicked
 
     def __str__(self):
-        return f'X: {self.x}, Y: {self.y}, Theta: {self.track}, Heading: {self.heading} Enabled: {"Y" if self.enabled else "N"}'
+        return f'X: {self.x}, Y: {self.y}, Track: {self.track}, Heading: {self.heading} Enabled: {"Y" if self.enabled else "N"}'
 
     def toJson(self):
         json_obj = dict()
 
         json_obj['x'] = self.x
         json_obj['y'] = self.y
-        json_obj['theta'] = self.track
+        json_obj['track'] = self.track
         json_obj['heading'] = self.heading
         json_obj['comment'] = ''
 

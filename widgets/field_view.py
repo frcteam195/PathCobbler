@@ -99,7 +99,7 @@ class FieldView(QLabel):
                 y_diff = inchesY - last_wp.y
 
                 track = int(math.degrees(math.atan2(y_diff, x_diff)))
-                
+
                 heading = track
 
             wp = Waypoint(inchesX, inchesY, track, heading)
@@ -139,16 +139,17 @@ class FieldView(QLabel):
                     y_diff = inchesY - wp.y
 
                     wp.track = float(math.floor(math.degrees(math.atan2(y_diff, x_diff))))
-                    
+
                 elif self.rotate_heading:
                     x_diff = inchesX - wp.x
                     y_diff = inchesY - wp.y
 
                     wp.heading = float(math.floor(math.degrees(math.atan2(y_diff, x_diff))))
-                           
+
                 else:
                     wp.x = inchesX
-                    wp.y = inchesY   
+                    wp.y = inchesY
+
         self.model.update()
 
         return super().mouseMoveEvent(ev)
@@ -168,13 +169,22 @@ class FieldView(QLabel):
 
         for wp in spline_wps:
             if wp.enabled:
-                self.painter.setPen(Qt.NoPen)
-                self.painter.setBrush(QBrush(QColor(0, 255, 0), Qt.SolidPattern))
-
                 pixelsX, pixelsY = self.inches_to_pixels(wp.x, wp.y)
 
+                self.painter.setPen(Qt.NoPen)
+                self.painter.setBrush(QBrush(QColor(0, 255, 0), Qt.SolidPattern))
                 self.painter.drawEllipse(QPointF(pixelsX, pixelsY), 3, 3)
                 self.drawRobot(self.painter, wp)
+
+        for idx, wp in enumerate(spline_wps):
+            if wp.enabled:
+                pixelsX, pixelsY = self.inches_to_pixels(wp.x, wp.y)
+
+                if idx % 10 == 0:
+                    heading_x_d = self.track_length * math.cos(math.radians(wp.heading))
+                    heading_y_d = self.track_length * math.sin(math.radians(wp.heading))
+                    self.painter.setPen(QPen(QColor(255, 0, 0), 3))
+                    self.painter.drawLine(QPointF(pixelsX, pixelsY), QPointF(pixelsX + heading_x_d, pixelsY - heading_y_d))
 
         for wp in wps:
             if wp.enabled:
@@ -192,15 +202,15 @@ class FieldView(QLabel):
 
                 pixelsX, pixelsY = self.inches_to_pixels(wp.x, wp.y)
 
-                x_diff = self.track_length * math.cos(math.radians(wp.heading))
-                y_diff = self.track_length * math.sin(math.radians(wp.heading))
-                track_x_d = self.track_length * math.cos(math.radians(wp.track))
-                track_y_d = self.track_length * math.sin(math.radians(wp.track))
+                x_diff = self.track_length * math.cos(math.radians(wp.track))
+                y_diff = self.track_length * math.sin(math.radians(wp.track))
+                heading_x_d = self.track_length * math.cos(math.radians(wp.track))
+                heading_y_d = self.track_length * math.sin(math.radians(wp.track))
 
                 self.painter.setPen(QPen(lineColor, 3))
                 self.painter.drawLine(QPointF(pixelsX, pixelsY), QPointF(pixelsX + x_diff, pixelsY - y_diff))
                 self.painter.setPen(QPen(headingColor, 3))
-                self.painter.drawLine(QPointF(pixelsX, pixelsY), QPointF(pixelsX + track_x_d , pixelsY - track_y_d))
+                self.painter.drawLine(QPointF(pixelsX, pixelsY), QPointF(pixelsX + heading_x_d , pixelsY - heading_y_d))
                 self.painter.setPen(Qt.NoPen)
                 self.painter.setBrush(QBrush(pointColor, Qt.SolidPattern))
                 self.painter.drawEllipse(QPointF(pixelsX, pixelsY), self.wp_size, self.wp_size)
@@ -209,7 +219,7 @@ class FieldView(QLabel):
         self.setPixmap(canvas)
 
     def drawRobot(self, painter: QPainter, wp: Waypoint):
-        h = math.radians(wp.heading)
+        h = math.radians(wp.track)
 
         angles = [h + (math.pi / 2) + constants.C_T,
                 h - (math.pi / 2) + constants.C_T,
