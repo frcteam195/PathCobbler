@@ -11,16 +11,18 @@ from utils.waypoint import Waypoint
 class C_Waypoint(Structure):
     _fields_ = [('x', c_double),
                 ('y', c_double),
+                ('track', c_double),
                 ('heading', c_double),
                 ('curvature', c_double)]
 
-    def __init__(self, x=0.0, y=0.0, heading=0.0):
+    def __init__(self, x=0.0, y=0.0, track=0.0, heading=0.0):
         self.x = x
         self.y = y
+        self.track = track
         self.heading = heading
 
     def __str__(self):
-        return f'{self.x} {self.y} {self.heading}'
+        return f'{self.x} {self.y} {self.track} {self.heading}'
 
 
 class C_WaypointArray(Structure):
@@ -58,7 +60,7 @@ def calc_splines(waypoints: List[Waypoint]):
     c_waypoints = []
     for wp in waypoints:
         if wp.enabled:
-            c_waypoints.append(C_Waypoint(wp.x, wp.y, wp.track))
+            c_waypoints.append(C_Waypoint(wp.x, wp.y, wp.track, wp.heading))
 
     c_wp_arr = C_WaypointArray(c_waypoints)
 
@@ -74,7 +76,7 @@ def calc_splines(waypoints: List[Waypoint]):
 
     ret_wps = []
     for point in spline_points.waypoints:
-        ret_wps.append(Waypoint(point.x, point.y, 0, point.heading))
+        ret_wps.append(Waypoint(point.x, point.y, point.track, point.heading))
         # print(point)
 
     spline_points.free()
