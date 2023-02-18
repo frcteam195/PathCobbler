@@ -11,6 +11,7 @@ typedef struct
 {
     double x;
     double y;
+    double track;
     double heading;
     double curvature;
 } waypoint_t;
