@@ -30,7 +30,7 @@ def load_path(filename):
     waypoints = []
     if 'waypoints' in path_json:
         for wp_json in path_json['waypoints']:
-            waypoints.append(Waypoint(wp_json['x'], wp_json['y'], wp_json['theta'], wp_json['heading']))
+            waypoints.append(Waypoint(wp_json['x'], wp_json['y'], wp_json['track'], wp_json['heading']))
         return waypoints
     else:
         msg = QMessageBox()
@@ -52,7 +52,7 @@ def load_auto(filename):
         for path in path_json['paths']:
             waypoints = []
             for wp in path['waypoints']:
-                waypoints.append(Waypoint(wp['x'], wp['y'], wp['theta'], wp['heading']))
+                waypoints.append(Waypoint(wp['x'], wp['y'], wp['track'], wp['heading']))
 
             paths.append(Auto(path['name'], waypoints))
         return paths
