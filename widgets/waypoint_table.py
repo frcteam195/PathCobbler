@@ -4,8 +4,10 @@ import json
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
+from io import BytesIO
 
-import imageio as io
+import imageio as iio
+
 from PIL import Image, ImageFont, ImageDraw 
 
 from utils.waypoint import Waypoint
@@ -14,6 +16,8 @@ from widgets.waypoint_model import WaypointModel
 from widgets.field_view import FieldView
 from widgets.cordwainer import Cordwainer
 from utils.auto import Auto
+
+from utils.bindings import calc_splines
 
 from utils.file_utils import *
 
@@ -232,13 +236,15 @@ class WaypointTable(QWidget):
         last_track = None
         if auto is not None:
             for path in auto:
-                if last_x is not None and last_x != path.waypoints[0].x and last_y != path.waypoints[0].y and last_track != path.waypoints[0].track:
-                    msg = QMessageBox()
-                    msg.setWindowTitle("Error!")
-                    msg.setIcon(QMessageBox.Warning)
-                    msg.setGeometry(500, 500, 500, 500)
-                    msg.setText("One of your paths doesn't end with the same point that begins the subsequent path")
-                    msg.exec()
+                #PUT BACK LATER
+
+                # if last_x is not None and last_x != path.waypoints[0].x and last_y != path.waypoints[0].y and last_track != path.waypoints[0].track:
+                #     msg = QMessageBox()
+                #     msg.setWindowTitle("Error!")
+                #     msg.setIcon(QMessageBox.Warning)
+                #     msg.setGeometry(500, 500, 500, 500)
+                #     msg.setText("One of your paths doesn't end with the same point that begins the subsequent path")
+                #     msg.exec()
                 self.path_list.list.addItem(path)
                 for wp in path.waypoints:
                     waypoints.append(wp)
@@ -303,42 +309,71 @@ class WaypointTable(QWidget):
         # for wp in path.waypoints:
         #         waypoints.append(wp)
 
-        increment = 0
         last_x = None
         last_y = None
         last_track = None
 
+        path_num = 0
+        p = 0
+        images = [] 
         for path in self.path_list.get_paths():
-            if last_x is not None and last_x != path.waypoints[0].x and last_y != path.waypoints[0].y and last_track != path.waypoints[0].track:
-                msg = QMessageBox()
-                msg.setWindowTitle("Error!")
-                msg.setIcon(QMessageBox.Warning)
-                msg.setGeometry(500, 500, 500, 500)
-                msg.setText("One of your paths doesn't end with the same point that begins the subsequent path")
-                msg.exec()
+            #PUT BACK IN LATER
+        
+            # if last_x is not None and last_x != path.waypoints[0].x and last_y != path.waypoints[0].y and last_track != path.waypoints[0].track:
+            #     msg = QMessageBox()
+            #     msg.setWindowTitle("Error!")
+            #     msg.setIcon(QMessageBox.Warning)
+            #     msg.setGeometry(500, 500, 500, 500)
+            #     msg.setText("One of your paths doesn't end with the same point that begins the subsequent path")
+            #     msg.exec()
+
             last_x = path.waypoints[len(path.waypoints) - 1].x
             last_y = path.waypoints[len(path.waypoints) - 1].y
             last_track = path.waypoints[len(path.waypoints) - 1].track
 
-            increment += 1
-
+            path_num += 1
+          
             waypoints = path.waypoints
 
             self.model.update(waypoints)
 
+            tiny_points = calc_splines(waypoints)
+
             screenshot_area = QRect(self.field.x(), self.field.y(), self.field.width(), self.field.height())
             screenshot = self.window().grab(screenshot_area)
+            screenshot.save(f"./resources/animation_in/{path.name}.png")
 
-            screenshot.save(f"./resources/animation_in/auto_animation_{path.name}.png")
+            
+            
+            skip = 0
+            for pt in tiny_points:
+                #Ignore this
+                skip += 1
+                if skip == 5:
 
-            test = Image.open(f"./resources/animation_in/auto_animation_{path.name}.png")
-            image = ImageDraw.Draw(test)
+                    skip = 0
+                    
 
-            image.text((15, test.size[1] - 175), str(increment), (237, 230, 211), font = ImageFont.truetype("Arial Unicode.ttf", 150))
+                    test = Image.open((f"./resources/animation_in/{path.name}.png"))
+                    image = ImageDraw.Draw(test)
 
-            test.save(f"./resources/animation_in/auto_animation_{path.name}.png")
-           
-        self.make_gif(filename.replace(".json", ""))
+                    px = (self.field.inches_to_pixels(pt.x, 0)[0] * 2) - 37.5
+                    py = (self.field.inches_to_pixels(0, pt.y)[1] * 2) - 37.5
+
+                    image.rectangle((px, py, px + 75, py + 75), fill="black", outline="red", width=10)
+                    
+                    image.text((15, test.size[1] - 175), str(path_num), (237, 230, 211), font = ImageFont.truetype("Arial Unicode.ttf", 150))
+
+                    # i = "{:03d}".format(p)
+                    output = BytesIO()
+                    test.save(output, format= "PNG")
+                    images.append(Image.open(output))
+                    print(p)
+                    p += 1
+                    # images.append(test.save(f"./resources/animation_in/auto_animation_{i}.png"))
+
+                        
+        self.make_gif(filename.replace(".json", ""), images)
         
     # def show_auto(self):
     #     waypoints = []
@@ -359,14 +394,14 @@ class WaypointTable(QWidget):
     #                 waypoints.append(wp)
     #         self.model.update(waypoints)
 
-    def make_gif(self, file_name):
+    def make_gif(self, file_name, files):
         images = []
-        
-        for filename in sorted(os.listdir('./resources/animation_in')):
+        print()
+        for filename in files:
             print(filename)
-            if filename.startswith("auto_animation_") and filename.endswith(".png"):
-                images.append(io.imread(os.path.join("./resources/animation_in",  f"{filename}")))
-        io.mimsave(f'{file_name}.gif', images, fps=1)
+            images.append(filename)
+        iio.mimsave(f'{file_name}.gif', images, fps=10)
+        print("No way")
         # optimize(file_name)
 
 
