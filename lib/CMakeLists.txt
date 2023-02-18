@@ -20,7 +20,9 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 file(GLOB_RECURSE ckutils_executable_sources CONFIGURE_DEPENDS
-     "${PROJECT_SOURCE_DIR}/ck_utilities/src/*.cpp"
+    #  "${PROJECT_SOURCE_DIR}/ck_utilities/src/*.cpp"
+	"${PROJECT_SOURCE_DIR}/ck_utilities/src/team254_geometry/*.cpp"
+	"${PROJECT_SOURCE_DIR}/ck_utilities/src/trajectory/*.cpp"
 )
 
 set(INT_LIB_NAME "ck_utilities")
