@@ -1,5 +1,6 @@
 import os
 import json
+import math
 
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
@@ -151,6 +152,7 @@ class WaypointTableBody(QTableWidget):
         #self.setLayout(self)
 
 
+
 class WaypointTable(QWidget):
     flipSignal = Signal()
 
@@ -175,18 +177,25 @@ class WaypointTable(QWidget):
         self.saveButton.clicked.connect(self.save_auto)
         # self.showButton = QPushButton('Show Auto')
         # self.showButton.clicked.connect(self.show_auto)
+        self.gifCheckboxLabel = QLabel("Save Gif: ")
+        self.gifCheckboxLabel.setMaximumWidth(60)
+        self.gifCheckbox = QCheckBox()
+        self.gifCheckbox.setMaximumWidth(25)
         self.howToUseButton = QPushButton('?')
         self.howToUseButton.clicked.connect(self.program_explanation)
         self.howToUseButton.setMaximumSize(32, 32)
         self.buttonLayout = QHBoxLayout()
+        self.buttonLayout.addWidget(self.howToUseButton)
         self.buttonLayout.addWidget(self.addButton)
         self.buttonLayout.addWidget(self.updateButton)
         self.buttonLayout.addWidget(self.animateButton)
         self.buttonLayout.addWidget(self.flipButton)
         self.buttonLayout.addWidget(self.loadButton)
         self.buttonLayout.addWidget(self.saveButton)
+        self.buttonLayout.addWidget(self.gifCheckboxLabel)
+        self.buttonLayout.addWidget(self.gifCheckbox)
         # self.buttonLayout.addWidget(self.showButton)
-        self.buttonLayout.addWidget(self.howToUseButton)
+ 
 
         # setting radius and border
         self.scroll_area = QScrollArea()
@@ -282,7 +291,8 @@ class WaypointTable(QWidget):
 
             with open(filename, 'w') as f:
                 f.write(path_json)
-            self.screenshot(filename)
+                if self.isGifEnabled():
+                    self.screenshot(filename)
         else:
             msg = QMessageBox()
             msg.setWindowTitle("WARNING")
@@ -298,6 +308,12 @@ class WaypointTable(QWidget):
         msg.setIcon(QMessageBox.Information)
         msg.setGeometry(500, 500, 500, 500)
         msg.exec()
+    
+    def isGifEnabled(self):
+        if self.gifCheckbox.isChecked():
+            return True
+        else:
+            return False
         
 
     def screenshot(self, filename):
@@ -313,15 +329,18 @@ class WaypointTable(QWidget):
 
         path_num = 0
         p = 0
+
         images = [] 
+
+        # for path in self.path_list.get_paths():
+        #     if last_x is not None and last_x != path.waypoints[0].x and last_y != path.waypoints[0].y and last_track != path.waypoints[0].track:
+        #         msg = QMessageBox()
+        #         msg.setWindowTitle("Error!")
+        #         msg.setIcon(QMessageBox.Warning)
+        #         msg.setGeometry(500, 500, 500, 500)
+        #         msg.setText("One of your paths doesn't end with the same point that begins the subsequent path")
+        #         msg.exec()
         for path in self.path_list.get_paths():        
-            if last_x is not None and last_x != path.waypoints[0].x and last_y != path.waypoints[0].y and last_track != path.waypoints[0].track:
-                msg = QMessageBox()
-                msg.setWindowTitle("Error!")
-                msg.setIcon(QMessageBox.Warning)
-                msg.setGeometry(500, 500, 500, 500)
-                msg.setText("One of your paths doesn't end with the same point that begins the subsequent path")
-                msg.exec()
 
             last_x = path.waypoints[len(path.waypoints) - 1].x
             last_y = path.waypoints[len(path.waypoints) - 1].y
@@ -353,10 +372,19 @@ class WaypointTable(QWidget):
                     test = Image.open((f"./resources/animation_in/{path.name}.png"))
                     image = ImageDraw.Draw(test)
 
-                    px = (self.field.inches_to_pixels(pt.x, 0)[0] * 2) - 37.5
-                    py = (self.field.inches_to_pixels(0, pt.y)[1] * 2) - 37.5
 
-                    image.rectangle((px, py, px + 75, py + 75), fill="black", outline="red", width=10)
+                    px = (self.field.inches_to_pixels(pt.x, 0)[0] * 2)
+                    py = (self.field.inches_to_pixels(0, pt.y)[1] * 2)
+
+                    # transfrom = int(math.sin(pt.heading) * robot_size)
+
+                    # image.regular_polygon((px , py, 75), n_sides= 4, rotation=pt.heading, fill="black", outline="red")
+                    xy = ImageDraw._compute_regular_polygon_vertices((px , py, 65), 4, pt.heading)
+                    image.polygon(xy, "black", "red", 10)
+                    constant = 65
+                    xtransform = constant*math.cos(math.radians(pt.heading))
+                    ytransform = constant*math.sin(math.radians(pt.heading))
+                    image.line(((px, py), (px+xtransform, py-ytransform)), fill="white", width = 5)
                     
                     image.text((15, test.size[1] - 175), str(path_num), (237, 230, 211), font = ImageFont.truetype("Arial Unicode.ttf", 150))
 
@@ -393,10 +421,10 @@ class WaypointTable(QWidget):
 
     def make_gif(self, file_name, files):
         images = []
-        print()
         for filename in files:
             images.append(filename)
         iio.mimsave(f'{file_name}.gif', images, fps=15)
+        print("No Way")
         # optimize(file_name)
 
 

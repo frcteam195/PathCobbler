@@ -204,8 +204,8 @@ class FieldView(QLabel):
 
                 x_diff = self.track_length * math.cos(math.radians(wp.track))
                 y_diff = self.track_length * math.sin(math.radians(wp.track))
-                heading_x_d = self.track_length * math.cos(math.radians(wp.track))
-                heading_y_d = self.track_length * math.sin(math.radians(wp.track))
+                heading_x_d = self.track_length * math.cos(math.radians(wp.heading))
+                heading_y_d = self.track_length * math.sin(math.radians(wp.heading))
 
                 self.painter.setPen(QPen(lineColor, 3))
                 self.painter.drawLine(QPointF(pixelsX, pixelsY), QPointF(pixelsX + x_diff, pixelsY - y_diff))
