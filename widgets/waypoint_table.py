@@ -1,6 +1,7 @@
 import os
 import json
 import math
+import time
 
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
@@ -61,7 +62,7 @@ class WaypointTableBody(QTableWidget):
 
 
             self.model[i] = Waypoint(x_val, y_val, track_val, heading_val, enabled = enabled_val)
-       
+
         # for i in range(0, self.rowCount()):
         #     print("hello")
         #     x_val = float(self.item(i, 0).text())
@@ -79,10 +80,10 @@ class WaypointTableBody(QTableWidget):
 
         self.clear()
 
-
         for wp in self.model:
             self.add_waypoint(wp)
 
+  
     def get_waypoints(self):
         self.update()
         return self.waypoints
@@ -224,15 +225,31 @@ class WaypointTable(QWidget):
 
         self.setLayout(self.main_layout)
 
+        self.model.updated.connect(self.add_path)
+
+        self.path_list.list.currentItemChanged.connect(self.update_path)
+
+    def add_path(self):
+        if self.path_list.list.count() < 1:
+            item = self.path_list.list.addItem(Auto(f"path{str(self.path_list.list.count() + 1)}", self.get_waypoints()))
+            
+            self.path_list.list.setCurrentRow(self.path_list.list.count() - 1)
+    
+    def update_path(self, current, previous):
+        if previous is not None:
+            previous.waypoints = self.get_waypoints()
+            self.path_list.list.selection_changed()
+            
+
     def update(self):
         self.tableBody.update()
-
+        
     def get_waypoints(self):
         return self.model.waypoints
 
     def add_waypoint(self, wp: Waypoint=Waypoint(0, 0, 0, 0)):
         self.model.append(wp)
-        pass
+
     def delete_row(self, rowNum):
         self.tableBody.delete_row(rowNum)
 
@@ -253,12 +270,11 @@ class WaypointTable(QWidget):
                     msg.setText("One of your paths doesn't end with the same point that begins the subsequent path")
                     msg.exec()
                 self.path_list.list.addItem(path)
-                for wp in path.waypoints:
-                    waypoints.append(wp)
-                last_x = path.waypoints[len(path.waypoints) - 1].x
-                last_y = path.waypoints[len(path.waypoints) - 1].y
-                last_track = path.waypoints[len(path.waypoints) - 1].track
+
+                self.path_list.list.setCurrentRow(self.path_list.list.count() - 1)
+                
                 self.model.update(waypoints)
+
 
     def save_auto(self):
         if self.path_list.list.count() > 0:
