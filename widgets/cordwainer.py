@@ -1,6 +1,4 @@
 import os
-import sys
-import time
 import signal
 
 from PySide6.QtGui import *
@@ -37,9 +35,6 @@ class ShoeList(QListWidget):
         self.setDragDropMode(QAbstractItemView.DragDrop)
 
         self.setDefaultDropAction(Qt.DropAction.MoveAction)        
-        #layout.addWidget(self)
-
-        self.currentItemChanged.connect(self.selection_changed)
 
     def get_items(self):
         paths = []
@@ -66,7 +61,9 @@ class ShoeList(QListWidget):
         '.',"Json files (*.json)")
         if load_path is not None:
             new_item = Auto(os.path.splitext(os.path.basename(self.fileName))[0], load_path(self.fileName))
-            self.model.update(new_item.waypoints)
+
+            if self.fileName == "":
+                new_item = Auto(f"path{self.count() + 1}", None)
 
             self.addItem(new_item)
 
@@ -81,11 +78,12 @@ class ShoeList(QListWidget):
 
     def selection_changed(self):
         item = self.currentItem()
+        
         if item is not None:
             self.model.update(item.waypoints)
         else:
             self.model.clear_model()
-    
+
     def add_paths(self, names, wps):
         self.names = names
         self.wps = wps

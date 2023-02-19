@@ -1,6 +1,5 @@
 from typing import List
 
-
 from utils.waypoint import Waypoint
 
 from PySide6.QtCore import QObject, Signal
