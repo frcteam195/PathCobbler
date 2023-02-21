@@ -1,29 +1,41 @@
 {
     "name": "auto4",
-    "path_count": 1,
+    "path_count": 2,
     "paths": [
         {
             "name": "path1",
             "waypoints": [
                 {
-                    "x": 112.0,
-                    "y": -226.0,
+                    "x": 261.0,
+                    "y": -122.0,
                     "track": 0.0,
                     "heading": 0.0,
                     "comment": ""
                 },
                 {
-                    "x": 497.0,
-                    "y": -103.0,
-                    "track": 17.0,
-                    "heading": 17.0,
+                    "x": 646.0,
+                    "y": -158.0,
+                    "track": -5.0,
+                    "heading": -5.0,
+                    "comment": ""
+                }
+            ]
+        },
+        {
+            "name": "path2",
+            "waypoints": [
+                {
+                    "x": 646.0,
+                    "y": -158.0,
+                    "track": 180.0,
+                    "heading": -5.0,
                     "comment": ""
                 },
                 {
-                    "x": 407.0,
-                    "y": -37.0,
-                    "track": 143.0,
-                    "heading": 143.0,
+                    "x": 284.0,
+                    "y": -122.0,
+                    "track": 180.0,
+                    "heading": 0.0,
                     "comment": ""
                 }
             ]

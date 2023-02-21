@@ -359,14 +359,14 @@ class WaypointTable(QWidget):
             tiny_points = calc_splines(waypoints)
 
             screenshot_area = QRect(self.field.x(), self.field.y(), self.field.width(), self.field.height())
-            # screenshot: QPixmap = self.window().grab(screenshot_area)
+            screenshot: QPixmap = self.window().grab(screenshot_area)
 
 
 
             # buffer = QBuffer()
             # buffer.open(QBuffer.OpenModeFlag.ReadWrite)
             # screenshot.toImage().save(buffer, 'PNG')
-            # pil_img = Image.open(io.BytesIO(buffer.data()))
+            # field_img = Image.open(io.BytesIO(buffer.data()))
 
             base_dir = os.path.dirname(os.path.dirname(__file__))
             img_path = f'{base_dir}/resources/images/field_red.png'
@@ -380,6 +380,8 @@ class WaypointTable(QWidget):
             # screenshot.save(f"./resources/animation_in/{path.name}.png")
 
             # for pt in tiny_points:
+            #     test = field_img.copy()
+            #     image = ImageDraw.Draw
 
 
             for idx, pt in enumerate(tiny_points):
@@ -392,16 +394,20 @@ class WaypointTable(QWidget):
 
 
                 px, py = FieldView.inches_to_pixels_scaled(pt.x, pt.y, scaled_w, scaled_h)
+                size, _ = FieldView.inches_to_pixels_scaled(30, 0, scaled_w, scaled_h)
+                # print(size)
+                diag = math.sqrt(size*size + size*size)
 
                 # transfrom = int(math.sin(pt.heading) * robot_size)
 
                 # image.regular_polygon((px , py, 75), n_sides= 4, rotation=pt.heading, fill="black", outline="red")
-                xy = ImageDraw._compute_regular_polygon_vertices((px , py, 20), 4, pt.heading)
+                xy = ImageDraw._compute_regular_polygon_vertices((px , py, size//2), 4, pt.heading)
+
                 image.polygon(xy, "black", "red", 2)
-                constant = 20
+                constant = diag//2
                 xtransform = constant*math.cos(math.radians(pt.heading))
                 ytransform = constant*math.sin(math.radians(pt.heading))
-                image.line(((px, py), (px+xtransform, py-ytransform)), fill="white", width = 1)
+                image.line(((px, py), (px+xtransform, py-ytransform)), fill="white", width = 3)
 
                 image.text((15, test.size[1] - 175), str(path_num), (237, 230, 211), font = ImageFont.truetype("Arial Unicode.ttf", 150))
 

@@ -1,0 +1,32 @@
+{
+    "name": "auto5",
+    "path_count": 1,
+    "paths": [
+        {
+            "name": "path1",
+            "waypoints": [
+                {
+                    "x": -40.0,
+                    "y": -145.0,
+                    "track": 0.0,
+                    "heading": -178.0,
+                    "comment": ""
+                },
+                {
+                    "x": 349.0,
+                    "y": -142.0,
+                    "track": 0.0,
+                    "heading": 0.0,
+                    "comment": ""
+                },
+                {
+                    "x": 682.0,
+                    "y": -140.0,
+                    "track": 0.0,
+                    "heading": 172.0,
+                    "comment": ""
+                }
+            ]
+        }
+    ]
+}

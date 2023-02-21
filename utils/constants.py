@@ -1,7 +1,8 @@
 import math
 
 
-fieldWidth = 888  # inches
+# fieldWidth = 888  # inches
+fieldWidth = 444  # inches
 fieldHeight = 360  # inches
 
 xOffset = 118.20125000
