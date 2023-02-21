@@ -1,0 +1,32 @@
+{
+    "name": "auto4",
+    "path_count": 1,
+    "paths": [
+        {
+            "name": "path1",
+            "waypoints": [
+                {
+                    "x": 112.0,
+                    "y": -226.0,
+                    "track": 0.0,
+                    "heading": 0.0,
+                    "comment": ""
+                },
+                {
+                    "x": 497.0,
+                    "y": -103.0,
+                    "track": 17.0,
+                    "heading": 17.0,
+                    "comment": ""
+                },
+                {
+                    "x": 407.0,
+                    "y": -37.0,
+                    "track": 143.0,
+                    "heading": 143.0,
+                    "comment": ""
+                }
+            ]
+        }
+    ]
+}

@@ -359,57 +359,59 @@ class WaypointTable(QWidget):
             tiny_points = calc_splines(waypoints)
 
             screenshot_area = QRect(self.field.x(), self.field.y(), self.field.width(), self.field.height())
-            screenshot: QPixmap = self.window().grab(screenshot_area)
+            # screenshot: QPixmap = self.window().grab(screenshot_area)
 
 
 
-            buffer = QBuffer()
-            buffer.open(QBuffer.OpenModeFlag.ReadWrite)
-            screenshot.toImage().save(buffer, 'PNG')
-            pil_img = Image.open(io.BytesIO(buffer.data()))
+            # buffer = QBuffer()
+            # buffer.open(QBuffer.OpenModeFlag.ReadWrite)
+            # screenshot.toImage().save(buffer, 'PNG')
+            # pil_img = Image.open(io.BytesIO(buffer.data()))
+
+            base_dir = os.path.dirname(os.path.dirname(__file__))
+            img_path = f'{base_dir}/resources/images/field_red.png'
+            field_img = Image.open(img_path)
+            w, h = field_img.size
+            field_img = field_img.resize((w // 2, h // 2))
+            scaled_w, scaled_h = field_img.size
             # Image.open
 
 
             # screenshot.save(f"./resources/animation_in/{path.name}.png")
 
+            # for pt in tiny_points:
 
 
-            skip = 0
-            for pt in tiny_points:
-                #Ignore this
-                skip += 1
-                if skip == 15:
-
-                    skip = 0
-
+            for idx, pt in enumerate(tiny_points):
+                if idx % 20 != 0:
+                    continue
 
                     # test = Image.open((f"./resources/animation_in/{path.name}.png"))
-                    test = pil_img.copy()
-                    image = ImageDraw.Draw(test)
+                test = field_img.copy()
+                image = ImageDraw.Draw(test)
 
 
-                    px = (self.field.inches_to_pixels(pt.x, 0)[0] * 2)
-                    py = (self.field.inches_to_pixels(0, pt.y)[1] * 2)
+                px, py = FieldView.inches_to_pixels_scaled(pt.x, pt.y, scaled_w, scaled_h)
 
-                    # transfrom = int(math.sin(pt.heading) * robot_size)
+                # transfrom = int(math.sin(pt.heading) * robot_size)
 
-                    # image.regular_polygon((px , py, 75), n_sides= 4, rotation=pt.heading, fill="black", outline="red")
-                    xy = ImageDraw._compute_regular_polygon_vertices((px , py, 65), 4, pt.heading)
-                    image.polygon(xy, "black", "red", 10)
-                    constant = 65
-                    xtransform = constant*math.cos(math.radians(pt.heading))
-                    ytransform = constant*math.sin(math.radians(pt.heading))
-                    image.line(((px, py), (px+xtransform, py-ytransform)), fill="white", width = 5)
+                # image.regular_polygon((px , py, 75), n_sides= 4, rotation=pt.heading, fill="black", outline="red")
+                xy = ImageDraw._compute_regular_polygon_vertices((px , py, 20), 4, pt.heading)
+                image.polygon(xy, "black", "red", 2)
+                constant = 20
+                xtransform = constant*math.cos(math.radians(pt.heading))
+                ytransform = constant*math.sin(math.radians(pt.heading))
+                image.line(((px, py), (px+xtransform, py-ytransform)), fill="white", width = 1)
 
-                    image.text((15, test.size[1] - 175), str(path_num), (237, 230, 211), font = ImageFont.truetype("Arial Unicode.ttf", 150))
+                image.text((15, test.size[1] - 175), str(path_num), (237, 230, 211), font = ImageFont.truetype("Arial Unicode.ttf", 150))
 
-                    # i = "{:03d}".format(p)
-                    # output = BytesIO()
-                    # test.save(output, format= "PNG")
-                    # output.seek(1)
-                    images.append(test)
-                    p += 1
-                    # images.append(test.save(f"./resources/animation_in/auto_animation_{i}.png"))
+                # i = "{:03d}".format(p)
+                # output = BytesIO()
+                # test.save(output, format= "PNG")
+                # output.seek(1)
+                images.append(test)
+                p += 1
+                # images.append(test.save(f"./resources/animation_in/auto_animation_{i}.png"))
 
         self.make_gif(filename.replace(".json", ""), images)
 

@@ -30,11 +30,13 @@ class FieldView(QLabel):
         self.currentWaypoints = []
         self.is_flipped = False
 
-        self.img_path = f'{base_dir}/resources/images/field.png'
-        self.img_path_flipped = f'{base_dir}/resources/images/fieldFlipped.png'
-        self.scaled_width = 1200
+        self.img_path = f'{base_dir}/resources/images/field_red.png'
+        self.img_path_flipped = f'{base_dir}/resources/images/field_blue.png'
+        self.scaled_width = 800
+        self.scaled_height = 500
 
-        self.image = QPixmap(self.img_path).scaledToWidth(self.scaled_width)
+        # self.image = QPixmap(self.img_path).scaledToWidth(self.scaled_width)
+        self.image = QPixmap(self.img_path).scaledToHeight(self.scaled_height)
         self.setPixmap(self.image)
 
         self.fieldWidth = self.image.width()
@@ -54,8 +56,16 @@ class FieldView(QLabel):
         return (inchesX, inchesY)
 
     def inches_to_pixels(self, inchesX, inchesY):
-        pixelsX = (inchesX + constants.xOffset) / constants.fieldWidth * self.fieldWidth
-        pixelsY = self.fieldHeight - (inchesY + constants.yOffset) / constants.fieldHeight * self.fieldHeight
+        # pixelsX = (inchesX + constants.xOffset) / constants.fieldWidth * self.fieldWidth
+        # pixelsY = self.fieldHeight - (inchesY + constants.yOffset) / constants.fieldHeight * self.fieldHeight
+
+        # return (pixelsX, pixelsY)
+        return FieldView.inches_to_pixels_scaled(inchesX, inchesY, self.fieldWidth, self.fieldHeight)
+
+    @staticmethod
+    def inches_to_pixels_scaled(inchesX, inchesY, fieldWidth, fieldHeight):
+        pixelsX = (inchesX + constants.xOffset) / constants.fieldWidth * fieldWidth
+        pixelsY = fieldHeight - (inchesY + constants.yOffset) / constants.fieldHeight * fieldHeight
 
         return (pixelsX, pixelsY)
 
@@ -63,9 +73,11 @@ class FieldView(QLabel):
         self.is_flipped = not self.is_flipped
 
         if self.is_flipped:
-            self.image = QPixmap(self.img_path_flipped).scaledToWidth(self.scaled_width)
+            # self.image = QPixmap(self.img_path_flipped).scaledToWidth(self.scaled_width)
+            self.image = QPixmap(self.img_path_flipped).scaledToHeight(self.scaled_height)
         else:
-            self.image = QPixmap(self.img_path).scaledToWidth(self.scaled_width)
+            # self.image = QPixmap(self.img_path).scaledToWidth(self.scaled_width)
+            self.image = QPixmap(self.img_path).scaledToHeight(self.scaled_height)
 
         self.setPixmap(self.image)
 
