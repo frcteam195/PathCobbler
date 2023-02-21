@@ -36,9 +36,9 @@ class ShoeList(QListWidget):
         self.waypoint_model.updated.connect(self.update_item)
         self.setDragDropMode(QAbstractItemView.DragDrop)
 
-        self.setDefaultDropAction(Qt.DropAction.MoveAction)  
+        self.setDefaultDropAction(Qt.DropAction.MoveAction)
 
-        self.currentItemChanged.connect(self.selection_changed) 
+        self.currentItemChanged.connect(self.selection_changed)
 
         self.pathIndex = 1
 
@@ -50,14 +50,15 @@ class ShoeList(QListWidget):
 
     def remove_item(self):
         items = self.currentRow()
-        if self.count() > 1:     
+        if self.count() > 1:
             if self.currentRow() < self.count()-1:
                 self.setCurrentRow(items+1)
             else:
                 self.setCurrentRow(items-1)
         else:
             self.clearSelection()
-            
+            self.waypoint_model.clear_model()
+
         self.takeItem(items)
 
     def update_item(self):
@@ -87,33 +88,32 @@ class ShoeList(QListWidget):
         self.addItem(new_item)
 
         self.setCurrentItem(new_item)
-        
+
+    def set_items(self, items: List[Auto]):
+        self.clear()
+
+        for item in items:
+            self.addItem(item)
+            for wp in item.waypoints:
+                print(wp)
+            print(' ')
+
+        self.setCurrentRow(self.count() - 1)
+
+        self.pathIndex = self.count() + 1
+
+
     def selection_changed(self, current, previous):
         if previous is not None:
             previous.waypoints = deepcopy(self.waypoint_model.waypoints)
 
-        # print('current', current.waypoints)
-            # if len(self.waypoint_model) > 0:
-            #     self.waypoint_model.clear_model()
-            
-            # print(type(current.waypoints))
+        if current is not None:
             self.waypoint_model.update(current.waypoints)
-        
-        # if current is not None:
-        #     print(current.waypoints)
-
-        # item = self.currentItem()
-        
-        # print('changed')
-        # if item is not None:
-        #     self.waypoint_model.update(item.waypoints)
-        # else:
-        #     self.waypoint_model.clear_model()
 
     def add_paths(self, names, wps):
         self.names = names
         self.wps = wps
-        
+
 class Cordwainer(QWidget):
     def __init__(self, model: WaypointModel):
         super().__init__()
@@ -134,6 +134,6 @@ class Cordwainer(QWidget):
         self.buttons.remove_button.clicked.connect(self.list.remove_item)
         self.buttons.add_button.clicked.connect(lambda: self.list.add_item([]))
         self.buttons.clear_button.clicked.connect(self.model.clear_model)
-    
+
     def get_paths(self):
         return self.list.get_items()
