@@ -16,7 +16,6 @@ class ShoeButtons(QWidget):
     def __init__(self):
         super().__init__()
         layout = QHBoxLayout()
-
         layout.setAlignment(Qt.AlignRight)
         self.setLayout(layout)
 
@@ -34,7 +33,7 @@ class ShoeList(QListWidget):
     def __init__(self, model: WaypointModel):
         super().__init__()
         self.waypoint_model = model
-        # self.waypoint_model.updated.connect(self.update_item)
+        self.waypoint_model.updated.connect(self.update_item)
         self.setDragDropMode(QAbstractItemView.DragDrop)
 
         self.setDefaultDropAction(Qt.DropAction.MoveAction)  
@@ -61,18 +60,24 @@ class ShoeList(QListWidget):
             
         self.takeItem(items)
 
+    def update_item(self):
+        if self.currentItem() is not None:
+            self.currentItem().waypoints = deepcopy(self.waypoint_model.waypoints)
+
     def add_item(self, waypoints: List[Waypoint]=[]):
-        print('add me')
+        # print('add me')
         # self.currentItem().waypoints = self.waypoint_model.waypoints
 
         # last_item_num = int(self.item(self.count-1).name[-1])
 
-        last_waypoint = deepcopy(self.waypoint_model.waypoints[-1])
+        if len(self.waypoint_model) > 0:
+            last_waypoint = deepcopy(self.waypoint_model.waypoints[-1])
+            # print(last_waypoint)
 
-        print(waypoints)
-        if waypoints == []:
-            print('empty')
-            waypoints.append(last_waypoint)
+            if waypoints == []:
+                # print('empty')
+                waypoints.append(last_waypoint)
+            # print(waypoints)
 
         # print(waypoints)
         new_item = Auto(f"path{self.pathIndex}", waypoints)
@@ -85,12 +90,11 @@ class ShoeList(QListWidget):
         
     def selection_changed(self, current, previous):
         if previous is not None:
-            print(previous.waypoints)
             previous.waypoints = deepcopy(self.waypoint_model.waypoints)
 
         # print('current', current.waypoints)
-            if len(self.waypoint_model) > 0:
-                self.waypoint_model.clear_model()
+            # if len(self.waypoint_model) > 0:
+            #     self.waypoint_model.clear_model()
             
             # print(type(current.waypoints))
             self.waypoint_model.update(current.waypoints)

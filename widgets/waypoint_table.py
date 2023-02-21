@@ -1,7 +1,10 @@
 import os
+import io
 import json
 import math
 import time
+
+from typing import List
 
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
@@ -240,9 +243,7 @@ class WaypointTable(QWidget):
         if previous is not None:
             previous.waypoints = self.get_waypoints()
             self.model.update(current.waypoints)
-            # self.path_list.list.selection_changed()
-            print(100)
-            
+            # self.path_list.list.selection_changed()            
 
     def update(self):
         self.tableBody.update()
@@ -300,7 +301,7 @@ class WaypointTable(QWidget):
 
             for i, path in enumerate(paths):
                 json_obj['paths'].append({})
-                json_obj["paths"][i]["name"] = path.name
+                json_obj["paths"][i]["name"] = path.text()
                 json_obj["paths"][i]["waypoints"] = []
                 for wp in path.waypoints:
                     json_obj["paths"][i]["waypoints"].append(wp.toJson())
@@ -359,8 +360,7 @@ class WaypointTable(QWidget):
         #         msg.setGeometry(500, 500, 500, 500)
         #         msg.setText("One of your paths doesn't end with the same point that begins the subsequent path")
         #         msg.exec()
-        for path in self.path_list.get_paths():        
-
+        for path in self.path_list.get_paths(): 
             last_x = path.waypoints[len(path.waypoints) - 1].x
             last_y = path.waypoints[len(path.waypoints) - 1].y
             last_track = path.waypoints[len(path.waypoints) - 1].track
@@ -369,13 +369,24 @@ class WaypointTable(QWidget):
           
             waypoints = path.waypoints
 
-            self.model.update(waypoints)
+            # self.model.update(waypoints)
+            self.path_list.list.setCurrentItem(path)
 
             tiny_points = calc_splines(waypoints)
 
             screenshot_area = QRect(self.field.x(), self.field.y(), self.field.width(), self.field.height())
-            screenshot = self.window().grab(screenshot_area)
-            screenshot.save(f"./resources/animation_in/{path.name}.png")
+            screenshot: QPixmap = self.window().grab(screenshot_area)
+
+            
+
+            buffer = QBuffer()
+            buffer.open(QBuffer.OpenModeFlag.ReadWrite)
+            screenshot.toImage().save(buffer, 'PNG')
+            pil_img = Image.open(io.BytesIO(buffer.data()))
+            # Image.open
+
+
+            # screenshot.save(f"./resources/animation_in/{path.name}.png")
 
             
             
@@ -388,7 +399,8 @@ class WaypointTable(QWidget):
                     skip = 0
                     
 
-                    test = Image.open((f"./resources/animation_in/{path.name}.png"))
+                    # test = Image.open((f"./resources/animation_in/{path.name}.png"))
+                    test = pil_img.copy()
                     image = ImageDraw.Draw(test)
 
 
@@ -408,16 +420,17 @@ class WaypointTable(QWidget):
                     image.text((15, test.size[1] - 175), str(path_num), (237, 230, 211), font = ImageFont.truetype("Arial Unicode.ttf", 150))
 
                     # i = "{:03d}".format(p)
-                    output = BytesIO()
-                    test.save(output, format= "PNG")
-                    output.seek(1)
-                    images.append(Image.open(output))
+                    # output = BytesIO()
+                    # test.save(output, format= "PNG")
+                    # output.seek(1)
+                    images.append(test)
                     p += 1
                     # images.append(test.save(f"./resources/animation_in/auto_animation_{i}.png"))
 
-                        
         self.make_gif(filename.replace(".json", ""), images)
-        output.flush()
+                        
+        # self.make_gif(filename.replace(".json", ""), images)
+        # output.flush()
         
     # def show_auto(self):
     #     waypoints = []
@@ -443,7 +456,6 @@ class WaypointTable(QWidget):
         for filename in files:
             images.append(filename)
         iio.mimsave(f'{file_name}.gif', images, fps=15)
-        print("No Way")
         # optimize(file_name)
 
 

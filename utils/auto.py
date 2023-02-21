@@ -7,8 +7,6 @@ from typing import List
 class Auto(QListWidgetItem):
     def __init__(self, name, waypoints: List[Waypoint]):
         super().__init__(name)
-        self.name = name
+        self.setFlags(self.flags() | Qt.ItemFlag.ItemIsEditable)
         self.waypoints: List[Waypoint] = waypoints
-    
-    def set_name(self, new_name):
-        self.setText(new_name)
+
