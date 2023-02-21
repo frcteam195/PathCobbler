@@ -175,6 +175,7 @@ class WaypointTable(QWidget):
         self.animateButton = QPushButton('Animate')
         self.flipButton = QPushButton('Flip Field')
         self.flipButton.clicked.connect(self.flipSignal.emit)
+        self.flipButton.setEnabled(False)
         self.loadButton = QPushButton('Load Auto')
         self.loadButton.clicked.connect(self.load_auto_wp_table)
         self.saveButton = QPushButton('Save Auto')
