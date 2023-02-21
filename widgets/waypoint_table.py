@@ -13,7 +13,7 @@ from io import BytesIO
 
 import imageio as iio
 
-from PIL import Image, ImageFont, ImageDraw 
+from PIL import Image, ImageFont, ImageDraw
 
 from utils.waypoint import Waypoint
 from widgets.path_list import PathList
@@ -52,7 +52,7 @@ class WaypointTableBody(QTableWidget):
 
         self.itemChanged.connect(self.item_changed)
 
-    def update(self, checked_item):
+    def update(self):
 
         waypoints = []
         for i in range(0, self.rowCount()):
@@ -86,7 +86,7 @@ class WaypointTableBody(QTableWidget):
         for wp in self.model:
             self.add_waypoint(wp)
 
-  
+
     def get_waypoints(self):
         self.update()
         return self.waypoints
@@ -199,7 +199,7 @@ class WaypointTable(QWidget):
         self.buttonLayout.addWidget(self.gifCheckboxLabel)
         self.buttonLayout.addWidget(self.gifCheckbox)
         # self.buttonLayout.addWidget(self.showButton)
- 
+
 
         # setting radius and border
         self.scroll_area = QScrollArea()
@@ -236,18 +236,18 @@ class WaypointTable(QWidget):
         if self.path_list.list.count() < 1:
             # item = self.path_list.list.addItem(Auto(f"path{str(self.path_list.list.count() + 1)}", self.get_waypoints()))
             self.path_list.list.add_item(self.get_waypoints())
-            
+
             self.path_list.list.setCurrentRow(self.path_list.list.count() - 1)
-    
+
     def update_path(self, current, previous):
         if previous is not None:
             previous.waypoints = self.get_waypoints()
             self.model.update(current.waypoints)
-            # self.path_list.list.selection_changed()            
+            # self.path_list.list.selection_changed()
 
     def update(self):
         self.tableBody.update()
-        
+
     def get_waypoints(self):
         return self.model.waypoints
 
@@ -259,25 +259,9 @@ class WaypointTable(QWidget):
 
     def load_auto_wp_table(self):
         filename, _ = QFileDialog.getOpenFileName(self, 'Select File to Load', '.', 'JSON File (*.json)')
-        waypoints = []
         auto = load_auto(filename)
-        last_x = None
-        last_y = None
-        last_track = None
         if auto is not None:
-            for path in auto:
-                if last_x is not None and last_x != path.waypoints[0].x and last_y != path.waypoints[0].y and last_track != path.waypoints[0].track:
-                    msg = QMessageBox()
-                    msg.setWindowTitle("Error!")
-                    msg.setIcon(QMessageBox.Warning)
-                    msg.setGeometry(500, 500, 500, 500)
-                    msg.setText("One of your paths doesn't end with the same point that begins the subsequent path")
-                    msg.exec()
-                self.path_list.list.addItem(path)
-
-                self.path_list.list.setCurrentRow(self.path_list.list.count() - 1)
-                
-                self.model.update(waypoints)
+            self.path_list.list.set_items(auto)
 
 
     def save_auto(self):
@@ -328,18 +312,18 @@ class WaypointTable(QWidget):
         msg.setIcon(QMessageBox.Information)
         msg.setGeometry(500, 500, 500, 500)
         msg.exec()
-    
+
     def isGifEnabled(self):
         if self.gifCheckbox.isChecked():
             return True
         else:
             return False
-        
+
 
     def screenshot(self, filename):
         # auto = load_auto(filename.replace(".png", ".json"))
-        for file in os.scandir('./resources/animation_in'):
-            os.remove(file.path)
+        # for file in os.scandir('./resources/animation_in'):
+        #     os.remove(file.path)
         # for wp in path.waypoints:
         #         waypoints.append(wp)
 
@@ -350,7 +334,7 @@ class WaypointTable(QWidget):
         path_num = 0
         p = 0
 
-        images = [] 
+        images = []
 
         # for path in self.path_list.get_paths():
         #     if last_x is not None and last_x != path.waypoints[0].x and last_y != path.waypoints[0].y and last_track != path.waypoints[0].track:
@@ -360,13 +344,13 @@ class WaypointTable(QWidget):
         #         msg.setGeometry(500, 500, 500, 500)
         #         msg.setText("One of your paths doesn't end with the same point that begins the subsequent path")
         #         msg.exec()
-        for path in self.path_list.get_paths(): 
+        for path in self.path_list.get_paths():
             last_x = path.waypoints[len(path.waypoints) - 1].x
             last_y = path.waypoints[len(path.waypoints) - 1].y
             last_track = path.waypoints[len(path.waypoints) - 1].track
 
             path_num += 1
-          
+
             waypoints = path.waypoints
 
             # self.model.update(waypoints)
@@ -377,7 +361,7 @@ class WaypointTable(QWidget):
             screenshot_area = QRect(self.field.x(), self.field.y(), self.field.width(), self.field.height())
             screenshot: QPixmap = self.window().grab(screenshot_area)
 
-            
+
 
             buffer = QBuffer()
             buffer.open(QBuffer.OpenModeFlag.ReadWrite)
@@ -388,8 +372,8 @@ class WaypointTable(QWidget):
 
             # screenshot.save(f"./resources/animation_in/{path.name}.png")
 
-            
-            
+
+
             skip = 0
             for pt in tiny_points:
                 #Ignore this
@@ -397,7 +381,7 @@ class WaypointTable(QWidget):
                 if skip == 15:
 
                     skip = 0
-                    
+
 
                     # test = Image.open((f"./resources/animation_in/{path.name}.png"))
                     test = pil_img.copy()
@@ -416,7 +400,7 @@ class WaypointTable(QWidget):
                     xtransform = constant*math.cos(math.radians(pt.heading))
                     ytransform = constant*math.sin(math.radians(pt.heading))
                     image.line(((px, py), (px+xtransform, py-ytransform)), fill="white", width = 5)
-                    
+
                     image.text((15, test.size[1] - 175), str(path_num), (237, 230, 211), font = ImageFont.truetype("Arial Unicode.ttf", 150))
 
                     # i = "{:03d}".format(p)
@@ -428,10 +412,10 @@ class WaypointTable(QWidget):
                     # images.append(test.save(f"./resources/animation_in/auto_animation_{i}.png"))
 
         self.make_gif(filename.replace(".json", ""), images)
-                        
+
         # self.make_gif(filename.replace(".json", ""), images)
         # output.flush()
-        
+
     # def show_auto(self):
     #     waypoints = []
     #     auto = self.path_list.get_paths()
