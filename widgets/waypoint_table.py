@@ -227,18 +227,21 @@ class WaypointTable(QWidget):
 
         self.model.updated.connect(self.add_path)
 
-        self.path_list.list.currentItemChanged.connect(self.update_path)
+        # self.path_list.list.currentItemChanged.connect(self.update_path)
 
     def add_path(self):
         if self.path_list.list.count() < 1:
-            item = self.path_list.list.addItem(Auto(f"path{str(self.path_list.list.count() + 1)}", self.get_waypoints()))
+            # item = self.path_list.list.addItem(Auto(f"path{str(self.path_list.list.count() + 1)}", self.get_waypoints()))
+            self.path_list.list.add_item(self.get_waypoints())
             
             self.path_list.list.setCurrentRow(self.path_list.list.count() - 1)
     
     def update_path(self, current, previous):
         if previous is not None:
             previous.waypoints = self.get_waypoints()
-            self.path_list.list.selection_changed()
+            self.model.update(current.waypoints)
+            # self.path_list.list.selection_changed()
+            print(100)
             
 
     def update(self):
