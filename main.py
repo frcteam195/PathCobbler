@@ -28,9 +28,16 @@ class MainWindow(QMainWindow):
         splashScreen.show()
         time.sleep(0.4)
 
+    def move_window_to_center(self):
+        center = QScreen.availableGeometry(QApplication.primaryScreen()).center()
+        geo = self.frameGeometry()
+        geo.moveCenter(center)
+        self.move(geo.topLeft())
+
 
 if __name__ == '__main__':
     app = QApplication()
     mw = MainWindow()
     mw.show()
+    mw.move_window_to_center()
     sys.exit(app.exec())
