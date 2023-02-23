@@ -1,0 +1,44 @@
+{
+    "name": "CubeWallTwoPiece",
+    "path_count": 2,
+    "paths": [
+        {
+            "name": "ConePickup",
+            "waypoints": [
+                {
+                    "x": 66.0,
+                    "y": -43.0,
+                    "track": 0.0,
+                    "heading": 0.0,
+                    "comment": ""
+                },
+                {
+                    "x": 276.0,
+                    "y": -33.0,
+                    "track": 2.0,
+                    "heading": 2.0,
+                    "comment": ""
+                }
+            ]
+        },
+        {
+            "name": "ConeDropOff",
+            "waypoints": [
+                {
+                    "x": 276.0,
+                    "y": -33.0,
+                    "track": 180.0,
+                    "heading": 0.0,
+                    "comment": ""
+                },
+                {
+                    "x": 69.0,
+                    "y": -19.0,
+                    "track": 180.0,
+                    "heading": 0.0,
+                    "comment": ""
+                }
+            ]
+        }
+    ]
+}
