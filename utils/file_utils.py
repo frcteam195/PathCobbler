@@ -45,7 +45,9 @@ def load_auto(filename):
     path_json = open_json_file(filename)
 
     if path_json is None:
-        return
+        return ('', None)
+
+    name = path_json['name']
 
     paths = []
     if 'paths' in path_json:
@@ -55,7 +57,7 @@ def load_auto(filename):
                 waypoints.append(Waypoint(wp['x'], wp['y'], wp['track'], wp['heading']))
 
             paths.append(Auto(path['name'], waypoints))
-        return paths
+        return (name, paths)
     else:
         msg = QMessageBox()
         msg.setWindowTitle("WARNING")
@@ -63,6 +65,6 @@ def load_auto(filename):
         msg.setIcon(QMessageBox.Warning)
         msg.setGeometry(100, 200, 100, 100)
         msg.exec()
-        return None
+        return ('', None)
 
 

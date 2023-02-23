@@ -1,0 +1,44 @@
+{
+    "name": "auto_tom",
+    "path_count": 2,
+    "paths": [
+        {
+            "name": "path1",
+            "waypoints": [
+                {
+                    "x": 72.0,
+                    "y": -142.0,
+                    "track": 0.0,
+                    "heading": 0.0,
+                    "comment": ""
+                },
+                {
+                    "x": 267.0,
+                    "y": -135.0,
+                    "track": 0.0,
+                    "heading": 0.0,
+                    "comment": ""
+                }
+            ]
+        },
+        {
+            "name": "path2",
+            "waypoints": [
+                {
+                    "x": 268.0,
+                    "y": -136.0,
+                    "track": 180.0,
+                    "heading": 0.0,
+                    "comment": ""
+                },
+                {
+                    "x": 74.0,
+                    "y": -122.0,
+                    "track": 180.0,
+                    "heading": 0.0,
+                    "comment": ""
+                }
+            ]
+        }
+    ]
+}

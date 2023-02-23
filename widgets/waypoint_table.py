@@ -230,6 +230,8 @@ class WaypointTable(QWidget):
 
         self.model.updated.connect(self.add_path)
 
+        self.auto_name = ''
+
         # self.path_list.list.currentItemChanged.connect(self.update_path)
 
     def add_path(self):
@@ -258,16 +260,19 @@ class WaypointTable(QWidget):
         self.tableBody.delete_row(rowNum)
 
     def load_auto_wp_table(self):
-        filename, _ = QFileDialog.getOpenFileName(self, 'Select File to Load', '.', 'JSON File (*.json)')
-        auto = load_auto(filename)
+        filename, _ = QFileDialog.getOpenFileName(self, 'Select File to Load', '.', 'SHOE File (*.shoe);;JSON File (*.json)')
+        name, auto = load_auto(filename)
         if auto is not None:
+            self.auto_name = name
             self.path_list.list.set_items(auto)
 
 
     def save_auto(self):
         if self.path_list.list.count() > 0:
-            default_name = 'auto.json'
-            filename, _ = QFileDialog.getSaveFileName(self, 'Select File to Save', f'./{default_name}', 'JSON File (*.json)')
+            if len(self.auto_name) == 0:
+                self.auto_name = 'auto.shoe'
+            # default_name = 'auto.shoe'
+            filename, _ = QFileDialog.getSaveFileName(self, 'Select File to Save', f'./{self.auto_name}', 'SHOE File (*.shoe);;JSON File (*.json)')
 
             if filename is None:
                 return

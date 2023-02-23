@@ -75,14 +75,21 @@ waypoint_array_t calc_splines(waypoint_array_t waypoints)
     }
     else
     {
+        std::cout << "pre splines" << std::endl;
         for (int i = 0; i < points.size() - 1; i++)
         {
             mQunticHermiteSplines.push_back(QuinticHermiteSpline(points[i], points[i+1]));
         }
+        std::cout << "post splines" << std::endl;
+        std::cout << mQunticHermiteSplines.at(0).getVelocity(0.5) << std::endl;
 
         QuinticHermiteSpline::optimizeSpline(mQunticHermiteSplines);
 
+        std::cout << "post optimize" << std::endl;
+
         positions = SplineGenerator::parameterizeSplines(mQunticHermiteSplines, headings);
+
+        std::cout << "post parameterize\n" << std::endl;
     }
 
     waypoint_array_t wp_arr;
