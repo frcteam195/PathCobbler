@@ -21,7 +21,7 @@ class ShoeButtons(QWidget):
 
         self.add_button = QPushButton("Add Path")
         self.remove_button = QPushButton("Remove Path")
-        self.clear_button = QPushButton("clear path")
+        self.clear_button = QPushButton("Clear Path")
 
 
         layout.addWidget(self.add_button)
