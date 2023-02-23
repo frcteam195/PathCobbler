@@ -359,7 +359,7 @@ class WaypointTable(QWidget):
 
             tiny_points = calc_splines(waypoints)
 
-            screenshot_area = QRect(self.field.x(), self.field.y(), self.field.width(), self.field.height())
+            screenshot_area = QRect(self.field.x(), self.field.y(), self.field.width() / 2, self.field.height())
             screenshot: QPixmap = self.window().grab(screenshot_area)
 
 
