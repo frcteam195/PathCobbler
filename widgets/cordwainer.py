@@ -94,9 +94,9 @@ class ShoeList(QListWidget):
 
         for item in items:
             self.addItem(item)
-            for wp in item.waypoints:
-                print(wp)
-            print(' ')
+            # for wp in item.waypoints:
+            #     print(wp)
+            # print(' ')
 
         self.setCurrentRow(self.count() - 1)
 
