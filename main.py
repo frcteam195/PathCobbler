@@ -12,6 +12,10 @@ from widgets.main_widget import MainWidget
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 
+# import faulthandler
+# faulthandler.enable()
+
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
