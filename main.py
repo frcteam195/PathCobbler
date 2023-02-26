@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import os
 import sys
 import time
@@ -10,6 +11,10 @@ from widgets.main_widget import MainWidget
 
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+
+# import faulthandler
+# faulthandler.enable()
 
 
 class MainWindow(QMainWindow):
