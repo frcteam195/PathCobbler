@@ -1,0 +1,46 @@
+{
+    "name": "Cone_Wall_TwoPiece",
+    "path_count": 2,
+    "paths": [
+        {
+            "name": "path1",
+            "waypoints": [
+                {
+                    "x": 60.0,
+                    "y": -34.0,
+                    "track": 0.0,
+                    "heading": 0.0,
+                    "comment": ""
+                },
+                {
+                    "x": 276.0,
+                    "y": -40.0,
+                    "track": -1.0,
+                    "heading": -1.0,
+                    "comment": ""
+                }
+            ]
+        },
+        {
+            "name": "path2",
+            "waypoints": [
+                {
+                    "x": 276.0,
+                    "y": -40.0,
+                    "track": 180.0,
+                    "heading": 0.0,
+                    "comment": ""
+                },
+                {
+                    "x": 60.0,
+                    "y": -16.0,
+                    "track": 180.0,
+                    "heading": 0.0,
+                    "comment": ""
+                }
+            ]
+        }
+    ]
+ }
+ 
+ 
