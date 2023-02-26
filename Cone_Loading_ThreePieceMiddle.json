@@ -1,0 +1,122 @@
+{
+    "name": "Cone_Loading_ThreePieceMiddleField",
+    "path_count": 5,
+    "paths": [
+        {
+            "name": "GatherCube1",
+            "waypoints": [
+                {
+                    "x": 76.0,
+                    "y": -190.0,
+                    "track": 0.0,
+                    "heading": 0.0,
+                    "comment": ""
+                },
+                {
+                    "x": 259.0,
+                    "y": -180.0,
+                    "track": 0.0,
+                    "heading": 0.0,
+                    "comment": ""
+                }
+            ]
+        },
+        {
+            "name": "ScoreCube1",
+            "waypoints": [
+                {
+                    "x": 259.0,
+                    "y": -180.0,
+                    "track": 180.0,
+                    "heading": 0.0,
+                    "comment": ""
+                },
+                {
+                    "x": 74.0,
+                    "y": -179.0,
+                    "track": 180.0,
+                    "heading": 0.0,
+                    "comment": ""
+                }
+            ]
+        },
+        {
+            "name": "GatherCube2",
+            "waypoints": [
+                {
+                    "x": 74.0,
+                    "y": -179.0,
+                    "track": 0.0,
+                    "heading": 0.0,
+                    "comment": ""
+                },
+                {
+                    "x": 212.0,
+                    "y": -179.0,
+                    "track": 0.0,
+                    "heading": 0.0,
+                    "comment": ""
+                },
+                {
+                    "x": 254.0,
+                    "y": -133.0,
+                    "track": 0.0,
+                    "heading": 0.0,
+                    "comment": ""
+                }
+            ]
+        },
+        {
+            "name": "ScoreCube2",
+            "waypoints": [
+                {
+                    "x": 254.0,
+                    "y": -133.0,
+                    "track": 180.0,
+                    "heading": 0.0,
+                    "comment": ""
+                },
+                {
+                    "x": 224.0,
+                    "y": -182.0,
+                    "track": 180.0,
+                    "heading": 0.0,
+                    "comment": ""
+                },
+                {
+                    "x": 74.0,
+                    "y": -179.0,
+                    "track": 180.0,
+                    "heading": 0.0,
+                    "comment": ""
+                }
+            ]
+        },
+        {
+            "name": "MoveToMiddle",
+            "waypoints": [
+                {
+                    "x": 74.0,
+                    "y": -179.0,
+                    "track": 0.0,
+                    "heading": 0.0,
+                    "comment": ""
+                },
+                {
+                    "x": 212.0,
+                    "y": -180.0,
+                    "track": 0.0,
+                    "heading": 0.0,
+                    "comment": ""
+                },
+                {
+                    "x": 305.0,
+                    "y": -152.0,
+                    "track": 0.0,
+                    "heading": 0.0,
+                    "comment": ""
+                }
+            ]
+        }
+    ]
+}
