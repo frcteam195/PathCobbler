@@ -1,0 +1,44 @@
+{
+    "name": "Cone_Loading_TwoPiece",
+    "path_count": 2,
+    "paths": [
+        {
+            "name": "GatherConePath",
+            "waypoints": [
+                {
+                    "x": 74.0,
+                    "y": -193.0,
+                    "track": 0.0,
+                    "heading": 0.0,
+                    "comment": ""
+                },
+                {
+                    "x": 259.0,
+                    "y": -182.0,
+                    "track": 0.0,
+                    "heading": 0.0,
+                    "comment": ""
+                }
+            ]
+        },
+        {
+            "name": "ScoreConePath",
+            "waypoints": [
+                {
+                    "x": 257.0,
+                    "y": -181.0,
+                    "track": 180.0,
+                    "heading": 0.0,
+                    "comment": ""
+                },
+                {
+                    "x": 73.0,
+                    "y": -191.0,
+                    "track": 180.0,
+                    "heading": 0.0,
+                    "comment": ""
+                }
+            ]
+        }
+    ]
+}

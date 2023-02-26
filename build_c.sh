@@ -1,3 +1,4 @@
+#!/bin/bash
 if [[ $1 == clean ]]; then
     rm -Rf lib/build
     exit 0

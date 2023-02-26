@@ -20,7 +20,7 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 file(GLOB_RECURSE ckutils_executable_sources CONFIGURE_DEPENDS
-    #  "${PROJECT_SOURCE_DIR}/ck_utilities/src/*.cpp"
+    # "${PROJECT_SOURCE_DIR}/ck_utilities/src/*.cpp"
 	"${PROJECT_SOURCE_DIR}/ck_utilities/src/team254_geometry/*.cpp"
 	"${PROJECT_SOURCE_DIR}/ck_utilities/src/trajectory/*.cpp"
 )
@@ -39,3 +39,8 @@ add_library(${PROJECT_NAME} SHARED ${executable_sources})
 target_include_directories(${PROJECT_NAME} PUBLIC "include" "ck_utilities/include")
 target_link_libraries(${PROJECT_NAME} Threads::Threads ${INT_LIB_NAME})
 #add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS})
+
+# include_directories("ck_utilities/include")
+# include_directories("include")
+# add_executable(main ${executable_sources} ${ckutils_executable_sources})
+# add_executable(main "${PROJECT_SOURCE_DIR}/src/main.cpp")
