@@ -198,3 +198,7 @@ cython_debug/
 #.idea/
 
 # End of https://www.toptal.com/developers/gitignore/api/python,macos
+
+# Autonomous files and previews.
+*.gif
+*.json
