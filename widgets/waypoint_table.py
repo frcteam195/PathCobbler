@@ -315,10 +315,11 @@ class WaypointTable(QWidget):
 
 
             path_json = json.dumps(json_obj, indent=4)
-            with open(filename, 'w') as f:
-                f.write(path_json)
-                if self.isGifEnabled():
-                    self.screenshot(filename)
+            if filename != '' or filename is None or filename != "":
+                with open(filename, 'w') as f:
+                    f.write(path_json)
+                    if self.isGifEnabled():
+                        self.screenshot(filename)
         else:
             msg = QMessageBox()
             msg.setWindowTitle("WARNING")
