@@ -268,7 +268,29 @@ class WaypointTable(QWidget):
     def save_auto(self):
         if self.path_list.list.count() > 0:
             default_name = 'auto.json'
+            last_x = None
+            last_y = None
+            last_heading = None
+
+            for path in self.path_list.get_paths(): 
+                print("lastx:" ,last_x)
+                print("current x:", path.waypoints[0].x)
+                print("current y:", path.waypoints[0].y)
+                print("current heading:", path.waypoints[0].heading)
+                if last_x is not None:
+                    if last_x != path.waypoints[0].x or last_y != path.waypoints[0].y or last_heading != path.waypoints[0].heading:
+                        msg = QMessageBox()
+                        msg.setWindowTitle("Error!")
+                        msg.setIcon(QMessageBox.Warning)
+                        msg.setGeometry(500, 500, 500, 500)
+                        msg.setText(f"One of your paths doesn't end with the same point that begins the subsequent path at {path.text()}")
+                        msg.exec()
+                last_x = path.waypoints[len(path.waypoints) - 1].x
+                last_y = path.waypoints[len(path.waypoints) - 1].y
+                last_heading = path.waypoints[len(path.waypoints) - 1].heading
+                print(1)
             filename, _ = QFileDialog.getSaveFileName(self, 'Select File to Save', f'./{default_name}', 'JSON File (*.json)')
+
 
             if filename is None:
                 return
@@ -293,7 +315,6 @@ class WaypointTable(QWidget):
 
 
             path_json = json.dumps(json_obj, indent=4)
-
             with open(filename, 'w') as f:
                 f.write(path_json)
                 if self.isGifEnabled():
@@ -327,28 +348,12 @@ class WaypointTable(QWidget):
         #     os.remove(file.path)
         # for wp in path.waypoints:
         #         waypoints.append(wp)
-
-        last_x = None
-        last_y = None
-        last_track = None
-
         path_num = 0
         p = 0
 
         images = []
 
-        # for path in self.path_list.get_paths():
-        #     if last_x is not None and last_x != path.waypoints[0].x and last_y != path.waypoints[0].y and last_track != path.waypoints[0].track:
-        #         msg = QMessageBox()
-        #         msg.setWindowTitle("Error!")
-        #         msg.setIcon(QMessageBox.Warning)
-        #         msg.setGeometry(500, 500, 500, 500)
-        #         msg.setText("One of your paths doesn't end with the same point that begins the subsequent path")
-        #         msg.exec()
         for path in self.path_list.get_paths():
-            last_x = path.waypoints[len(path.waypoints) - 1].x
-            last_y = path.waypoints[len(path.waypoints) - 1].y
-            last_track = path.waypoints[len(path.waypoints) - 1].track
 
             path_num += 1
 
