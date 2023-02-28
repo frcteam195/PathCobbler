@@ -5,7 +5,7 @@ fieldWidth = 888  # inches
 fieldHeight = 360  # inches
 
 xOffset = 118.20125000
-yOffset = fieldHeight - 21.90125000
+yOffset = fieldHeight - 22.90125000
 
 width = 2704  # pixels
 height = 1096  # pixels
