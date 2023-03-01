@@ -22,11 +22,16 @@ class ShoeButtons(QWidget):
         self.add_button = QPushButton("Add Path")
         self.remove_button = QPushButton("Remove Path")
         self.clear_button = QPushButton("Clear Path")
+        self.speed_textbox = QTextEdit()
+        self.speed_button = QPushButton("Submit Speed")
+        self.speed_textbox.setMaximumSize(20, 32)
 
 
         layout.addWidget(self.add_button)
         layout.addWidget(self.remove_button)
         layout.addWidget(self.clear_button)
+        layout.addWidget(self.speed_textbox)
+        layout.addWidget(self.speed_button)
 
 
 class ShoeList(QListWidget):
