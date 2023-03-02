@@ -273,10 +273,6 @@ class WaypointTable(QWidget):
             last_heading = None
 
             for path in self.path_list.get_paths(): 
-                print("lastx:" ,last_x)
-                print("current x:", path.waypoints[0].x)
-                print("current y:", path.waypoints[0].y)
-                print("current heading:", path.waypoints[0].heading)
                 if last_x is not None:
                     if last_x != path.waypoints[0].x or last_y != path.waypoints[0].y or last_heading != path.waypoints[0].heading:
                         msg = QMessageBox()
@@ -288,7 +284,6 @@ class WaypointTable(QWidget):
                 last_x = path.waypoints[len(path.waypoints) - 1].x
                 last_y = path.waypoints[len(path.waypoints) - 1].y
                 last_heading = path.waypoints[len(path.waypoints) - 1].heading
-                print(1)
             filename, _ = QFileDialog.getSaveFileName(self, 'Select File to Save', f'./{default_name}', 'JSON File (*.json)')
 
 
@@ -305,10 +300,11 @@ class WaypointTable(QWidget):
 
             json_obj['paths'] = []
 
-
             for i, path in enumerate(paths):
                 json_obj['paths'].append({})
                 json_obj["paths"][i]["name"] = path.text()
+                if path.speed:
+                    json_obj["paths"][i]["max_velocity"] = int(path.speed)                 
                 json_obj["paths"][i]["waypoints"] = []
                 for wp in path.waypoints:
                     json_obj["paths"][i]["waypoints"].append(wp.toJson())
