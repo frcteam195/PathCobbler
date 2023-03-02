@@ -22,17 +22,21 @@ class ShoeButtons(QWidget):
         self.add_button = QPushButton("Add Path")
         self.remove_button = QPushButton("Remove Path")
         self.clear_button = QPushButton("Clear Path")
+        self.speed_textbox = QLineEdit()
+        self.speed_textbox.setMaximumSize(32, 32)
 
 
         layout.addWidget(self.add_button)
         layout.addWidget(self.remove_button)
         layout.addWidget(self.clear_button)
+        layout.addWidget(self.speed_textbox)
 
 
 class ShoeList(QListWidget):
-    def __init__(self, model: WaypointModel):
+    def __init__(self, model: WaypointModel, buttons: ShoeButtons):
         super().__init__()
         self.waypoint_model = model
+        self.buttons = buttons
         self.waypoint_model.updated.connect(self.update_item)
         self.setDragDropMode(QAbstractItemView.DragDrop)
 
@@ -106,20 +110,30 @@ class ShoeList(QListWidget):
     def selection_changed(self, current, previous):
         if previous is not None:
             previous.waypoints = deepcopy(self.waypoint_model.waypoints)
+            previous.speed = deepcopy(self.buttons.speed_textbox.text())
 
         if current is not None:
             self.waypoint_model.update(current.waypoints)
+            if current.speed is not None:
+                self.buttons.speed_textbox.setText(current.speed)
+            else:
+                self.buttons.speed_textbox.clear()
 
     def add_paths(self, names, wps):
         self.names = names
         self.wps = wps
+    
+    def add_speed(self, speed):
+        self.currentItem().speed = speed
+
+
 
 class Cordwainer(QWidget):
     def __init__(self, model: WaypointModel):
         super().__init__()
         self.layout = QVBoxLayout()
-        self.list = ShoeList(model)
         self.buttons = ShoeButtons()
+        self.list = ShoeList(model, self.buttons)
         self.model = model
 
         self.buttons.setGeometry(self.buttons.x()-100, self.buttons.y(), self.buttons.width(), self.buttons.height())
@@ -133,7 +147,11 @@ class Cordwainer(QWidget):
 
         self.buttons.remove_button.clicked.connect(self.list.remove_item)
         self.buttons.add_button.clicked.connect(lambda: self.list.add_item([]))
-        self.buttons.clear_button.clicked.connect(self.model.clear_model)
+        self.buttons.clear_button.clicked.connect(self.clear_all)
+        self.buttons.speed_textbox.editingFinished.connect(lambda: self.list.add_speed(self.buttons.speed_textbox.text()))
 
     def get_paths(self):
         return self.list.get_items()
+    def clear_all(self):
+        self.buttons.speed_textbox.clear()
+        self.model.clear_model()
