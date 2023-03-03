@@ -31,6 +31,7 @@ from PySide6.QtCore import *
 
 from utils.waypoint import Waypoint
 from widgets.waypoint_model import WaypointModel
+from copy import deepcopy, copy
 
 
 class WaypointTableBody(QTableWidget):
@@ -44,17 +45,153 @@ class WaypointTableBody(QTableWidget):
         self.num_waypoints = 0
         # self.resize(500, 100)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-
-
+        self.setDragEnabled(True)
+        self.setAcceptDrops(True)
+        self.viewport().setAcceptDrops(True)
+        self.setDragDropOverwriteMode(False)
+        self.setDropIndicatorShown(True)
+        self.setSelectionMode(QTableWidget.SingleSelection) 
+        self.setSelectionBehavior(QTableWidget.SelectRows)
+        self.setDragDropMode(QTableWidget.InternalMove)   
+        self.setDefaultDropAction(Qt.MoveAction)
         self.model.updated.connect(self.draw_table)
         self.setColumnCount(6)
         self.setHorizontalHeaderLabels(["X", "Y", "Track", "Heading",  "Enabled", "Delete"])
 
         self.itemChanged.connect(self.item_changed)
 
-    def update(self):
+    def dropEvent(self, event):
+        if event.source() == self and (event.dropAction() == Qt.MoveAction or self.dragDropMode() == QTableWidget.InternalMove):
+            success, row, col, topIndex = self.dropOn(event)
+            if success:             
+                selRows = self.getSelectedRowsFast()                        
 
-        waypoints = []
+                top = selRows[0]
+                # print 'top is %d'%top
+                dropRow = row
+                if dropRow == -1:
+                    dropRow = self.rowCount()
+                # print 'dropRow is %d'%dropRow
+                offset = dropRow - top
+                # print 'offset is %d'%offset
+
+                for i, row in enumerate(selRows):
+                    r = row + offset
+                    if r > self.rowCount() or r < 0:
+                        r = 0
+                    self.insertRow(r)
+                    # print 'inserting row at %d'%r
+
+
+                selRows = self.getSelectedRowsFast()
+                # print 'selected rows: %s'%selRows
+
+                top = selRows[0]
+                # print 'top is %d'%top
+                offset = dropRow - top                
+                # print 'offset is %d'%offset
+                self.blockSignals(True)
+                for i, row in enumerate(selRows):
+                    r = row + offset
+                    if r > self.rowCount() or r < 0:
+                        r = 0
+
+                    for j in range(self.columnCount()):
+                        # print 'source is (%d, %d)'%(row, j)
+                        # print 'item text: %s'%self.item(row,j).text()
+                        source = QTableWidgetItem(self.item(row, j))
+                        # print 'dest is (%d, %d)'%(r,j)
+                        self.setItem(r, j, source)
+
+                # Why does this NOT need to be here?
+                # for row in reversed(selRows):
+                    # self.removeRow(row)
+
+                event.accept()
+                self.blockSignals(False)
+
+        else:
+            self.blockSignals(True)
+            QTableView.dropEvent(event)
+            self.blockSignals(False)
+        # self.update()
+
+    def getSelectedRowsFast(self):
+        selRows = []
+        for item in self.selectedItems():
+            if item.row() not in selRows:
+                selRows.append(item.row())
+        return selRows
+
+    def droppingOnItself(self, event, index):
+        dropAction = event.dropAction()
+
+        if self.dragDropMode() == QTableWidget.InternalMove:
+            dropAction = Qt.MoveAction
+
+        if event.source() == self and event.possibleActions() & Qt.MoveAction and dropAction == Qt.MoveAction:
+            selectedIndexes = self.selectedIndexes()
+            child = index
+            while child.isValid() and child != self.rootIndex():
+                if child in selectedIndexes:
+                    return True
+                child = child.parent()
+
+        return False
+
+    def dropOn(self, event):
+        if event.isAccepted():
+            return False, None, None, None
+
+        index = QModelIndex()
+        row = -1
+        col = -1
+
+        if self.viewport().rect().contains(event.pos()):
+            index = self.indexAt(event.pos())
+            if not index.isValid() or not self.visualRect(index).contains(event.pos()):
+                index = self.rootIndex()
+
+        if self.supportedDropActions() & event.dropAction():
+            if index != self.rootIndex():
+                dropIndicatorPosition = self.position(event.pos(), self.visualRect(index), index)
+
+                if dropIndicatorPosition == QTableWidget.AboveItem:
+                    row = index.row()
+                    col = index.column()
+                    # index = index.parent()
+                elif dropIndicatorPosition == QTableWidget.BelowItem:
+                    row = index.row() + 1
+                    col = index.column()
+                    # index = index.parent()
+                else:
+                    row = index.row()
+                    col = index.column()
+
+            if not self.droppingOnItself(event, index):
+                # print 'row is %d'%row
+                # print 'col is %d'%col
+                return True, row, col, index
+
+        return False, None, None, None
+
+    def position(self, pos, rect, index):
+        r = self.OnViewport
+        margin = 2
+        if pos.y() - rect.top() < margin:
+            r = QTableWidget.AboveItem
+        elif rect.bottom() - pos.y() < margin:
+            r = QTableWidget.BelowItem 
+        elif rect.contains(pos, True):
+            r = QTableWidget.OnItem
+
+        if r == QTableWidget.OnItem and not Qt.ItemIsDropEnabled:
+            r = QTableWidget.AboveItem if pos.y() < rect.center().y() else QTableWidget.BelowItem
+
+        return r
+
+
+    def update(self):
         for i in range(0, self.rowCount()):
 
             x_val = float(self.item(i, 0).text())
@@ -63,24 +200,9 @@ class WaypointTableBody(QTableWidget):
             track_val = float(self.item(i, 2).text())
             enabled_val = self.item(i, 4).getCheckedState() == Qt.Checked
 
-
             self.model[i] = Waypoint(x_val, y_val, track_val, heading_val, enabled = enabled_val)
 
-        # for i in range(0, self.rowCount()):
-        #     print("hello")
-        #     x_val = float(self.item(i, 0).text())
-        #     y_val = float(self.item(i, 1).text())
-        #     track_val = float(self.item(i, 2).text())
-        #     enabled_val = self.item(i, 3)
-        #     print("track: ", track_val)
-        #     print("enabled: ", enabled_val)
-        #     waypoints.append(Waypoint(x_val, y_val, track_val, enabled=enabled_val))
-
-        # self.model.update(waypoints)
-
     def draw_table(self):
-
-
         self.clear()
 
         for wp in self.model:
