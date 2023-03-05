@@ -13,6 +13,7 @@ from utils.waypoint import Waypoint
 from utils.translation2d import Translation2d
 from utils.bindings import calc_splines
 from widgets.waypoint_model import WaypointModel
+import numpy as np
 
 
 base_dir = os.path.dirname(os.path.dirname(__file__))
@@ -23,6 +24,8 @@ class FieldView(QLabel):
 
     def __init__(self, model: WaypointModel):
         super().__init__()
+
+        self.setMouseTracking(True)
 
         self.model = model
         self.model.updated.connect(lambda: self.draw_waypoints(self.model.waypoints))
@@ -46,6 +49,7 @@ class FieldView(QLabel):
 
         self.rotate_heading = False
         self.rotate_track = False
+        self.hover_point = False
 
     def pixels_to_inches(self, pixelsX, pixelsY):
         inchesX = (pixelsX / self.fieldWidth) * constants.fieldWidth - constants.xOffset
@@ -128,11 +132,12 @@ class FieldView(QLabel):
         return super().mouseReleaseEvent(ev)
 
     def mouseMoveEvent(self, ev: QMouseEvent) -> None:
+        inchesX, inchesY = self.pixels_to_inches(ev.position().x(), ev.position().y())
+        inchesX = float(math.floor(inchesX))
+        inchesY = float(math.floor(inchesY))
         for wp in self.model:
             if wp.clicked:
-                inchesX, inchesY = self.pixels_to_inches(ev.position().x(), ev.position().y())
-                inchesX = float(math.floor(inchesX))
-                inchesY = float(math.floor(inchesY))
+
 
                 if self.rotate_track:
                     x_diff = inchesX - wp.x
@@ -145,10 +150,16 @@ class FieldView(QLabel):
                     y_diff = inchesY - wp.y
 
                     wp.heading = float(math.floor(math.degrees(math.atan2(y_diff, x_diff))))
-
                 else:
                     wp.x = inchesX
                     wp.y = inchesY
+        if self.hover_point:
+            inchesX = float(math.floor(inchesX))
+            inchesY = float(math.floor(inchesY))
+            self.get_spline_distance(inchesX, inchesY)
+            # self.setToolTip(self.get_spline_distance(inchesX, inchesY))
+            pos = QPoint(ev.globalX(), ev.globalY())
+            QToolTip.showText(pos, self.get_spline_distance(inchesX, inchesY))
 
         self.model.update()
 
@@ -239,3 +250,16 @@ class FieldView(QLabel):
             pixelPoint = Translation2d(pixelsX, pixelsY)
 
             pixelPoint.draw(painter, color, 2)
+    def get_spline_distance(self, x, y):
+        distances = []
+        wps_list = calc_splines(self.model.waypoints)
+        if len(wps_list) > 1:
+            for idx, wps in enumerate(wps_list):
+                if idx < len(wps_list):
+                    point1 = np.array([wps_list[idx].x, wps_list[idx].y], dtype=float)
+                    point2 = np.array([x, y], dtype=float)
+                    current_distance = np.linalg.norm(point1-point2)
+                    distances.append(current_distance)
+            # print(np.argmin(distances))
+            # print(len(wps_list)-1)
+            return f"{np.round(((np.argmin(distances))/(len(wps_list)-1))*100, 1)}%"
