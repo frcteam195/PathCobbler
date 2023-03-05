@@ -53,8 +53,11 @@ def load_auto(filename):
             waypoints = []
             for wp in path['waypoints']:
                 waypoints.append(Waypoint(wp['x'], wp['y'], wp['track'], wp['heading']))
-
-            paths.append(Auto(path['name'], waypoints))
+            if 'max_velocity' in path:
+                speed = path['max_velocity']
+                paths.append(Auto(path['name'], waypoints, speed))
+            else:
+                paths.append(Auto(path['name'], waypoints, speed))
         return paths
     else:
         msg = QMessageBox()

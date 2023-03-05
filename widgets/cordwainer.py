@@ -115,7 +115,7 @@ class ShoeList(QListWidget):
         if current is not None:
             self.waypoint_model.update(current.waypoints)
             if current.speed is not None:
-                self.buttons.speed_textbox.setText(current.speed)
+                self.buttons.speed_textbox.setText(str(current.speed))
             else:
                 self.buttons.speed_textbox.clear()
 
