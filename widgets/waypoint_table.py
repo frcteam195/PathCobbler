@@ -46,88 +46,88 @@ class WaypointTableBody(QTableWidget):
         self.num_waypoints = 0
         # self.resize(500, 100)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setDragEnabled(True)
-        self.setAcceptDrops(True)
-        self.viewport().setAcceptDrops(True)
-        self.setDragDropOverwriteMode(False)
-        self.setDropIndicatorShown(True)
-        self.setSelectionMode(QTableWidget.SingleSelection) 
-        self.setSelectionBehavior(QTableWidget.SelectRows)
-        self.setDragDropMode(QTableWidget.InternalMove)   
-        self.setDefaultDropAction(Qt.MoveAction)
+        # self.setDragEnabled(True)
+        # self.setAcceptDrops(True)
+        # self.viewport().setAcceptDrops(True)
+        # self.setDragDropOverwriteMode(False)
+        # self.setDropIndicatorShown(True)
+        # self.setSelectionMode(QTableWidget.SingleSelection) 
+        # self.setSelectionBehavior(QTableWidget.SelectRows)
+        # self.setDragDropMode(QTableWidget.InternalMove)   
+        # self.setDefaultDropAction(Qt.MoveAction)
         self.model.updated.connect(self.draw_table)
         self.setColumnCount(6)
         self.setHorizontalHeaderLabels(["X", "Y", "Track", "Heading",  "Enabled", "Delete"])
 
         self.itemChanged.connect(self.item_changed)
-    def dropEvent(self, event: QDropEvent):
-        print("drop event")
-        self.blockSignals(True)
-        delete_button_index = 5
-        if not event.isAccepted() and event.source() == self:
-            drop_row = self.drop_on(event)
+    # def dropEvent(self, event: QDropEvent):
+    #     print("drop event")
+    #     self.blockSignals(True)
+    #     delete_button_index = 5
+    #     if not event.isAccepted() and event.source() == self:
+    #         drop_row = self.drop_on(event)
 
-            rows = sorted(set(item.row() for item in self.selectedItems()))
-            rows_to_move = [[QTableWidgetItem(self.item(row_index, column_index)) for column_index in range(self.columnCount())]
-                            for row_index in rows]
-            for row_index in reversed(rows):
-                self.removeRow(row_index)
-                if row_index < drop_row:
-                    drop_row -= 1
-            delete_button = QPushButton("X")
-            delete_button.clicked.connect(self.delete_row)
-            for row_index, data in enumerate(rows_to_move):
-                row_index += drop_row
-                self.insertRow(row_index)
-                for column_index, column_data in enumerate(data):
-                    if column_index == delete_button_index:
-                        self.setCellWidget(row_index, delete_button_index, delete_button)
-                        continue
-                    self.setItem(row_index, column_index, column_data)
-                    print(row_index, column_index, column_data)
+    #         rows = sorted(set(item.row() for item in self.selectedItems()))
+    #         rows_to_move = [[QTableWidgetItem(self.item(row_index, column_index)) for column_index in range(self.columnCount())]
+    #                         for row_index in rows]
+    #         for row_index in reversed(rows):
+    #             self.removeRow(row_index)
+    #             if row_index < drop_row:
+    #                 drop_row -= 1
+    #         delete_button = QPushButton("X")
+    #         delete_button.clicked.connect(self.delete_row)
+    #         for row_index, data in enumerate(rows_to_move):
+    #             row_index += drop_row
+    #             self.insertRow(row_index)
+    #             for column_index, column_data in enumerate(data):
+    #                 if column_index == delete_button_index:
+    #                     self.setCellWidget(row_index, delete_button_index, delete_button)
+    #                     continue
+    #                 self.setItem(row_index, column_index, column_data)
+    #                 print(row_index, column_index, column_data)
                 
-            event.accept()
-            # for row_index in range(len(rows_to_move)):
-            #     self.item(drop_row + row_index, 0).setSelected(True)
-            #     self.item(drop_row + row_index, 1).setSelected(True)
-        super().dropEvent(event)
-        self.blockSignals(False)
+    #         event.accept()
+    #         # for row_index in range(len(rows_to_move)):
+    #         #     self.item(drop_row + row_index, 0).setSelected(True)
+    #         #     self.item(drop_row + row_index, 1).setSelected(True)
+    #     super().dropEvent(event)
+    #     self.blockSignals(False)
 
-        # self.update()
+    #     # self.update()
 
-        for i in range(self.rowCount()):
-            self.dragUpdate(i)
-        # self.update()
+    #     # for i in range(self.rowCount()):
+    #     #     self.dragUpdate(i)
+    #     # self.update()
 
-        # for r in range(0, self.rowCount()):
-        #     print(f"Current Row: {r}")
-        #     for c in range(0, self.columnCount()-1):
-        #         print(f"Current Column: {c}")
-        #         print(f"Item: {self.item(r, c).text()}")
-        #         # print(f"")
-    def getSelectedRows(self):
-        selRows = []
-        for item in self.selectedItems():
-            if item.row() not in selRows:
-                selRows.append(item.row())
-        return selRows
+    #     # for r in range(0, self.rowCount()):
+    #     #     print(f"Current Row: {r}")
+    #     #     for c in range(0, self.columnCount()-1):
+    #     #         print(f"Current Column: {c}")
+    #     #         print(f"Item: {self.item(r, c).text()}")
+    #     #         # print(f"")
+    # def getSelectedRows(self):
+    #     selRows = []
+    #     for item in self.selectedItems():
+    #         if item.row() not in selRows:
+    #             selRows.append(item.row())
+    #     return selRows
 
-    def drop_on(self, event):
-        index = self.indexAt(event.pos())
-        if not index.isValid():
-            return self.rowCount()
+    # def drop_on(self, event):
+    #     index = self.indexAt(event.pos())
+    #     if not index.isValid():
+    #         return self.rowCount()
 
-        return index.row() + 1 if self.is_below(event.pos(), index) else index.row()
+    #     return index.row() + 1 if self.is_below(event.pos(), index) else index.row()
 
-    def is_below(self, pos, index):
-        rect = self.visualRect(index)
-        margin = 2
-        if pos.y() - rect.top() < margin:
-            return False
-        elif rect.bottom() - pos.y() < margin:
-            return True
-        # noinspection PyTypeChecker
-        return rect.contains(pos, True) and not (int(self.flags(index)) & Qt.ItemIsDropEnabled) and pos.y() >= rect.center().y()
+    # def is_below(self, pos, index):
+    #     rect = self.visualRect(index)
+    #     margin = 2
+    #     if pos.y() - rect.top() < margin:
+    #         return False
+    #     elif rect.bottom() - pos.y() < margin:
+    #         return True
+    #     # noinspection PyTypeChecker
+    #     return rect.contains(pos, True) and not (int(self.flags(index)) & Qt.ItemIsDropEnabled) and pos.y() >= rect.center().y()
 
     def update(self):
         print('updating')
