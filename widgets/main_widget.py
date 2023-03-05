@@ -43,6 +43,8 @@ class MainWidget(QWidget):
             self.field.rotate_track = True
         if event.key() == Qt.Key_Control:
             self.field.rotate_heading = True
+        if event.key() == Qt.Key_Alt:
+            self.field.hover_point = True
         return super().keyPressEvent(event)
 
     def keyReleaseEvent(self, event: QKeyEvent) -> None:
@@ -50,4 +52,7 @@ class MainWidget(QWidget):
             self.field.rotate_track = False
         if event.key() == Qt.Key_Control:
             self.field.rotate_heading = False
+        if event.key() == Qt.Key_Alt:
+            self.field.hover_point = False
+            self.field.setToolTip("")
         return super().keyReleaseEvent(event)
