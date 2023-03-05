@@ -13,6 +13,7 @@ from utils.waypoint import Waypoint
 from utils.translation2d import Translation2d
 from utils.bindings import calc_splines
 from widgets.waypoint_model import WaypointModel
+import numpy as np
 
 
 base_dir = os.path.dirname(os.path.dirname(__file__))
@@ -217,6 +218,7 @@ class FieldView(QLabel):
 
         self.painter.end()
         self.setPixmap(canvas)
+        self.get_spline_distance()
 
     def drawRobot(self, painter: QPainter, wp: Waypoint):
         h = math.radians(wp.heading)
@@ -239,3 +241,13 @@ class FieldView(QLabel):
             pixelPoint = Translation2d(pixelsX, pixelsY)
 
             pixelPoint.draw(painter, color, 2)
+    def get_spline_distance(self):
+        distances = []
+        wps_list = calc_splines(self.model.waypoints)
+        print(wps_list[0].x)
+        for idx, wps in enumerate(wps_list):
+            print("idx:", idx)
+            point1 = np.array(int(wps_list[idx].x), int(wps_list[idx].y))
+            point2 = np.array(int(wps_list[idx+1].x), int(wps_list[idx+1].y))
+            current_distance = np.linalg.norm(point1, point2)
+            distances.append(current_distance)
