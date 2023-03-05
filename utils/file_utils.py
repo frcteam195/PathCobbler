@@ -57,7 +57,7 @@ def load_auto(filename):
                 speed = path['max_velocity']
                 paths.append(Auto(path['name'], waypoints, speed))
             else:
-                paths.append(Auto(path['name'], waypoints, speed))
+                paths.append(Auto(path['name'], waypoints))
         return paths
     else:
         msg = QMessageBox()
