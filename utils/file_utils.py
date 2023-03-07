@@ -67,5 +67,24 @@ def load_auto(filename):
         msg.setGeometry(100, 200, 100, 100)
         msg.exec()
         return None
-
-
+def load_default_points():
+    file = open_json_file("resources/default_points.json")
+    if file is not None:
+        if 'points' in file:
+            waypoints = []
+            for points in file['points']:
+                for wp_json in points["waypoint"]:
+                    waypoint = Waypoint(wp_json['x'], wp_json['y'], wp_json['track'], wp_json['heading'])
+                    waypoints.append(waypoint)
+                    print(waypoint)
+            return waypoints
+    
+        
+    else:
+        msg = QMessageBox()
+        msg.setWindowTitle("WARNING")
+        msg.setText("Failed to load default points")
+        msg.setIcon(QMessageBox.Warning)
+        msg.setGeometry(100, 200, 100, 100)
+        msg.exec()
+        return None

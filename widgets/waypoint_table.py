@@ -2,7 +2,6 @@ import os
 import io
 import json
 import math
-import time
 
 from typing import List
 
@@ -16,7 +15,6 @@ import imageio as iio
 from PIL import Image, ImageFont, ImageDraw
 
 from utils.waypoint import Waypoint
-from widgets.path_list import PathList
 from widgets.waypoint_model import WaypointModel
 from widgets.field_view import FieldView
 from widgets.cordwainer import Cordwainer
@@ -243,7 +241,9 @@ class WaypointTable(QWidget):
         self.field = field
 
         self.setMinimumSize(1010, 300)
-
+        self.dropDown = QComboBox()
+        self.dropDown.insertItems(0, ["--Select a point--", "1", "2", "3", "4", "5", "6", "7", "8", "9"])
+        self.dropDown.currentTextChanged.connect(self.update_drop_down)
         self.addButton = QPushButton('Add Point')
         self.addButton.clicked.connect(lambda: self.add_waypoint())
         self.updateButton = QPushButton('Update')
@@ -267,6 +267,7 @@ class WaypointTable(QWidget):
         self.howToUseButton.setMaximumSize(32, 32)
         self.buttonLayout = QHBoxLayout()
         self.buttonLayout.addWidget(self.howToUseButton)
+        self.buttonLayout.addWidget(self.dropDown)
         self.buttonLayout.addWidget(self.addButton)
         self.buttonLayout.addWidget(self.updateButton)
         self.buttonLayout.addWidget(self.animateButton)
@@ -310,6 +311,9 @@ class WaypointTable(QWidget):
         # self.path_list.list.currentItemChanged.connect(self.update_path)
 
     def add_path(self):
+        """
+        Adds a path to the waypoint table.
+        """
         if self.path_list.list.count() < 1:
             # item = self.path_list.list.addItem(Auto(f"path{str(self.path_list.list.count() + 1)}", self.get_waypoints()))
             self.path_list.list.add_item(self.get_waypoints())
@@ -339,8 +343,11 @@ class WaypointTable(QWidget):
         auto = load_auto(filename)
         if auto is not None:
             self.path_list.list.set_items(auto)
-
-
+    def update_drop_down(self):
+        if self.dropDown.currentIndex() != 0:
+            print(self.dropDown.currentIndex())
+            load_default_points()
+    
     def save_auto(self):
         if self.path_list.list.count() > 0:
             default_name = 'auto.json'
@@ -467,8 +474,8 @@ class WaypointTable(QWidget):
                     image = ImageDraw.Draw(test)
 
 
-                    px = (self.field.inches_to_pixels(pt.x, 0)[0] * 2)
-                    py = (self.field.inches_to_pixels(0, pt.y)[1] * 2)
+                    px = self.field.inches_to_pixels(pt.x, 0)[0] * 2
+                    py = self.field.inches_to_pixels(0, pt.y)[1] * 2
 
                     # transfrom = int(math.sin(pt.heading) * robot_size)
 
