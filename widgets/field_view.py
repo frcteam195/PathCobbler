@@ -137,8 +137,6 @@ class FieldView(QLabel):
         inchesY = float(math.floor(inchesY))
         for wp in self.model:
             if wp.clicked:
-
-
                 if self.rotate_track:
                     x_diff = inchesX - wp.x
                     y_diff = inchesY - wp.y
@@ -153,6 +151,7 @@ class FieldView(QLabel):
                 else:
                     wp.x = inchesX
                     wp.y = inchesY
+                self.model.update()
         if self.hover_point:
             inchesX = float(math.floor(inchesX))
             inchesY = float(math.floor(inchesY))
@@ -160,8 +159,6 @@ class FieldView(QLabel):
             # self.setToolTip(self.get_spline_distance(inchesX, inchesY))
             pos = QPoint(ev.globalX(), ev.globalY())
             QToolTip.showText(pos, self.get_spline_distance(inchesX, inchesY))
-
-        self.model.update()
 
         return super().mouseMoveEvent(ev)
 
