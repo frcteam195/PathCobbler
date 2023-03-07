@@ -243,7 +243,7 @@ class WaypointTable(QWidget):
         self.setMinimumSize(1010, 300)
         self.dropDown = QComboBox()
         self.dropDown.insertItems(0, ["--Select a point--", "1", "2", "3", "4", "5", "6", "7", "8", "9"])
-        self.dropDown.currentTextChanged.connect(self.update_drop_down)
+        # self.dropDown.currentTextChanged.connect(self.update_drop_down)
         self.addButton = QPushButton('Add Point')
         self.addButton.clicked.connect(lambda: self.add_waypoint())
         self.updateButton = QPushButton('Update')
