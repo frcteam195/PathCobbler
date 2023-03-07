@@ -520,4 +520,3 @@ class WaypointTable(QWidget):
             images.append(filename)
         iio.mimsave(f'{file_name}.gif', images, fps=15)
         # optimize(file_name)
-
