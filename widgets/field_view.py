@@ -153,6 +153,7 @@ class FieldView(QLabel):
                 else:
                     wp.x = inchesX
                     wp.y = inchesY
+            self.model.update()
         if self.hover_point:
             inchesX = float(math.floor(inchesX))
             inchesY = float(math.floor(inchesY))
@@ -161,7 +162,7 @@ class FieldView(QLabel):
             pos = QPoint(ev.globalX(), ev.globalY())
             QToolTip.showText(pos, self.get_spline_distance(inchesX, inchesY))
 
-        self.model.update()
+        
 
         return super().mouseMoveEvent(ev)
 
