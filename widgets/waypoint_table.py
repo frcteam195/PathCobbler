@@ -20,6 +20,7 @@ from widgets.path_list import PathList
 from widgets.waypoint_model import WaypointModel
 from widgets.field_view import FieldView
 from widgets.cordwainer import Cordwainer
+# from widgets.TableWidgetDragRows import TableWidgetDragRows
 from utils.auto import Auto
 
 from utils.bindings import calc_splines
@@ -45,162 +46,104 @@ class WaypointTableBody(QTableWidget):
         self.num_waypoints = 0
         # self.resize(500, 100)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        # self.setDragEnabled(True)
-        # self.setAcceptDrops(True)
-        # self.viewport().setAcceptDrops(True)
-        # self.setDragDropOverwriteMode(False)
-        # self.setDropIndicatorShown(True)
-        # self.setSelectionMode(QTableWidget.SingleSelection) 
-        # self.setSelectionBehavior(QTableWidget.SelectRows)
-        # self.setDragDropMode(QTableWidget.InternalMove)   
-        # self.setDefaultDropAction(Qt.MoveAction)
+        self.setDragEnabled(True)
+        self.setAcceptDrops(True)
+        self.viewport().setAcceptDrops(True)
+        self.setDragDropOverwriteMode(False)
+        self.setDropIndicatorShown(True)
+        self.setSelectionMode(QTableWidget.SingleSelection) 
+        self.setSelectionBehavior(QTableWidget.SelectRows)
+        self.setDragDropMode(QTableWidget.InternalMove)   
+        self.setDefaultDropAction(Qt.MoveAction)
         self.model.updated.connect(self.draw_table)
         self.setColumnCount(6)
         self.setHorizontalHeaderLabels(["X", "Y", "Track", "Heading",  "Enabled", "Delete"])
 
         self.itemChanged.connect(self.item_changed)
+    def dropEvent(self, event: QDropEvent):
+        # print("drop event")
+        self.blockSignals(True)
+        delete_button_index = 5
+        if not event.isAccepted() and event.source() == self:
+            drop_row = self.drop_on(event)
 
-    # def dropEvent(self, event):
-    #     if event.source() == self and (event.dropAction() == Qt.MoveAction or self.dragDropMode() == QTableWidget.InternalMove):
-    #         success, row, col, topIndex = self.dropOn(event)
-    #         if success:             
-    #             selRows = self.getSelectedRowsFast()                        
+            rows = sorted(set(item.row() for item in self.selectedItems()))
+            rows_to_move = [[QTableWidgetItem(self.item(row_index, column_index)) for column_index in range(self.columnCount())]
+                            for row_index in rows]
+            for row_index in reversed(rows):
+                self.removeRow(row_index)
+                if row_index < drop_row:
+                    drop_row -= 1
+            delete_button = QPushButton("X")
+            delete_button.clicked.connect(self.delete_row)
+            for row_index, data in enumerate(rows_to_move):
+                row_index += drop_row
+                self.insertRow(row_index)
+                for column_index, column_data in enumerate(data):
+                    if column_index == delete_button_index:
+                        self.setCellWidget(row_index, delete_button_index, delete_button)
+                        continue
+                    self.setItem(row_index, column_index, column_data)
+                    # print(row_index, column_index, column_data)
+                
+            event.accept()
+            # for row_index in range(len(rows_to_move)):
+            #     self.item(drop_row + row_index, 0).setSelected(True)
+            #     self.item(drop_row + row_index, 1).setSelected(True)
+        super().dropEvent(event)
+        self.update()
+        self.blockSignals(False)
 
-    #             top = selRows[0]
-    #             # print 'top is %d'%top
-    #             dropRow = row
-    #             if dropRow == -1:
-    #                 dropRow = self.rowCount()
-    #             # print 'dropRow is %d'%dropRow
-    #             offset = dropRow - top
-    #             # print 'offset is %d'%offset
+        # self.update()
 
-    #             for i, row in enumerate(selRows):
-    #                 r = row + offset
-    #                 if r > self.rowCount() or r < 0:
-    #                     r = 0
-    #                 self.insertRow(r)
-    #                 # print 'inserting row at %d'%r
+        # for i in range(self.rowCount()):
+        #     self.dragUpdate(i)
+        # self.update()
 
+        # for r in range(0, self.rowCount()):
+        #     print(f"Current Row: {r}")
+        #     for c in range(0, self.columnCount()-1):
+        #         print(f"Current Column: {c}")
+        #         print(f"Item: {self.item(r, c).text()}")
+        #         # print(f"")
+    def getSelectedRows(self):
+        selRows = []
+        for item in self.selectedItems():
+            if item.row() not in selRows:
+                selRows.append(item.row())
+        return selRows
 
-    #             selRows = self.getSelectedRowsFast()
-    #             # print 'selected rows: %s'%selRows
+    def drop_on(self, event):
+        index = self.indexAt(event.pos())
+        if not index.isValid():
+            return self.rowCount()
 
-    #             top = selRows[0]
-    #             # print 'top is %d'%top
-    #             offset = dropRow - top                
-    #             # print 'offset is %d'%offset
-    #             self.blockSignals(True)
-    #             for i, row in enumerate(selRows):
-    #                 r = row + offset
-    #                 if r > self.rowCount() or r < 0:
-    #                     r = 0
+        return index.row() + 1 if self.is_below(event.pos(), index) else index.row()
 
-    #                 for j in range(self.columnCount()):
-    #                     # print 'source is (%d, %d)'%(row, j)
-    #                     # print 'item text: %s'%self.item(row,j).text()
-    #                     source = QTableWidgetItem(self.item(row, j))
-    #                     # print 'dest is (%d, %d)'%(r,j)
-    #                     self.setItem(r, j, source)
-
-    #             # Why does this NOT need to be here?
-    #             # for row in reversed(selRows):
-    #                 # self.removeRow(row)
-
-    #             event.accept()
-    #             self.blockSignals(False)
-
-    #     else:
-    #         self.blockSignals(True)
-    #         QTableView.dropEvent(event)
-    #         self.blockSignals(False)
-    #     # self.update()
-
-    # def getSelectedRowsFast(self):
-    #     selRows = []
-    #     for item in self.selectedItems():
-    #         if item.row() not in selRows:
-    #             selRows.append(item.row())
-    #     return selRows
-
-    # def droppingOnItself(self, event, index):
-    #     dropAction = event.dropAction()
-
-    #     if self.dragDropMode() == QTableWidget.InternalMove:
-    #         dropAction = Qt.MoveAction
-
-    #     if event.source() == self and event.possibleActions() & Qt.MoveAction and dropAction == Qt.MoveAction:
-    #         selectedIndexes = self.selectedIndexes()
-    #         child = index
-    #         while child.isValid() and child != self.rootIndex():
-    #             if child in selectedIndexes:
-    #                 return True
-    #             child = child.parent()
-
-    #     return False
-
-    # def dropOn(self, event):
-    #     if event.isAccepted():
-    #         return False, None, None, None
-
-    #     index = QModelIndex()
-    #     row = -1
-    #     col = -1
-
-    #     if self.viewport().rect().contains(event.pos()):
-    #         index = self.indexAt(event.pos())
-    #         if not index.isValid() or not self.visualRect(index).contains(event.pos()):
-    #             index = self.rootIndex()
-
-    #     if self.supportedDropActions() & event.dropAction():
-    #         if index != self.rootIndex():
-    #             dropIndicatorPosition = self.position(event.pos(), self.visualRect(index), index)
-
-    #             if dropIndicatorPosition == QTableWidget.AboveItem:
-    #                 row = index.row()
-    #                 col = index.column()
-    #                 # index = index.parent()
-    #             elif dropIndicatorPosition == QTableWidget.BelowItem:
-    #                 row = index.row() + 1
-    #                 col = index.column()
-    #                 # index = index.parent()
-    #             else:
-    #                 row = index.row()
-    #                 col = index.column()
-
-    #         if not self.droppingOnItself(event, index):
-    #             # print 'row is %d'%row
-    #             # print 'col is %d'%col
-    #             return True, row, col, index
-
-    #     return False, None, None, None
-
-    # def position(self, pos, rect, index):
-    #     r = self.OnViewport
-    #     margin = 2
-    #     if pos.y() - rect.top() < margin:
-    #         r = QTableWidget.AboveItem
-    #     elif rect.bottom() - pos.y() < margin:
-    #         r = QTableWidget.BelowItem 
-    #     elif rect.contains(pos, True):
-    #         r = QTableWidget.OnItem
-
-    #     if r == QTableWidget.OnItem and not Qt.ItemIsDropEnabled:
-    #         r = QTableWidget.AboveItem if pos.y() < rect.center().y() else QTableWidget.BelowItem
-
-    #     return r
-
+    def is_below(self, pos, index):
+        rect = self.visualRect(index)
+        margin = 2
+        if pos.y() - rect.top() < margin:
+            return False
+        elif rect.bottom() - pos.y() < margin:
+            return True
+        # noinspection PyTypeChecker
+        return rect.contains(pos, True) and not (Qt.ItemIsDropEnabled) and pos.y() >= rect.center().y()
 
     def update(self):
+        # print('updating')
         for i in range(0, self.rowCount()):
+            # print(i)
+            x_val = deepcopy(float(self.item(i, 0).text()))
+            y_val = deepcopy(float(self.item(i, 1).text()))
+            heading_val = deepcopy(float(self.item(i, 3).text()))
+            track_val = deepcopy(float(self.item(i, 2).text()))
+            enabled_val = deepcopy(self.item(i, 4).checkState() == Qt.Checked)
+            waypoint = Waypoint(x_val, y_val, track_val, heading_val, enabled = enabled_val)
+            # print(waypoint)
 
-            x_val = float(self.item(i, 0).text())
-            y_val = float(self.item(i, 1).text())
-            heading_val = float(self.item(i, 3).text())
-            track_val = float(self.item(i, 2).text())
-            enabled_val = self.item(i, 4).getCheckedState() == Qt.Checked
-
-            self.model[i] = Waypoint(x_val, y_val, track_val, heading_val, enabled = enabled_val)
+            self.model.waypoints[i] = waypoint
+        self.model.update()
 
     def draw_table(self):
         self.clear()
@@ -224,29 +167,40 @@ class WaypointTableBody(QTableWidget):
 
         self.model[row] = Waypoint(x_val, y_val, track_val, heading_val, enabled = enabled_val)
 
-    def add_waypoint(self, wp: Waypoint):
+    def dragUpdate(self, row):
+        x_val = float(self.item(row, 0).text())
+        y_val = float(self.item(row, 1).text())
+        track_val = float(self.item(row, 2).text())
+        heading_val = float(self.item(row, 3).text())
+        enabled_val = self.item(row, 4).checkState() == Qt.CheckState.Checked
+
+        self.model[row] = Waypoint(x_val, y_val, track_val, heading_val, enabled = enabled_val)
+
+    def add_waypoint(self, wp: Waypoint, location: int=None):
         # TODO: Fix model implementation so the
         # textChanged signal can be used instead of
         # editing finished.s
 
         self.blockSignals(True)
         num_rows = self.rowCount()
+        if location is None:
+            location=num_rows
 
-        self.insertRow(num_rows)
+        self.insertRow(location)
 
         self.checkboxItem = QTableWidgetItem()
         self.checkboxItem.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
         self.checkboxItem.setCheckState(Qt.Checked if wp.enabled else Qt.Unchecked)
         self.delete_button = QPushButton("X")
-        self.delete_button.clicked.connect(lambda: self.delete_row(num_rows ))
+        self.delete_button.clicked.connect(lambda: self.delete_row(location))
 
-        self.setItem(num_rows, 0, QTableWidgetItem(str(wp.x)))
-        self.setItem(num_rows, 1, QTableWidgetItem(str(wp.y)))
-        self.setItem(num_rows, 2, QTableWidgetItem(str(wp.track)))
-        self.setItem(num_rows, 3, QTableWidgetItem(str(wp.heading)))
-        self.setItem(num_rows, 4, self.checkboxItem)
+        self.setItem(location, 0, QTableWidgetItem(str(wp.x)))
+        self.setItem(location, 1, QTableWidgetItem(str(wp.y)))
+        self.setItem(location, 2, QTableWidgetItem(str(wp.track)))
+        self.setItem(location, 3, QTableWidgetItem(str(wp.heading)))
+        self.setItem(location, 4, self.checkboxItem)
 
-        self.setCellWidget(num_rows, 5, self.delete_button)
+        self.setCellWidget(location, 5, self.delete_button)
 
         self.blockSignals(False)
 
@@ -460,7 +414,7 @@ class WaypointTable(QWidget):
         else:
             return False
 
-
+    
     def screenshot(self, filename):
         # auto = load_auto(filename.replace(".png", ".json"))
         # for file in os.scandir('./resources/animation_in'):
@@ -566,5 +520,4 @@ class WaypointTable(QWidget):
             images.append(filename)
         iio.mimsave(f'{file_name}.gif', images, fps=15)
         # optimize(file_name)
-
 
