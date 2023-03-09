@@ -130,18 +130,20 @@ class WaypointTableBody(QTableWidget):
 
     def update(self):
         # print('updating')
+        self.blockSignals(True)
         for i in range(0, self.rowCount()):
             # print(i)
             x_val = deepcopy(float(self.item(i, 0).text()))
             y_val = deepcopy(float(self.item(i, 1).text()))
             heading_val = deepcopy(float(self.item(i, 3).text()))
             track_val = deepcopy(float(self.item(i, 2).text()))
-            enabled_val = deepcopy(self.item(i, 4).checkState() == Qt.Checked)
+            enabled_val = deepcopy(self.item(i, 4).checkState() == Qt.CheckState.Checked)
             waypoint = Waypoint(x_val, y_val, track_val, heading_val, enabled = enabled_val)
             # print(waypoint)
 
             self.model.waypoints[i] = waypoint
         self.model.update()
+        self.blockSignals(False)
 
     def draw_table(self):
         self.clear()
@@ -156,23 +158,34 @@ class WaypointTableBody(QTableWidget):
 
 
     def item_changed(self, item):
+        self.blockSignals(True)
         row = item.row()
+        print(1)
         x_val = float(self.item(row, 0).text())
+        print(2)
         y_val = float(self.item(row, 1).text())
+        print(3)
         track_val = float(self.item(row, 2).text())
+        print(4)
         heading_val = float(self.item(row, 3).text())
+        print(5)
         enabled_val = self.item(row, 4).checkState() == Qt.CheckState.Checked
-
+        print(6)
         self.model[row] = Waypoint(x_val, y_val, track_val, heading_val, enabled = enabled_val)
+        print(7)
+        self.model.update()
+        print(8)
+        self.blockSignals(False)
+        print(9)
 
-    def dragUpdate(self, row):
-        x_val = float(self.item(row, 0).text())
-        y_val = float(self.item(row, 1).text())
-        track_val = float(self.item(row, 2).text())
-        heading_val = float(self.item(row, 3).text())
-        enabled_val = self.item(row, 4).checkState() == Qt.CheckState.Checked
+    # def dragUpdate(self, row):
+    #     x_val = float(self.item(row, 0).text())
+    #     y_val = float(self.item(row, 1).text())
+    #     track_val = float(self.item(row, 2).text())
+    #     heading_val = float(self.item(row, 3).text())
+    #     enabled_val = self.item(row, 4).checkState() == Qt.CheckState.Checked
 
-        self.model[row] = Waypoint(x_val, y_val, track_val, heading_val, enabled = enabled_val)
+    #     self.model[row] = Waypoint(x_val, y_val, track_val, heading_val, enabled = enabled_val)
 
     def add_waypoint(self, wp: Waypoint, location: int=None):
         # TODO: Fix model implementation so the
@@ -242,8 +255,8 @@ class WaypointTable(QWidget):
 
         self.setMinimumSize(1010, 300)
         self.dropDown = QComboBox()
-        self.dropDown.insertItems(0, ["--Select a point--", "1", "2", "3", "4", "5", "6", "7", "8", "9"])
-        # self.dropDown.currentTextChanged.connect(self.update_drop_down)
+        self.dropDown.insertItems(0, ["--Select a point--", "Wall1", "Wall2", "Wall3", "Middle1", "Middle2", "Middle3", "Loading1", "Loading2", "Loading3", "Piece1", "Piece2", "Piece3", "Piece4"])
+        self.dropDown.currentTextChanged.connect(self.update_drop_down)
         self.addButton = QPushButton('Add Point')
         self.addButton.clicked.connect(lambda: self.add_waypoint())
         self.updateButton = QPushButton('Update')
@@ -277,6 +290,8 @@ class WaypointTable(QWidget):
         self.buttonLayout.addWidget(self.gifCheckboxLabel)
         self.buttonLayout.addWidget(self.gifCheckbox)
         # self.buttonLayout.addWidget(self.showButton)
+
+        self.default_point = None
 
 
         # setting radius and border
@@ -333,7 +348,10 @@ class WaypointTable(QWidget):
         return self.model.waypoints
 
     def add_waypoint(self, wp: Waypoint=Waypoint(0, 0, 0, 0)):
-        self.model.append(wp)
+        if self.default_point is None:
+            self.model.append(wp)
+        else:
+            self.model.append(self.default_point)
 
     def delete_row(self, rowNum):
         self.tableBody.delete_row(rowNum)
@@ -345,8 +363,9 @@ class WaypointTable(QWidget):
             self.path_list.list.set_items(auto)
     def update_drop_down(self):
         if self.dropDown.currentIndex() != 0:
-            print(self.dropDown.currentIndex())
-            load_default_points()
+            waypoints = load_default_points()
+            self.default_point = waypoints[self.dropDown.currentIndex()-1]
+            
     
     def save_auto(self):
         if self.path_list.list.count() > 0:

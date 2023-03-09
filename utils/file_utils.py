@@ -76,7 +76,6 @@ def load_default_points():
                 for wp_json in points["waypoint"]:
                     waypoint = Waypoint(wp_json['x'], wp_json['y'], wp_json['track'], wp_json['heading'])
                     waypoints.append(waypoint)
-                    print(waypoint)
             return waypoints
     
         
