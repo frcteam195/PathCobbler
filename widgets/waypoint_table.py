@@ -55,6 +55,7 @@ class WaypointTableBody(QTableWidget):
         self.setDefaultDropAction(Qt.MoveAction)
         self.model.updated.connect(self.draw_table)
         self.setColumnCount(6)
+        self.setFocusPolicy(Qt.ClickFocus)
         self.setHorizontalHeaderLabels(["X", "Y", "Track", "Heading",  "Enabled", "Delete"])
 
         self.itemChanged.connect(self.item_changed)
@@ -160,23 +161,14 @@ class WaypointTableBody(QTableWidget):
     def item_changed(self, item):
         self.blockSignals(True)
         row = item.row()
-        print(1)
         x_val = float(self.item(row, 0).text())
-        print(2)
         y_val = float(self.item(row, 1).text())
-        print(3)
         track_val = float(self.item(row, 2).text())
-        print(4)
         heading_val = float(self.item(row, 3).text())
-        print(5)
         enabled_val = self.item(row, 4).checkState() == Qt.CheckState.Checked
-        print(6)
         self.model[row] = Waypoint(x_val, y_val, track_val, heading_val, enabled = enabled_val)
-        print(7)
         self.model.update()
-        print(8)
         self.blockSignals(False)
-        print(9)
 
     # def dragUpdate(self, row):
     #     x_val = float(self.item(row, 0).text())

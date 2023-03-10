@@ -50,6 +50,7 @@ class FieldView(QLabel):
         self.rotate_heading = False
         self.rotate_track = False
         self.hover_point = False
+        self.setFocusPolicy(Qt.ClickFocus)
 
     def pixels_to_inches(self, pixelsX, pixelsY):
         inchesX = (pixelsX / self.fieldWidth) * constants.fieldWidth - constants.xOffset
@@ -137,21 +138,19 @@ class FieldView(QLabel):
         inchesY = float(math.floor(inchesY))
         for wp in self.model:
             if wp.clicked:
+                self.setFocus()
                 if self.rotate_track:
-                    print("track")
                     x_diff = inchesX - wp.x
                     y_diff = inchesY - wp.y
 
                     wp.track = float(math.floor(math.degrees(math.atan2(y_diff, x_diff))))
 
                 elif self.rotate_heading:
-                    print("heading")
                     x_diff = inchesX - wp.x
                     y_diff = inchesY - wp.y
 
                     wp.heading = float(math.floor(math.degrees(math.atan2(y_diff, x_diff))))
                 else:
-                    print("neither")
                     wp.x = inchesX
                     wp.y = inchesY
                 self.model.update()
