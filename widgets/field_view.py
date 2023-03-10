@@ -138,17 +138,20 @@ class FieldView(QLabel):
         for wp in self.model:
             if wp.clicked:
                 if self.rotate_track:
+                    print("track")
                     x_diff = inchesX - wp.x
                     y_diff = inchesY - wp.y
 
                     wp.track = float(math.floor(math.degrees(math.atan2(y_diff, x_diff))))
 
                 elif self.rotate_heading:
+                    print("heading")
                     x_diff = inchesX - wp.x
                     y_diff = inchesY - wp.y
 
                     wp.heading = float(math.floor(math.degrees(math.atan2(y_diff, x_diff))))
                 else:
+                    print("neither")
                     wp.x = inchesX
                     wp.y = inchesY
                 self.model.update()

@@ -41,10 +41,13 @@ class MainWidget(QWidget):
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if event.key() == Qt.Key_Shift:
             self.field.rotate_track = True
+            print("shift")
         elif event.key() == Qt.Key_Control:
             self.field.rotate_heading = True
+            print("cntrl")
         elif event.key() == Qt.Key_Alt:
             self.field.hover_point = True
+            print("alt")
         return super().keyPressEvent(event)
 
     def keyReleaseEvent(self, event: QKeyEvent) -> None:
