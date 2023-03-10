@@ -4,8 +4,8 @@
             "name": "Wall1",
             "waypoint": [
                 {
-                    "x": 77.0,
-                    "y": -19.0,
+                    "x": 69.74,
+                    "y": -20.5,
                     "track": 0.0,
                     "heading": 180.0,
                     "comment": ""
@@ -16,8 +16,8 @@
             "name": "Wall2",
             "waypoint": [
                 {
-                    "x": 77.0,
-                    "y": -42.0,
+                    "x": 69.74,
+                    "y": -42.5,
                     "track": 0.0,
                     "heading": 180.0,
                     "comment": ""
@@ -28,8 +28,8 @@
             "name": "Wall3",
             "waypoint": [
                 {
-                    "x": 77.0,
-                    "y": -63.5,
+                    "x": 69.74,
+                    "y": -64.5,
                     "track": 0.0,
                     "heading": 180.0,
                     "comment": ""
@@ -40,8 +40,8 @@
             "name": "Middle1",
             "waypoint": [
                 {
-                    "x": 77.0,
-                    "y": -85.5,
+                    "x": 69.74,
+                    "y": -86.5,
                     "track": 0.0,
                     "heading": 180.0,
                     "comment": ""
@@ -52,8 +52,8 @@
             "name": "Middle2",
             "waypoint": [
                 {
-                    "x": 77.0,
-                    "y": -108.0,
+                    "x": 69.74,
+                    "y": -108.5,
                     "track": 0.0,
                     "heading": 0.0,
                     "comment": ""
@@ -64,8 +64,8 @@
             "name": "Middle3",
             "waypoint": [
                 {
-                    "x": 77.0,
-                    "y": -129.5,
+                    "x": 69.74,
+                    "y": -130.5,
                     "track": 0.0,
                     "heading": 180.0,
                     "comment": ""
@@ -76,8 +76,8 @@
             "name": "Loading1",
             "waypoint": [
                 {
-                    "x": 77.0,
-                    "y": -151.0,
+                    "x": 69.74,
+                    "y": -152.5,
                     "track": 0.0,
                     "heading": 180.0,
                     "comment": ""
@@ -88,8 +88,8 @@
             "name": "Loading2",
             "waypoint": [
                 {
-                    "x": 77.0,
-                    "y": -174.0,
+                    "x": 69.74,
+                    "y": -174.5,
                     "track": 0.0,
                     "heading": 180.0,
                     "comment": ""
@@ -100,8 +100,8 @@
             "name": "Loading3",
             "waypoint": [
                 {
-                    "x": 77.0,
-                    "y": -198.5,
+                    "x": 69.74,
+                    "y": -196.5,
                     "track": 0.0,
                     "heading": 180.0,
                     "comment": ""
@@ -112,8 +112,8 @@
             "name": "Piece1",
             "waypoint": [
                 {
-                    "x": 279.0,
-                    "y": -36.0,
+                    "x": 278.3465,
+                    "y": -36.72,
                     "track": 0.0,
                     "heading": 180.0,
                     "comment": ""
@@ -124,8 +124,8 @@
             "name": "Piece2",
             "waypoint": [
                 {
-                    "x": 279,
-                    "y": -85.0,
+                    "x": 278.3465,
+                    "y": -84.72,
                     "track": 7.0,
                     "heading": 180.0,
                     "comment": ""
@@ -136,8 +136,8 @@
             "name": "Piece3",
             "waypoint": [
                 {
-                    "x": 279.0,
-                    "y": -132.0,
+                    "x": 278.3465,
+                    "y": -132.72,
                     "track": 35.0,
                     "heading": 0.0,
                     "comment": ""
@@ -148,8 +148,8 @@
             "name": "Piece4",
             "waypoint": [
                 {
-                    "x": 279.0,
-                    "y": -180.0,
+                    "x": 278.3465,
+                    "y": -180.72,
                     "track": 0.0,
                     "heading": 180.0,
                     "comment": ""
