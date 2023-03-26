@@ -36,12 +36,13 @@ from copy import deepcopy, copy
 class WaypointTableBody(QTableWidget):
     updateSignal = Signal(list, name='updateSignal')
 
-    def __init__(self, model: WaypointModel):
+    def __init__(self, model: WaypointModel, field_view: FieldView):
         super().__init__()
 
         self.waypoints = []
         self.model = model
         self.num_waypoints = 0
+        self.field_view = field_view
         # self.resize(500, 100)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setDragEnabled(True)
@@ -57,8 +58,8 @@ class WaypointTableBody(QTableWidget):
         self.setColumnCount(6)
         self.setFocusPolicy(Qt.ClickFocus)
         self.setHorizontalHeaderLabels(["X", "Y", "Track", "Heading",  "Enabled", "Delete"])
-
         self.itemChanged.connect(self.item_changed)
+
     def dropEvent(self, event: QDropEvent):
         # print("drop event")
         self.blockSignals(True)
@@ -92,6 +93,7 @@ class WaypointTableBody(QTableWidget):
         super().dropEvent(event)
         self.update()
         self.blockSignals(False)
+        self.field_view.setFocus()
 
         # self.update()
 
@@ -233,6 +235,10 @@ class WaypointTableBody(QTableWidget):
         self.setRowCount(0)
 
         #self.setLayout(self)
+    
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+            self.field_view.setFocus()
 
 
 
@@ -289,7 +295,7 @@ class WaypointTable(QWidget):
         # setting radius and border
         self.scroll_area = QScrollArea()
         self.scroll_area.setWidgetResizable(True)
-        self.tableBody = WaypointTableBody(self.model)
+        self.tableBody = WaypointTableBody(self.model, self.field)
         self.scroll_area.setWidget(self.tableBody)
         self.updateSignal = self.tableBody.updateSignal
 
@@ -344,6 +350,7 @@ class WaypointTable(QWidget):
             self.model.append(wp)
         else:
             self.model.append(self.default_point)
+        self.field.setFocus()
 
     def delete_row(self, rowNum):
         self.tableBody.delete_row(rowNum)
