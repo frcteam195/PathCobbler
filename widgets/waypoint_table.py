@@ -50,9 +50,9 @@ class WaypointTableBody(QTableWidget):
         self.viewport().setAcceptDrops(True)
         self.setDragDropOverwriteMode(False)
         self.setDropIndicatorShown(True)
-        self.setSelectionMode(QTableWidget.SingleSelection) 
+        self.setSelectionMode(QTableWidget.SingleSelection)
         self.setSelectionBehavior(QTableWidget.SelectRows)
-        self.setDragDropMode(QTableWidget.InternalMove)   
+        self.setDragDropMode(QTableWidget.InternalMove)
         self.setDefaultDropAction(Qt.MoveAction)
         self.model.updated.connect(self.draw_table)
         self.setColumnCount(6)
@@ -85,7 +85,7 @@ class WaypointTableBody(QTableWidget):
                         continue
                     self.setItem(row_index, column_index, column_data)
                     # print(row_index, column_index, column_data)
-                
+
             event.accept()
             # for row_index in range(len(rows_to_move)):
             #     self.item(drop_row + row_index, 0).setSelected(True)
@@ -235,7 +235,7 @@ class WaypointTableBody(QTableWidget):
         self.setRowCount(0)
 
         #self.setLayout(self)
-    
+
     def keyPressEvent(self, event: QKeyEvent):
         if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
             self.field_view.setFocus()
@@ -356,7 +356,7 @@ class WaypointTable(QWidget):
         self.tableBody.delete_row(rowNum)
 
     def load_auto_wp_table(self):
-        filename, _ = QFileDialog.getOpenFileName(self, 'Select File to Load', '.', 'JSON File (*.json)')
+        filename, _ = QFileDialog.getOpenFileName(self, 'Select File to Load', '.', 'SHOE File (*.shoe);;JSON File (*.json)')
         auto = load_auto(filename)
         if auto is not None:
             self.path_list.list.set_items(auto)
@@ -364,8 +364,8 @@ class WaypointTable(QWidget):
         if self.dropDown.currentIndex() != 0:
             waypoints = load_default_points()
             self.default_point = waypoints[self.dropDown.currentIndex()-1]
-            
-    
+
+
     def save_auto(self):
         if self.path_list.list.count() > 0:
             default_name = 'auto.json'
@@ -373,7 +373,7 @@ class WaypointTable(QWidget):
             last_y = None
             last_heading = None
 
-            for path in self.path_list.get_paths(): 
+            for path in self.path_list.get_paths():
                 if last_x is not None:
                     if last_x != path.waypoints[0].x or last_y != path.waypoints[0].y or last_heading != path.waypoints[0].heading:
                         msg = QMessageBox()
@@ -385,7 +385,7 @@ class WaypointTable(QWidget):
                 last_x = path.waypoints[len(path.waypoints) - 1].x
                 last_y = path.waypoints[len(path.waypoints) - 1].y
                 last_heading = path.waypoints[len(path.waypoints) - 1].heading
-            filename, _ = QFileDialog.getSaveFileName(self, 'Select File to Save', f'./{default_name}', 'JSON File (*.json)')
+            filename, _ = QFileDialog.getSaveFileName(self, 'Select File to Save', f'./{default_name}', 'SHOE File (*.shoe);;JSON File (*.json)')
 
 
             if filename is None:
@@ -405,7 +405,7 @@ class WaypointTable(QWidget):
                 json_obj['paths'].append({})
                 json_obj["paths"][i]["name"] = path.text()
                 if path.speed:
-                    json_obj["paths"][i]["max_velocity"] = int(path.speed)                 
+                    json_obj["paths"][i]["max_velocity"] = int(path.speed)
                 json_obj["paths"][i]["waypoints"] = []
                 for wp in path.waypoints:
                     json_obj["paths"][i]["waypoints"].append(wp.toJson())
@@ -439,7 +439,7 @@ class WaypointTable(QWidget):
         else:
             return False
 
-    
+
     def screenshot(self, filename):
         # auto = load_auto(filename.replace(".png", ".json"))
         # for file in os.scandir('./resources/animation_in'):
