@@ -202,3 +202,5 @@ cython_debug/
 # Autonomous files and previews.
 *.gif
 *.json
+
+lib/cmake-build-debug/
